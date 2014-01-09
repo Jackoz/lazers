@@ -10,9 +10,9 @@
 #define _LAZERS_H_
 
 #include <SDL/SDL.h>
-//#include <SDL_image/SDL_image.h>
+#include <SDL_image/SDL_image.h>
 
-//#define SCALE (3)
+#define SCALE (3)
 
 
 
@@ -21,7 +21,10 @@
 typedef unsigned char u8;
 typedef unsigned int u32;
 typedef unsigned short u16;
+
+typedef signed char s8;
 typedef signed short s16;
+
 typedef SDL_Color color;
 
 
@@ -39,7 +42,7 @@ enum LaserColor : u8
   
   COLOR_YELLOW = 0x03,
   COLOR_MAGENTA = 0x05,
-  COLOR_CYAN = 0x05,
+  COLOR_CYAN = 0x06,
   
   COLOR_WHITE = 0x07
 };
@@ -53,7 +56,7 @@ enum PieceType : u8
   PIECE_MIRROR
 };
   
-enum Rotation : u8
+enum Direction : u8
 {
   NORTH = 0,
   NORTH_EAST,
@@ -67,30 +70,54 @@ enum Rotation : u8
   
 struct Position
 {
-  u8 x, y;
+  s8 x, y;
+  
+  Position(u8 x, u8 y) : x(x), y(y) { }
+  bool isValid() { return x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
 };
 
 struct Piece
 {
   private:
     PieceType type_;
-    Rotation rotation_;
+    Direction rotation_;
+    LaserColor color_;
   
   public:
-    Piece() : type_(PIECE_MIRROR), rotation_(NORTH) { }
+    Piece(PieceType type, LaserColor color) : type_(type), rotation_(NORTH), color_(color) { }
   
-    Rotation rotation() { return rotation_; }
-    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Rotation>(rotation_-1); }
-    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Rotation>(rotation_+1); }
+    Direction rotation() { return rotation_; }
+    PieceType type() { return type_; }
+    LaserColor color() { return color_; }
+  
+    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
+    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
+};
+  
+struct Laser
+{
+  Position position;
+  Direction direction;
+  LaserColor color;
+  
+  Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
 };
   
 struct Tile
 {
-  LaserColor colors[8];
+  u8 colors[8];
   Piece *piece;
+
   u8 x, y;
   
   Tile() : colors{COLOR_NONE}, piece{nullptr}, x{0}, y{0} { }
+  
+  void resetLasers()
+  {
+    for (int i = 0; i < 8; ++i)
+      colors[i] = COLOR_NONE;
+  }
+
 };
   
 
@@ -108,6 +135,13 @@ class Gfx
   
     static const u16 TILE_SIZE = 14;
     static const u16 PIECE_SIZE = 12;
+  
+    static const s16 GFX_PIECE_ROWS[];
+    static const s16 GFX_LASER_ROWS[];
+    static const Position GFX_FIELD_POS;
+  
+    static u16 coordX(u16 x) { return TILE_SIZE*x + GFX_FIELD_POS.x; }
+    static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS.y; }
   
   public:
     static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
@@ -152,6 +186,7 @@ class Field
 {
   private:
     Tile *tiles;
+    const s8 directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
   
   public:
     Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT])
@@ -164,10 +199,16 @@ class Field
           tile->y = j;
         }
       
-      tileAt(3,3)->piece = new Piece();
+      tileAt(3,3)->piece = new Piece(PIECE_MIRROR, COLOR_NONE);
+      tileAt(5,5)->piece = new Piece(PIECE_SOURCE, COLOR_RED);
+      tileAt(7,7)->piece = new Piece(PIECE_SOURCE, COLOR_GREEN);
+      updateLasers();
     }
   
     Tile* tileAt(int x, int y) { return &tiles[y*FIELD_WIDTH + x]; }
+    Tile* tileAt(Position p) { return tileAt(p.x, p.y); }
+  
+    void updateLasers();
 };
   
 class Game
@@ -175,13 +216,16 @@ class Game
   private:
     bool running;
     Field field_;
+    Tile *selectedTile_;
 
   public:
+    Game() : position(Position(0,0)), selectedTile_(nullptr) { }
     void init();
     void loop();
     void handleEvents();
   
     Field *field() { return &field_; }
+    Tile *selectedTile() { return selectedTile_; }
   
   Position position;
 };

@@ -8,6 +8,10 @@
 
 #include "lazers.h"
 
+#include <list>
+
+using namespace std;
+
 SDL_PixelFormat *Gfx::format = nullptr;
 
 SDL_Surface *Gfx::screen = nullptr;
@@ -17,6 +21,10 @@ SDL_Surface *Gfx::screen = nullptr;
 
 
 SDL_Surface *Gfx::tiles = nullptr;
+
+const s16 Gfx::GFX_LASER_ROWS[] = {-1, 2, 3, 4, 5, 6, 7, 8};
+const s16 Gfx::GFX_PIECE_ROWS[] = {-1, 1, -1, 0};
+const Position Gfx::GFX_FIELD_POS = Position(0,10);
 
 void Gfx::init()
 {
@@ -45,9 +53,9 @@ void Gfx::init()
   
   Gfx::setFormat(screen->format);
   
-  //tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
+  tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
   
-  SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+  SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
 }
 
 void Gfx::blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
@@ -127,19 +135,25 @@ void Gfx::render(Game *game)
   
   lock();
   
-  u32 color = ccc(180, 0, 0);
+  u32 color = ccc(180, 180, 180);
   
   for (int i = 0; i < FIELD_WIDTH+1; ++i)
-    line(i*TILE_SIZE, 0, i*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE, color);
+    line(coordX(i), coordY(0), coordX(i), coordY(FIELD_HEIGHT), color);
   
   for (int i = 0; i < FIELD_HEIGHT+1; ++i)
-    line(0, i*TILE_SIZE, FIELD_WIDTH*TILE_SIZE, i*TILE_SIZE, color);
+    line(coordX(0), coordY(i), coordX(FIELD_WIDTH), coordY(i), color);
   
-  rect(TILE_SIZE*game->position.x, TILE_SIZE*game->position.y, TILE_SIZE*(game->position.x+1), TILE_SIZE*(game->position.y+1), ccc(180, 0, 0));
+  rect(coordX(game->position.x), coordY(game->position.y), coordX(game->position.x+1), coordY(game->position.y+1), ccc(180, 0, 0));
+  
+  if (game->selectedTile())
+  {
+    rect(coordX(game->selectedTile()->x), coordY(game->selectedTile()->y), coordX(game->selectedTile()->x+1), coordY(game->selectedTile()->y+1), ccc(240, 240, 0));
+
+  }
   
   unlock();
   
-  //drawField(game);
+  drawField(game);
   
   #ifdef SCALE
     blit(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
@@ -160,13 +174,70 @@ void Gfx::drawField(Game *game)
       
       if (tile->piece)
       {
-        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),0,PIECE_SIZE,PIECE_SIZE};
-        SDL_Rect dst = {static_cast<s16>(x*TILE_SIZE+1),static_cast<s16>(y*TILE_SIZE+1),0,0};
+        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*GFX_PIECE_ROWS[tile->piece->type()]),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect dst = {static_cast<s16>(coordX(x)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      
+      for (int i = 0; i < 8; ++i)
+      {
+        if (tile->colors[i])
+        {
+          SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*GFX_LASER_ROWS[tile->colors[i]]),PIECE_SIZE,PIECE_SIZE};
+          SDL_Rect dst = {static_cast<s16>(coordX(x)+1),static_cast<s16>(coordY(y)+1),0,0};
+          SDL_BlitSurface(tiles, &src, screen, &dst);
+        }
       }
     }
 }
 
+
+
+
+void Field::updateLasers()
+{
+  list<Laser> lasers;
+  
+  for (int i = 0; i < FIELD_WIDTH; ++i)
+    for (int j = 0; j < FIELD_HEIGHT; ++j)
+    {
+      Tile *tile = tileAt(i,j);
+      tile->resetLasers();
+      Piece *piece = tile->piece;
+      
+      if (piece && piece->type() == PIECE_SOURCE)
+      {
+        Laser laser = Laser(Position(i+directions[piece->rotation()][0],j+directions[piece->rotation()][1]), piece->rotation(), piece->color());
+        lasers.push_back(laser);
+      }
+    }
+  
+  list<Laser>::iterator it = lasers.begin();
+  while (!lasers.empty())
+  {
+    bool toRemove = true;
+
+    Laser& laser = (*it);
+    
+    while (laser.position.isValid())
+    {
+      Tile *tile = tileAt(laser.position);
+      
+      tile->colors[laser.direction] |= laser.color;
+      tile->colors[(laser.direction+4)%8] |= laser.color;
+      
+      laser.position.x += directions[laser.direction][0];
+      laser.position.y += directions[laser.direction][1];
+    }
+    
+    
+    
+    if (toRemove)
+      it = lasers.erase(it);
+    else
+      ++it;
+  }
+}
 
 
 
@@ -223,6 +294,20 @@ void Game::handleEvents()
             
           case SDLK_LALT: // B
           {
+            Tile *curTile = field_.tileAt(position);
+            
+            if (!selectedTile_ && curTile->piece)
+            {
+              selectedTile_ = curTile;
+            }
+            else if (selectedTile_ == curTile)
+              selectedTile_ = nullptr;
+            else if (selectedTile_)
+            {
+              std::swap(selectedTile_->piece, curTile->piece);
+              selectedTile_ = nullptr;
+              field_.updateLasers();
+            }
             
             break;
           }
@@ -243,7 +328,10 @@ void Game::handleEvents()
           {
             Piece *piece = field_.tileAt(position.x, position.y)->piece;
             if (piece)
+            {
               piece->rotateLeft();
+              field_.updateLasers();
+            }
             
             
             break;
@@ -253,7 +341,10 @@ void Game::handleEvents()
           {
             Piece *piece = field_.tileAt(position.x, position.y)->piece;
             if (piece)
+            {
               piece->rotateRight();
+              field_.updateLasers();
+            }
             
             break;
           }
