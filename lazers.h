@@ -10,9 +10,9 @@
 #define _LAZERS_H_
 
 #include <SDL/SDL.h>
-#include <SDL_image/SDL_image.h>
+#include <SDL_image.h>
 
-#define SCALE (3)
+//#define SCALE (3)
 
 
 
@@ -192,13 +192,14 @@ class Gfx
   
 class Field
 {
+  static const s8 directions[8][2];
+    
   private:
     Tile *tiles;
     Tile *inventory;
-    const s8 directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
   
   public:
-    Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT])
+    Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT])
     {
       for (int i = 0; i < FIELD_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)
@@ -243,7 +244,7 @@ class Game
     Tile *selectedTile_;
 
   public:
-    Game() : fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), selectedTile_(nullptr) { }
+    Game() : running(true), selectedTile_(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition) { }
     void init();
     void loop();
     void handleEvents();
@@ -251,8 +252,8 @@ class Game
     Field *field() { return &field_; }
     Tile *selectedTile() { return selectedTile_; }
   
-  Position fposition, iposition;
-  Position *position;
+  	Position fposition, iposition;
+  	Position *position;
 };
 
 #endif

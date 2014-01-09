@@ -58,7 +58,7 @@ void Gfx::init()
   #ifdef SCALE
     tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
   #else
-    tiles = IMG_Load("mirror.png");
+    tiles = IMG_Load("./mirror.png");
   #endif
   
   SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
@@ -217,6 +217,8 @@ void Gfx::drawField(Game *game)
 
 
 
+
+const s8 Field::directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
 
 void Field::updateLasers()
 {
