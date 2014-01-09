@@ -24,7 +24,9 @@ SDL_Surface *Gfx::tiles = nullptr;
 
 const s16 Gfx::GFX_LASER_ROWS[] = {-1, 2, 3, 4, 5, 6, 7, 8};
 const s16 Gfx::GFX_PIECE_ROWS[] = {-1, 1, -1, 0};
-const Position Gfx::GFX_FIELD_POS = Position(0,10);
+const u16 Gfx::GFX_FIELD_POS_X = 0;
+const u16 Gfx::GFX_FIELD_POS_Y = 10;
+const u16 Gfx::GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 5;
 
 void Gfx::init()
 {
@@ -53,7 +55,11 @@ void Gfx::init()
   
   Gfx::setFormat(screen->format);
   
-  tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
+  #ifdef SCALE
+    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
+  #else
+    tiles = IMG_Load("mirror.png");
+  #endif
   
   SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
 }
@@ -97,12 +103,12 @@ void Gfx::line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
       p[y*screen->w + x1] = color;
 }
 
-void Gfx::rect(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
+void Gfx::rect(u16 x, u16 y, u16 w, u16 h, u32 color)
 {
-  line(x1, y1, x1, y2, color);
-  line(x1, y1, x2, y1, color);
-  line(x2, y1, x2, y2, color);
-  line(x1, y2, x2, y2, color);
+  line(x, y, x, y+h, color);
+  line(x, y, x+w, y, color);
+  line(x+w, y, x+w, y+h, color);
+  line(x, y+h, x+w, y+h, color);
 }
 
 void Gfx::rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color)
@@ -138,17 +144,22 @@ void Gfx::render(Game *game)
   u32 color = ccc(180, 180, 180);
   
   for (int i = 0; i < FIELD_WIDTH+1; ++i)
-    line(coordX(i), coordY(0), coordX(i), coordY(FIELD_HEIGHT), color);
+    line(coordX(i, false), coordY(0), coordX(i, false), coordY(FIELD_HEIGHT), color);
   
   for (int i = 0; i < FIELD_HEIGHT+1; ++i)
-    line(coordX(0), coordY(i), coordX(FIELD_WIDTH), coordY(i), color);
+    line(coordX(0, false), coordY(i), coordX(FIELD_WIDTH, false), coordY(i), color);
   
-  rect(coordX(game->position.x), coordY(game->position.y), coordX(game->position.x+1), coordY(game->position.y+1), ccc(180, 0, 0));
+  for (int i = 0; i < INVENTORY_WIDTH+1; ++i)
+    line(coordX(i+FIELD_WIDTH, true), coordY(0), coordX(i+FIELD_WIDTH, true), coordY(INVENTORY_HEIGHT), color);
+  
+  for (int i = 0; i < INVENTORY_HEIGHT+1; ++i)
+    line(coordX(FIELD_WIDTH, true), coordY(i), coordX(FIELD_WIDTH+INVENTORY_WIDTH, true), coordY(i), color);
+  
+  rect(coordX(game->position->x, true), coordY(game->position->y), TILE_SIZE, TILE_SIZE, ccc(180, 0, 0));
   
   if (game->selectedTile())
   {
-    rect(coordX(game->selectedTile()->x), coordY(game->selectedTile()->y), coordX(game->selectedTile()->x+1), coordY(game->selectedTile()->y+1), ccc(240, 240, 0));
-
+    rect(coordX(game->selectedTile()->x, true), coordY(game->selectedTile()->y), TILE_SIZE, TILE_SIZE, ccc(240, 240, 0));
   }
   
   unlock();
@@ -175,7 +186,7 @@ void Gfx::drawField(Game *game)
       if (tile->piece)
       {
         SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*GFX_PIECE_ROWS[tile->piece->type()]),PIECE_SIZE,PIECE_SIZE};
-        SDL_Rect dst = {static_cast<s16>(coordX(x)+1),static_cast<s16>(coordY(y)+1),0,0};
+        SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
       
@@ -184,9 +195,22 @@ void Gfx::drawField(Game *game)
         if (tile->colors[i])
         {
           SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*GFX_LASER_ROWS[tile->colors[i]]),PIECE_SIZE,PIECE_SIZE};
-          SDL_Rect dst = {static_cast<s16>(coordX(x)+1),static_cast<s16>(coordY(y)+1),0,0};
+          SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
           SDL_BlitSurface(tiles, &src, screen, &dst);
         }
+      }
+    }
+  
+  for (int x = 0; x < INVENTORY_WIDTH; ++x)
+    for (int y = 0; y < INVENTORY_HEIGHT; ++y)
+    {
+      Tile *tile = field->tileAt(x+FIELD_WIDTH,y);
+      
+      if (tile->piece)
+      {
+        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*GFX_PIECE_ROWS[tile->piece->type()]),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect dst = {static_cast<s16>(coordX(x+FIELD_WIDTH, true)+1),static_cast<s16>(coordY(y)+1),0,0};
+        SDL_BlitSurface(tiles, &src, screen, &dst);
       }
     }
 }
@@ -246,7 +270,6 @@ void Game::init()
 
   Gfx::init();
   running = true;
-  position = {0,0};
 }
 
 void Game::handleEvents()
@@ -266,35 +289,44 @@ void Game::handleEvents()
             
           case SDLK_LEFT:
           {
-            if (position.x > 0) --position.x;
+            if ((position == &fposition && position->x > 0) || position->x > FIELD_WIDTH)
+              --position->x;
+
             break;
           }
           case SDLK_RIGHT:
           {
-            if (position.x < FIELD_WIDTH - 1) ++position.x;
+            if ((position == &fposition && position->x < FIELD_WIDTH-1) || position->x < FIELD_WIDTH+INVENTORY_WIDTH-1)
+              ++position->x;
             break;
           }
           case SDLK_UP:
           {
-            if (position.y > 0) --position.y;
+            if (position->y > 0)
+              --position->y;
             break;
           }
             
           case SDLK_DOWN:
           {
-            if (position.y < FIELD_HEIGHT - 1) ++position.y;
+            if ((position == &fposition && position->y < FIELD_HEIGHT-1) || position->y < FIELD_HEIGHT-1)
+              ++position->y;
             break;
           }
             
+          //   Y
+          //  X A
+          //   B
+            
           case SDLK_LCTRL: // A
           {
-            
+            position = position == &iposition ? &fposition : &iposition;
             break;
           }
             
           case SDLK_LALT: // B
           {
-            Tile *curTile = field_.tileAt(position);
+            Tile *curTile = field_.tileAt(*position);
             
             if (!selectedTile_ && curTile->piece)
             {
@@ -326,7 +358,7 @@ void Game::handleEvents()
             
           case SDLK_TAB: // L
           {
-            Piece *piece = field_.tileAt(position.x, position.y)->piece;
+            Piece *piece = field_.tileAt(position->x, position->y)->piece;
             if (piece)
             {
               piece->rotateLeft();
@@ -339,7 +371,7 @@ void Game::handleEvents()
             
           case SDLK_BACKSPACE: // R
           {
-            Piece *piece = field_.tileAt(position.x, position.y)->piece;
+            Piece *piece = field_.tileAt(position->x, position->y)->piece;
             if (piece)
             {
               piece->rotateRight();

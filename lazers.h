@@ -32,6 +32,9 @@ typedef SDL_Color color;
 static const u16 FIELD_WIDTH = 15;
 static const u16 FIELD_HEIGHT = 15;
 
+static const u16 INVENTORY_WIDTH = 6;
+static const u16 INVENTORY_HEIGHT = 4;
+
 
 enum LaserColor : u8
 {
@@ -138,14 +141,19 @@ class Gfx
   
     static const s16 GFX_PIECE_ROWS[];
     static const s16 GFX_LASER_ROWS[];
-    static const Position GFX_FIELD_POS;
+    static const u16 GFX_FIELD_POS_X, GFX_FIELD_POS_Y, GFX_INVENTORY_POS_X;
   
-    static u16 coordX(u16 x) { return TILE_SIZE*x + GFX_FIELD_POS.x; }
-    static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS.y; }
+    static u16 coordX(u16 x, bool isInventory) {
+      if (!isInventory || x < FIELD_WIDTH)
+        return TILE_SIZE*x + GFX_FIELD_POS_X;
+      else
+        return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
+    }
+    static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
   
   public:
     static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
-    static void rect(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
+    static void rect(u16 x1, u16 y1, u16 w, u16 h, u32 color);
     static void rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color);
     static void clear(u32 color);
     static inline void lock() { SDL_LockSurface(screen); }
@@ -186,6 +194,7 @@ class Field
 {
   private:
     Tile *tiles;
+    Tile *inventory;
     const s8 directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
   
   public:
@@ -199,13 +208,28 @@ class Field
           tile->y = j;
         }
       
+      for (int i = 0; i < INVENTORY_WIDTH; ++i)
+        for (int j = 0; j < INVENTORY_HEIGHT; ++j)
+        {
+          Tile *tile = tileAt(FIELD_WIDTH+i,j);
+          tile->x = FIELD_WIDTH+i;
+          tile->y = j;
+        }
+      
       tileAt(3,3)->piece = new Piece(PIECE_MIRROR, COLOR_NONE);
       tileAt(5,5)->piece = new Piece(PIECE_SOURCE, COLOR_RED);
       tileAt(7,7)->piece = new Piece(PIECE_SOURCE, COLOR_GREEN);
       updateLasers();
     }
   
-    Tile* tileAt(int x, int y) { return &tiles[y*FIELD_WIDTH + x]; }
+    Tile* tileAt(int x, int y)
+    {
+      if (x >= FIELD_WIDTH)
+        return &inventory[y*INVENTORY_WIDTH + (x-FIELD_WIDTH)];
+      else
+        return &tiles[y*FIELD_WIDTH + x];
+    }
+  
     Tile* tileAt(Position p) { return tileAt(p.x, p.y); }
   
     void updateLasers();
@@ -219,7 +243,7 @@ class Game
     Tile *selectedTile_;
 
   public:
-    Game() : position(Position(0,0)), selectedTile_(nullptr) { }
+    Game() : fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), selectedTile_(nullptr) { }
     void init();
     void loop();
     void handleEvents();
@@ -227,7 +251,8 @@ class Game
     Field *field() { return &field_; }
     Tile *selectedTile() { return selectedTile_; }
   
-  Position position;
+  Position fposition, iposition;
+  Position *position;
 };
 
 #endif
