@@ -127,7 +127,7 @@ void Gfx::render(Game *game)
   
   lock();
   
-  u32 color = ccc(80, 80, 80);
+  u32 color = ccc(180, 0, 0);
   
   for (int i = 0; i < FIELD_WIDTH+1; ++i)
     line(i*TILE_SIZE, 0, i*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE, color);
