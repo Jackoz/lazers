@@ -60,6 +60,15 @@ void Gfx::rect(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
   line(x1, y2, x2, y2, color);
 }
 
+void Gfx::rectFill(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
+{
+  u32* p = (u32*)screen->pixels;
+  
+  for (int x = x1; x <= x2; ++x)
+    for (int y = y1; y <= y2; ++y)
+      p[y*screen->w + x] = color;
+}
+
 void Gfx::clear(u32 color)
 {
   SDL_Rect frect = {0,0,WIDTH,HEIGHT};
@@ -86,7 +95,7 @@ void Gfx::render(Game *game)
   for (int i = 0; i < Game::FIELD_HEIGHT+1; ++i)
     line(0, i*TILE_SIZE, Game::FIELD_WIDTH*TILE_SIZE, i*TILE_SIZE, color);
   
-  rect(TILE_SIZE*game->position.x, TILE_SIZE*game->position.y, TILE_SIZE*(game->position.x+1), TILE_SIZE*(game->position.y+1), ccc(180, 0, 0));
+  rectFill(TILE_SIZE*game->position.x, TILE_SIZE*game->position.y, TILE_SIZE*(game->position.x+1), TILE_SIZE*(game->position.y+1), ccc(180, 0, 0));
   
   unlock();
   
