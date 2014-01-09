@@ -11,6 +11,11 @@
 SDL_PixelFormat *Gfx::format = nullptr;
 
 SDL_Surface *Gfx::screen = nullptr;
+#ifdef SCALE
+  SDL_Surface *Gfx::realScreen = nullptr;
+#endif
+
+
 SDL_Surface *Gfx::tiles = nullptr;
 
 void Gfx::init()
@@ -19,7 +24,13 @@ void Gfx::init()
 	atexit(SDL_Quit);
   
 	//SDL_ShowCursor(SDL_DISABLE);
-	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+#ifdef SCALE
+	realScreen = SDL_SetVideoMode(WIDTH*SCALE, HEIGHT*SCALE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  screen = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, realScreen->format->Rmask, realScreen->format->Gmask, realScreen->format->Bmask, realScreen->format->Amask);
+#else
+  screen = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+#endif
+  
 	if (screen->format->BitsPerPixel != 32) {
     fprintf(stderr, "ERROR: Did not get 32 bpp, got %u bpp instead.\n",
             screen->format->BitsPerPixel);
@@ -38,6 +49,32 @@ void Gfx::init()
   
   SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
+
+void Gfx::blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
+{
+  SDL_LockSurface(src);
+  SDL_LockSurface(dst);
+  
+  u32 *sp = (u32*)src->pixels;
+  u32 *dp = (u32*)dst->pixels;
+
+  // for each pixel in source
+  for (u16 x = sx; x < sx+w; ++x)
+    for (u16 y = sy; y < sy+h; ++y)
+    {
+      u32 color = PIXEL(sp, src->w, x, y);
+      // for each dest pixel according to scale factor
+      for (u16 ix = 0; ix < f; ++ix)
+        for (u16 iy = 0; iy < f; ++iy)
+        {
+          PIXEL(dp, dst->w, dx + x*f + ix, dy + y*f + iy) = color;
+        } 
+    }
+  
+  SDL_UnlockSurface(src);
+  SDL_UnlockSurface(dst);
+}
+
 
 void Gfx::line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
 {
@@ -60,13 +97,16 @@ void Gfx::rect(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
   line(x1, y2, x2, y2, color);
 }
 
-void Gfx::rectFill(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
+void Gfx::rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color)
 {
-  u32* p = (u32*)screen->pixels;
+  SDL_Rect rect = {x1,y1,static_cast<u16>(x2-x1+1),static_cast<u16>(y2-y1+1)};
+  SDL_FillRect(screen, &rect, color);
+  
+  /*u32* p = (u32*)screen->pixels;
   
   for (int x = x1; x <= x2; ++x)
     for (int y = y1; y <= y2; ++y)
-      p[y*screen->w + x] = color;
+      p[y*screen->w + x] = color;*/
 }
 
 void Gfx::clear(u32 color)
@@ -89,17 +129,42 @@ void Gfx::render(Game *game)
   
   u32 color = ccc(80, 80, 80);
   
-  for (int i = 0; i < Game::FIELD_WIDTH+1; ++i)
-    line(i*TILE_SIZE, 0, i*TILE_SIZE, Game::FIELD_HEIGHT*TILE_SIZE, color);
+  for (int i = 0; i < FIELD_WIDTH+1; ++i)
+    line(i*TILE_SIZE, 0, i*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE, color);
   
-  for (int i = 0; i < Game::FIELD_HEIGHT+1; ++i)
-    line(0, i*TILE_SIZE, Game::FIELD_WIDTH*TILE_SIZE, i*TILE_SIZE, color);
+  for (int i = 0; i < FIELD_HEIGHT+1; ++i)
+    line(0, i*TILE_SIZE, FIELD_WIDTH*TILE_SIZE, i*TILE_SIZE, color);
   
-  rectFill(TILE_SIZE*game->position.x, TILE_SIZE*game->position.y, TILE_SIZE*(game->position.x+1), TILE_SIZE*(game->position.y+1), ccc(180, 0, 0));
+  rect(TILE_SIZE*game->position.x, TILE_SIZE*game->position.y, TILE_SIZE*(game->position.x+1), TILE_SIZE*(game->position.y+1), ccc(180, 0, 0));
   
   unlock();
   
-  SDL_Flip(screen);
+  //drawField(game);
+  
+  #ifdef SCALE
+    blit(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
+    SDL_Flip(realScreen);
+  #else
+    SDL_Flip(screen);
+  #endif
+}
+
+void Gfx::drawField(Game *game)
+{
+  Field *field = game->field();
+  
+  for (int x = 0; x < FIELD_WIDTH; ++x)
+    for (int y = 0; y < FIELD_HEIGHT; ++y)
+    {
+      Tile *tile = field->tileAt(x,y);
+      
+      if (tile->piece)
+      {
+        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),0,PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect dst = {static_cast<s16>(x*TILE_SIZE+1),static_cast<s16>(y*TILE_SIZE+1),0,0};
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+    }
 }
 
 
@@ -147,6 +212,49 @@ void Game::handleEvents()
           case SDLK_DOWN:
           {
             if (position.y < FIELD_HEIGHT - 1) ++position.y;
+            break;
+          }
+            
+          case SDLK_LCTRL: // A
+          {
+            
+            break;
+          }
+            
+          case SDLK_LALT: // B
+          {
+            
+            break;
+          }
+            
+          case SDLK_LSHIFT: // X
+          {
+            
+            break;
+          }
+            
+          case SDLK_SPACE: // Y
+          {
+            
+            break;
+          }
+            
+          case SDLK_TAB: // L
+          {
+            Piece *piece = field_.tileAt(position.x, position.y)->piece;
+            if (piece)
+              piece->rotateLeft();
+            
+            
+            break;
+          }
+            
+          case SDLK_BACKSPACE: // R
+          {
+            Piece *piece = field_.tileAt(position.x, position.y)->piece;
+            if (piece)
+              piece->rotateRight();
+            
             break;
           }
             
