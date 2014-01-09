@@ -100,6 +100,8 @@ void Game::init()
 {
 
   Gfx::init();
+  running = true;
+  position = {0,0};
 }
 
 void Game::handleEvents()

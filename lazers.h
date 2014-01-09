@@ -10,7 +10,7 @@
 #define _LAZERS_H_
 
 #include <SDL/SDL.h>
-#include <SDL_image/SDL_image.h>
+//#include <SDL_image/SDL_image.h>
 
 
 typedef unsigned char u8;
@@ -118,7 +118,7 @@ class Gfx
 class Game
 {
   private:
-    bool running = true;
+    bool running;
 
   public:
     void init();
@@ -129,7 +129,7 @@ class Game
   static const u16 FIELD_WIDTH = 15;
   static const u16 FIELD_HEIGHT = 15;
   
-  Position position = {0,0};
+  Position position;
 };
 
 #endif
