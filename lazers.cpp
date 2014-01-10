@@ -167,6 +167,7 @@ void Gfx::render(Game *game)
   #endif
 }
 
+
 void Gfx::drawField(Game *game)
 {
   Field *field = game->field();
@@ -187,7 +188,7 @@ void Gfx::drawField(Game *game)
       {
         if (tile->colors[i])
         {
-          SDL_Rect src = {static_cast<s16>(96+(PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*(tile->colors[i]-1)),PIECE_SIZE,PIECE_SIZE};
+          SDL_Rect src = {static_cast<s16>(PIECE_SIZE*8+(PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*(tile->colors[i]-1)),PIECE_SIZE,PIECE_SIZE};
           SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
           SDL_BlitSurface(tiles, &src, screen, &dst);
         }
@@ -327,7 +328,7 @@ void Game::handleEvents()
           case SDLK_LCTRL: // A
           {
             Piece *piece = field_.tileAt(position->x, position->y)->piece();
-            if (piece)
+            if (piece && piece->canBeRotated())
             {
               piece->rotateRight();
               field_.updateLasers();
@@ -340,7 +341,7 @@ void Game::handleEvents()
           {
             Tile *curTile = field_.tileAt(*position);
             
-            if (!selectedTile_ && curTile->piece())
+            if (!selectedTile_ && curTile->piece() && curTile->piece()->canBeMoved())
             {
               selectedTile_ = curTile;
             }
@@ -349,11 +350,15 @@ void Game::handleEvents()
             else if (selectedTile_)
             {
               Piece *tmpPiece = selectedTile_->piece();
-              selectedTile_->place(curTile->piece());
-              curTile->place(tmpPiece);
-              //std::swap(selectedTile_->piece, curTile->piece);
-              selectedTile_ = nullptr;
-              field_.updateLasers();
+              
+              if (!tmpPiece || tmpPiece->canBeMoved())
+              {
+                selectedTile_->place(curTile->piece());
+                curTile->place(tmpPiece);
+                //std::swap(selectedTile_->piece, curTile->piece);
+                selectedTile_ = nullptr;
+                field_.updateLasers();
+              }
             }
             
             break;
@@ -362,7 +367,7 @@ void Game::handleEvents()
           case SDLK_LSHIFT: // X
           {
             Piece *piece = field_.tileAt(position->x, position->y)->piece();
-            if (piece)
+            if (piece && piece->canBeRotated())
             {
               piece->rotateLeft();
               field_.updateLasers();
@@ -379,25 +384,13 @@ void Game::handleEvents()
             
           case SDLK_TAB: // L
           {
-            Piece *piece = field_.tileAt(position->x, position->y)->piece();
-            if (piece)
-            {
-              piece->rotateLeft();
-              field_.updateLasers();
-            }
-            
+
             
             break;
           }
             
           case SDLK_BACKSPACE: // R
           {
-            Piece *piece = field_.tileAt(position->x, position->y)->piece();
-            if (piece)
-            {
-              piece->rotateRight();
-              field_.updateLasers();
-            }
             
             break;
           }

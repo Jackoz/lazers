@@ -292,7 +292,9 @@
 				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
 				INFOPLIST_FILE = "Lazers-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -307,7 +309,9 @@
 				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
 				INFOPLIST_FILE = "Lazers-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

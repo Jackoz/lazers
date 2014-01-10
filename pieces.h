@@ -60,12 +60,14 @@ class Piece
     PieceType type_;
     Direction rotation_;
     LaserColor color_;
+    bool movable, roteable;
+  
     Field *field;
   
     virtual Position gfxTile() = 0;
   
   public:
-    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), field(field) { }
+    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), field(field) { }
   
     Direction rotation() { return rotation_; }
     PieceType type() { return type_; }
@@ -77,6 +79,9 @@ class Piece
     virtual bool produceLaser() = 0;
     virtual bool blocksLaser(Laser &laser) = 0;
     virtual void receiveLaser(Laser &laser) = 0;
+  
+    virtual bool canBeMoved() = 0;
+    virtual bool canBeRotated() = 0;
   
     SDL_Rect gfxRect()
     {
@@ -105,7 +110,10 @@ class Wall : public Piece
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); }
   
-    Position gfxTile() { return Position(0,7); }
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return false; }
+  
+    Position gfxTile() { return Position(13,7); }
 };
 
 class LaserSource : public Piece
@@ -116,6 +124,9 @@ class LaserSource : public Piece
     bool produceLaser() { return true; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); /*laser.invalidate();*/ }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
   
     Position gfxTile() { return Position{rotation_, 1}; }
 };
@@ -141,6 +152,9 @@ class Mirror : public Piece
         laser.invalidate();
     }
   
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
     Position gfxTile() { return Position{rotation_, 0}; }
 };
 
@@ -164,8 +178,11 @@ class DoubleMirror : public Piece
       else
         laser.invalidate();
     }
-    
-    Position gfxTile() { return Position{static_cast<s8>(rotation_%4 + 4), 8}; }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
+    Position gfxTile() { return Position{static_cast<s8>(rotation_%4 + 4), 5}; }
 };
 
 class Splitter : public Piece
@@ -176,6 +193,9 @@ class Splitter : public Piece
     bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
   
     Position gfxTile() { return Position{rotation_, 2}; }
 };
@@ -188,7 +208,10 @@ class DSplitter : public Piece
     bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
-    
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
     Position gfxTile() { return Position{rotation_, 3}; }
 };
 
@@ -200,6 +223,9 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
   
   Position gfxTile() { return Position{rotation_, 4}; }
 };
@@ -216,7 +242,10 @@ public:
     laser.rotateRight(1);
   }
   
-  Position gfxTile() { return Position{7, 7}; }
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position{14, 7}; }
 };
 
 class Filter : public Piece
@@ -230,23 +259,29 @@ class Filter : public Piece
     {
       laser.color = static_cast<LaserColor>(laser.color & color_);
     }
-    
-    Position gfxTile() { return Position{color_, 7}; }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return false; }
+  
+    Position gfxTile() { return Position{color_+8, 8}; }
 };
 
 class Polarizer : public Piece
 {
   public:
-    Polarizer(Direction rotation, Field *field) : Piece(PIECE_POLARIZER, rotation, COLOR_NONE, field) { }
+    Polarizer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_POLARIZER, rotation, color, field) { }
     
     bool produceLaser() { return false; }
-    bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
+    bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == 0; }
     void receiveLaser(Laser &laser)
     {
-      UNUSED(laser);
+      laser.color = static_cast<LaserColor>(laser.color & color_);
     }
-    
-    Position gfxTile() { return Position{static_cast<s8>(rotation_%4), 8}; }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
+    Position gfxTile() { return Position{static_cast<s8>(color_+8), static_cast<s8>(9 + rotation_%4)}; }
 };
 
 class Tunnel : public Piece
@@ -261,8 +296,11 @@ class Tunnel : public Piece
       if (deltaDirection(laser) != 0)
         laser.invalidate();
     }
-    
-    Position gfxTile() { return Position{rotation_, 9}; }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
+    Position gfxTile() { return Position{rotation_, 6}; }
 };
 
 
