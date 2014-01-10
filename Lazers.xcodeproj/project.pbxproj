@@ -1,0 +1,339 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0401E190187F89B800678A0F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18F187F89B800678A0F /* common.cpp */; };
+		0401E191187F93F600678A0F /* pieces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18C187F885F00678A0F /* pieces.cpp */; };
+		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
+		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
+		04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB488187E705800CA4BFB /* AppKit.framework */; };
+		04EEB4B1187E710200CA4BFB /* SDLMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */; };
+		04EEB4B2187E710400CA4BFB /* lazers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4AD187E70EE00CA4BFB /* lazers.cpp */; };
+		04EEB4D7187E76F600CA4BFB /* tiles.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04EEB4BD187E72E200CA4BFB /* tiles.png */; };
+		04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CA18805A1B000E8E4E /* SDL_image.framework */; };
+		04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CB18805A1B000E8E4E /* SDL.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		04EEB4CE187E76D500CA4BFB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				04EEB4D7187E76F600CA4BFB /* tiles.png in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0401E18C187F885F00678A0F /* pieces.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pieces.cpp; sourceTree = SOURCE_ROOT; };
+		0401E18D187F885F00678A0F /* pieces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pieces.h; sourceTree = SOURCE_ROOT; };
+		0401E18E187F889200678A0F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = SOURCE_ROOT; };
+		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = SOURCE_ROOT; };
+		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		04EEB485187E705800CA4BFB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		04EEB488187E705800CA4BFB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		04EEB48A187E705800CA4BFB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		04EEB48D187E705800CA4BFB /* Lazers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Lazers-Info.plist"; sourceTree = SOURCE_ROOT; };
+		04EEB48F187E705800CA4BFB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		04EEB4A3187E706E00CA4BFB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		04EEB4AD187E70EE00CA4BFB /* lazers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lazers.cpp; sourceTree = SOURCE_ROOT; };
+		04EEB4AE187E70EE00CA4BFB /* lazers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lazers.h; sourceTree = SOURCE_ROOT; };
+		04EEB4AF187E70EE00CA4BFB /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = SOURCE_ROOT; };
+		04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLMain.mm; sourceTree = SOURCE_ROOT; };
+		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tiles.png; path = data/tiles.png; sourceTree = SOURCE_ROOT; };
+		04FA39CA18805A1B000E8E4E /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/../../../../../../../../Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
+		04FA39CB18805A1B000E8E4E /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		04EEB47F187E705800CA4BFB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */,
+				04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */,
+				04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */,
+				04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04EEB479187E705800CA4BFB = {
+			isa = PBXGroup;
+			children = (
+				04EEB4B3187E72E200CA4BFB /* data */,
+				04EEB48B187E705800CA4BFB /* Lazers */,
+				04EEB484187E705800CA4BFB /* Frameworks */,
+				04EEB483187E705800CA4BFB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		04EEB483187E705800CA4BFB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04EEB482187E705800CA4BFB /* Lazers.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		04EEB484187E705800CA4BFB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04FA39CA18805A1B000E8E4E /* SDL_image.framework */,
+				04FA39CB18805A1B000E8E4E /* SDL.framework */,
+				04EEB4A3187E706E00CA4BFB /* CoreFoundation.framework */,
+				04EEB485187E705800CA4BFB /* Cocoa.framework */,
+				04EEB487187E705800CA4BFB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		04EEB487187E705800CA4BFB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04EEB488187E705800CA4BFB /* AppKit.framework */,
+				04EEB48A187E705800CA4BFB /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		04EEB48B187E705800CA4BFB /* Lazers */ = {
+			isa = PBXGroup;
+			children = (
+				0401E18E187F889200678A0F /* common.h */,
+				0401E18F187F89B800678A0F /* common.cpp */,
+				0401E18D187F885F00678A0F /* pieces.h */,
+				0401E18C187F885F00678A0F /* pieces.cpp */,
+				04EEB4AE187E70EE00CA4BFB /* lazers.h */,
+				04EEB4AD187E70EE00CA4BFB /* lazers.cpp */,
+				04EEB4AF187E70EE00CA4BFB /* SDLMain.h */,
+				04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */,
+				04EEB48C187E705800CA4BFB /* Supporting Files */,
+			);
+			path = Lazers;
+			sourceTree = "<group>";
+		};
+		04EEB48C187E705800CA4BFB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				04EEB48D187E705800CA4BFB /* Lazers-Info.plist */,
+				04EEB48E187E705800CA4BFB /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		04EEB4B3187E72E200CA4BFB /* data */ = {
+			isa = PBXGroup;
+			children = (
+				04EEB4BD187E72E200CA4BFB /* tiles.png */,
+			);
+			name = data;
+			path = Lazers/data;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		04EEB481187E705800CA4BFB /* Lazers */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04EEB49F187E705800CA4BFB /* Build configuration list for PBXNativeTarget "Lazers" */;
+			buildPhases = (
+				04EEB47E187E705800CA4BFB /* Sources */,
+				04EEB47F187E705800CA4BFB /* Frameworks */,
+				04EEB480187E705800CA4BFB /* Resources */,
+				04EEB4CE187E76D500CA4BFB /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Lazers;
+			productName = Lazers;
+			productReference = 04EEB482187E705800CA4BFB /* Lazers.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		04EEB47A187E705800CA4BFB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = Jack;
+			};
+			buildConfigurationList = 04EEB47D187E705800CA4BFB /* Build configuration list for PBXProject "Lazers" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 04EEB479187E705800CA4BFB;
+			productRefGroup = 04EEB483187E705800CA4BFB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				04EEB481187E705800CA4BFB /* Lazers */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		04EEB480187E705800CA4BFB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04EEB47E187E705800CA4BFB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04EEB4B1187E710200CA4BFB /* SDLMain.mm in Sources */,
+				04EEB4B2187E710400CA4BFB /* lazers.cpp in Sources */,
+				0401E190187F89B800678A0F /* common.cpp in Sources */,
+				0401E191187F93F600678A0F /* pieces.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		04EEB48E187E705800CA4BFB /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				04EEB48F187E705800CA4BFB /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		04EEB49D187E705800CA4BFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		04EEB49E187E705800CA4BFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		04EEB4A0187E705800CA4BFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
+				INFOPLIST_FILE = "Lazers-Info.plist";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		04EEB4A1187E705800CA4BFB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
+				INFOPLIST_FILE = "Lazers-Info.plist";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04EEB47D187E705800CA4BFB /* Build configuration list for PBXProject "Lazers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04EEB49D187E705800CA4BFB /* Debug */,
+				04EEB49E187E705800CA4BFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		04EEB49F187E705800CA4BFB /* Build configuration list for PBXNativeTarget "Lazers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				04EEB4A0187E705800CA4BFB /* Debug */,
+				04EEB4A1187E705800CA4BFB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 04EEB47A187E705800CA4BFB /* Project object */;
+}
