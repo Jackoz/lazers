@@ -9,8 +9,16 @@
 #ifndef _LAZERS_H_
 #define _LAZERS_H_
 
+
+#define SCALE (3)
+
 #include <SDL/SDL.h>
+
+#ifdef SCALE
 #include <SDL_image/SDL_image.h>
+#else
+#include <SDL_image.h>
+#endif
 
 typedef SDL_Color color;
 
@@ -18,7 +26,6 @@ typedef SDL_Color color;
 
 #include "pieces.h"
 
-#define SCALE (3)
 
 
 
