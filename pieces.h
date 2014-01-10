@@ -192,6 +192,33 @@ class DSplitter : public Piece
     Position gfxTile() { return Position{rotation_, 3}; }
 };
 
+class Prism : public Piece
+{
+public:
+  Prism(Direction rotation, Field *field) : Piece(PIECE_PRISM, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser);
+  
+  Position gfxTile() { return Position{rotation_, 4}; }
+};
+
+class Bender : public Piece
+{
+public:
+  Bender(Field *field) : Piece(PIECE_PRISM, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser)
+  {
+    laser.rotateRight(1);
+  }
+  
+  Position gfxTile() { return Position{7, 7}; }
+};
+
 class Filter : public Piece
 {
   public:

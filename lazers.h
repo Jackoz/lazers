@@ -10,7 +10,7 @@
 #define _LAZERS_H_
 
 
-//#define SCALE (3)
+#define SCALE (3)
 
 #include <SDL/SDL.h>
 
@@ -159,6 +159,9 @@ class Field
       tileAt(3,2)->place(new DSplitter(NORTH, this));
       tileAt(4,2)->place(new Wall(this));
       tileAt(5,2)->place(new Wall(this));
+      tileAt(6,2)->place(new Prism(NORTH, this));
+      tileAt(7,2)->place(new Bender(this));
+
       updateLasers();
     }
   

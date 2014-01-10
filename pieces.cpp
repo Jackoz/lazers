@@ -45,3 +45,36 @@ void DSplitter::receiveLaser(Laser &laser)
   else
     laser.invalidate();
 }
+
+void Prism::receiveLaser(Laser &laser)
+{
+  s8 delta = deltaDirection(laser);
+  
+  if (delta == 0)
+  {
+    if (laser.color & COLOR_RED)
+      field->generateBeam(laser.position, laser.direction, COLOR_RED);
+    if (laser.color & COLOR_GREEN)
+      field->generateBeam(laser.position, laser.rotatedDirection(1), COLOR_GREEN);
+    if (laser.color & COLOR_BLUE)
+      field->generateBeam(laser.position, laser.rotatedDirection(2), COLOR_BLUE);
+
+  }
+  else if (delta == 4)
+  {
+    if (laser.color & COLOR_RED)
+      field->generateBeam(laser.position, laser.direction, COLOR_RED);
+  }
+  else if (delta == -3)
+  {
+    if (laser.color & COLOR_GREEN)
+      field->generateBeam(laser.position, laser.rotatedDirection(-1), COLOR_GREEN);
+  }
+  else if (delta == -2)
+  {
+    if (laser.color & COLOR_BLUE)
+      field->generateBeam(laser.position, laser.rotatedDirection(-2), COLOR_BLUE);
+  }
+  
+  laser.invalidate();
+}
