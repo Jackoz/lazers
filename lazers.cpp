@@ -8,8 +8,6 @@
 
 #include "lazers.h"
 
-#include <list>
-
 using namespace std;
 
 SDL_PixelFormat *Gfx::format = nullptr;
@@ -185,7 +183,7 @@ void Gfx::drawField(Game *game)
       
       if (tile->piece)
       {
-        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*GFX_PIECE_ROWS[tile->piece->type()]),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*tile->piece->gfxRow()),PIECE_SIZE,PIECE_SIZE};
         SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
@@ -208,14 +206,12 @@ void Gfx::drawField(Game *game)
       
       if (tile->piece)
       {
-        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*GFX_PIECE_ROWS[tile->piece->type()]),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*tile->piece->gfxRow()),PIECE_SIZE,PIECE_SIZE};
         SDL_Rect dst = {static_cast<s16>(coordX(x+FIELD_WIDTH, true)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
     }
 }
-
-
 
 
 const s8 Field::directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
@@ -231,7 +227,7 @@ void Field::updateLasers()
       tile->resetLasers();
       Piece *piece = tile->piece;
       
-      if (piece && piece->type() == PIECE_SOURCE)
+      if (piece && piece->produceLaser())
       {
         Laser laser = Laser(Position(i+directions[piece->rotation()][0],j+directions[piece->rotation()][1]), piece->rotation(), piece->color());
         lasers.push_back(laser);
@@ -241,27 +237,34 @@ void Field::updateLasers()
   list<Laser>::iterator it = lasers.begin();
   while (!lasers.empty())
   {
-    bool toRemove = true;
-
     Laser& laser = (*it);
     
-    while (laser.position.isValid())
+    while (laser.isValid())
     {
       Tile *tile = tileAt(laser.position);
       
-      tile->colors[laser.direction] |= laser.color;
-      tile->colors[(laser.direction+4)%8] |= laser.color;
+      Piece *piece = tile->piece;
       
-      laser.position.x += directions[laser.direction][0];
-      laser.position.y += directions[laser.direction][1];
+      if (piece && piece->blocksLaser(laser))
+        break;
+           
+      // place first half of laser if piece doesn't block it
+      tile->colors[(laser.direction+4)%8] |= laser.color;
+
+      // update existing laser or add new lasers according to piece behavior
+      if (piece)
+        piece->receiveLaser(laser, lasers);
+      
+      // keep drawing the other laser if receiveLaser didn't invalidate it
+      if (laser.isValid())
+      {
+        tile->colors[laser.direction] |= laser.color;
+        laser.position.x += directions[laser.direction][0];
+        laser.position.y += directions[laser.direction][1];
+        }
     }
-    
-    
-    
-    if (toRemove)
-      it = lasers.erase(it);
-    else
-      ++it;
+
+    it = lasers.erase(it);
   }
 }
 
@@ -291,14 +294,14 @@ void Game::handleEvents()
             
           case SDLK_LEFT:
           {
-            if ((position == &fposition && position->x > 0) || position->x > FIELD_WIDTH)
+            if ((position == &fposition && position->x > 0) || (position == &iposition && position->x > FIELD_WIDTH))
               --position->x;
 
             break;
           }
           case SDLK_RIGHT:
           {
-            if ((position == &fposition && position->x < FIELD_WIDTH-1) || position->x < FIELD_WIDTH+INVENTORY_WIDTH-1)
+            if ((position == &fposition && position->x < FIELD_WIDTH-1) || (position == &iposition && position->x < FIELD_WIDTH+INVENTORY_WIDTH-1))
               ++position->x;
             break;
           }
@@ -311,7 +314,7 @@ void Game::handleEvents()
             
           case SDLK_DOWN:
           {
-            if ((position == &fposition && position->y < FIELD_HEIGHT-1) || position->y < FIELD_HEIGHT-1)
+            if ((position == &fposition && position->y < FIELD_HEIGHT-1) || (position == &iposition && position->y < INVENTORY_HEIGHT-1))
               ++position->y;
             break;
           }

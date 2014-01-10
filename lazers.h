@@ -10,9 +10,11 @@
 #define _LAZERS_H_
 
 #include <SDL/SDL.h>
-#include <SDL_image.h>
+#include <SDL_image/SDL_image.h>
 
-//#define SCALE (3)
+#include <list>
+
+#define SCALE (3)
 
 
 
@@ -53,6 +55,7 @@ enum LaserColor : u8
 
 enum PieceType : u8
 {
+  PIECE_AIR,
   PIECE_WALL,
   PIECE_SOURCE,
   PIECE_TARGET,
@@ -76,25 +79,7 @@ struct Position
   s8 x, y;
   
   Position(u8 x, u8 y) : x(x), y(y) { }
-  bool isValid() { return x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
-};
-
-struct Piece
-{
-  private:
-    PieceType type_;
-    Direction rotation_;
-    LaserColor color_;
   
-  public:
-    Piece(PieceType type, LaserColor color) : type_(type), rotation_(NORTH), color_(color) { }
-  
-    Direction rotation() { return rotation_; }
-    PieceType type() { return type_; }
-    LaserColor color() { return color_; }
-  
-    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
-    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
 };
   
 struct Laser
@@ -104,8 +89,114 @@ struct Laser
   LaserColor color;
   
   Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
-};
   
+  bool isValid() { return position.x >= 0 && position.y >= 0 && position.x < FIELD_WIDTH && position.y < FIELD_HEIGHT; }
+  void invalidate() { position.x = -1; position.y = -1; }
+  
+  void rotateLeft(u8 steps)
+  {
+    u8 delta = direction - steps;
+    if (delta < 0) delta += 8;
+    direction = static_cast<Direction>(delta);
+  }
+  
+  void rotateRight(u8 steps)
+  {
+    u8 delta = direction + steps;
+    delta %= 8;
+    direction = static_cast<Direction>(delta);
+  }
+  
+  void flip() { rotateLeft(4); }
+};
+
+
+class Piece
+{
+  protected:
+    PieceType type_;
+    Direction rotation_;
+    LaserColor color_;
+  
+  public:
+    Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color) { }
+  
+    Direction rotation() { return rotation_; }
+    PieceType type() { return type_; }
+    LaserColor color() { return color_; }
+  
+    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
+    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
+  
+    virtual bool produceLaser() = 0;
+    virtual bool blocksLaser(Laser &laser) = 0;
+    virtual void receiveLaser(Laser &laser, std::list<Laser> &lasers) = 0;
+  
+    virtual u8 gfxRow() = 0;
+  
+    s8 deltaDirection(Laser& laser)
+    {
+      s8 delta = laser.direction - rotation_ + 4;
+      
+      if (delta > 4) delta -= 8;
+      else if (delta < -4) delta += 8;
+      else if (delta == -4) delta = 4;
+      
+      return delta;
+    }
+
+};
+
+class Wall : public Piece
+{
+  public:
+    Wall(Direction rotation, LaserColor color) : Piece(PIECE_WALL, rotation, color) { }
+
+    bool produceLaser() override { return false; }
+    bool blocksLaser(Laser &laser) override { return true; }
+    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override { }
+  
+    u8 gfxRow() override { return 1; }
+};
+
+class LaserSource : public Piece
+{
+  public:
+    LaserSource(Direction rotation, LaserColor color) : Piece(PIECE_SOURCE, rotation, color) { }
+    
+    bool produceLaser() override { return true; }
+    bool blocksLaser(Laser &laser) override { return true; }
+    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override { /*laser.invalidate();*/ }
+  
+    u8 gfxRow() override { return 1; }
+};
+
+class Mirror : public Piece
+{
+  public:
+    Mirror(Direction rotation, LaserColor color) : Piece(PIECE_MIRROR, rotation, color) { }
+    
+    bool produceLaser() override { return false; }
+    bool blocksLaser(Laser &laser) override { return false; }
+    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override
+    {
+      s8 delta = deltaDirection(laser);
+      
+      // opposite
+      if (delta == 0)
+        laser.flip();
+      else if (delta == -1)
+        laser.rotateLeft(2);
+      else if (delta == 1)
+        laser.rotateRight(2);
+      else
+        laser.invalidate();
+    }
+  
+    u8 gfxRow() override { return 0; }
+};
+
+
 struct Tile
 {
   u8 colors[8];
@@ -217,9 +308,9 @@ class Field
           tile->y = j;
         }
       
-      tileAt(3,3)->piece = new Piece(PIECE_MIRROR, COLOR_NONE);
-      tileAt(5,5)->piece = new Piece(PIECE_SOURCE, COLOR_RED);
-      tileAt(7,7)->piece = new Piece(PIECE_SOURCE, COLOR_GREEN);
+      tileAt(3,3)->piece = new Mirror(NORTH, COLOR_NONE);
+      tileAt(5,5)->piece = new LaserSource(NORTH, COLOR_RED);
+      tileAt(7,7)->piece = new LaserSource(NORTH, COLOR_GREEN);
       updateLasers();
     }
   
