@@ -10,7 +10,7 @@
 #define _LAZERS_H_
 
 
-#define SCALE (3)
+//#define SCALE (3)
 
 #include <SDL/SDL.h>
 
@@ -40,7 +40,7 @@ class Tile
 
     u8 x, y;
     
-    Tile() : colors{COLOR_NONE}, piece_{nullptr}, x{0}, y{0} { }
+    Tile() : piece_{nullptr}, colors{COLOR_NONE}, x{0}, y{0} { }
     
     void resetLasers()
     {

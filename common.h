@@ -78,7 +78,7 @@ struct Position
 {
   s8 x, y;
   
-  Position(u8 x, u8 y) : x(x), y(y) { }
+  Position(s8 x, s8 y) : x(x), y(y) { }
   
   void shift(Direction direction) { x += directions[direction][0]; y += directions[direction][1]; }
   Position derived(Direction direction) { return Position(x+directions[direction][0], y+directions[direction][1]); }

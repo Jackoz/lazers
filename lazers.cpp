@@ -326,7 +326,13 @@ void Game::handleEvents()
             
           case SDLK_LCTRL: // A
           {
-            position = position == &iposition ? &fposition : &iposition;
+            Piece *piece = field_.tileAt(position->x, position->y)->piece();
+            if (piece)
+            {
+              piece->rotateRight();
+              field_.updateLasers();
+            }
+            
             break;
           }
             
@@ -355,13 +361,19 @@ void Game::handleEvents()
             
           case SDLK_LSHIFT: // X
           {
+            Piece *piece = field_.tileAt(position->x, position->y)->piece();
+            if (piece)
+            {
+              piece->rotateLeft();
+              field_.updateLasers();
+            }
             
             break;
           }
             
           case SDLK_SPACE: // Y
           {
-            
+            position = position == &iposition ? &fposition : &iposition;
             break;
           }
             
