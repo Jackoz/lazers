@@ -151,6 +151,9 @@ class Field
       tileAt(2,14)->place(new Polarizer(NORTH, COLOR_MAGENTA, this));
       tileAt(1,14)->place(new Polarizer(NORTH, COLOR_WHITE, this));
       tileAt(3,14)->place(new Tunnel(NORTH, this));
+      tileAt(4,14)->place(new ColorShifter(NORTH, this));
+      tileAt(5,14)->place(new ColorInverter(NORTH, this));
+
 
       tileAt(3,3)->place(new Mirror(NORTH, this));
       tileAt(4,3)->place(new DoubleMirror(NORTH, this));

@@ -303,5 +303,58 @@ class Tunnel : public Piece
     Position gfxTile() { return Position{rotation_, 6}; }
 };
 
+class ColorShifter : public Piece
+{
+  public:
+    ColorShifter(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
+    
+    bool produceLaser() { return false; }
+    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+    void receiveLaser(Laser &laser)
+    {
+      s8 delta = deltaDirection(laser);
+      
+      if (delta%4 != 0)
+        laser.invalidate();
+      else
+      {
+        if (delta == 0)
+          laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & COLOR_RED) << 2));
+        else if (delta == 4)
+          laser.color = static_cast<LaserColor>(((laser.color << 1) & COLOR_WHITE) | ((laser.color & COLOR_BLUE) >> 2));
+      }
+    }
+    
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+    
+    Position gfxTile() { return Position{rotation_, 8}; }
+};
+
+class ColorInverter : public Piece
+{
+public:
+  ColorInverter(Direction rotation, Field *field) : Piece(PIECE_COLOR_INVERTER, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser)
+  {
+    s8 delta = deltaDirection(laser);
+    
+    if (delta%4 != 0)
+      laser.invalidate();
+    else
+    {
+      laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
+    }
+  }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position{rotation_, 7}; }
+};
+
 
 #endif
