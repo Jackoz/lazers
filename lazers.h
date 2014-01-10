@@ -12,206 +12,37 @@
 #include <SDL/SDL.h>
 #include <SDL_image/SDL_image.h>
 
+typedef SDL_Color color;
+
 #include <list>
+
+#include "pieces.h"
 
 #define SCALE (3)
 
 
 
-#define PIXEL(s, w, x, y) s[(y)*(w) + x]
-
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef unsigned short u16;
-
-typedef signed char s8;
-typedef signed short s16;
-
-typedef SDL_Color color;
-
-
-
-static const u16 FIELD_WIDTH = 15;
-static const u16 FIELD_HEIGHT = 15;
-
-static const u16 INVENTORY_WIDTH = 6;
-static const u16 INVENTORY_HEIGHT = 4;
-
-
-enum LaserColor : u8
+class Tile
 {
-  COLOR_NONE = 0x00,
-  COLOR_RED = 0x01,
-  COLOR_GREEN = 0x02,
-  COLOR_BLUE = 0x04,
+  private:
+    Piece *piece_;
   
-  COLOR_YELLOW = 0x03,
-  COLOR_MAGENTA = 0x05,
-  COLOR_CYAN = 0x06,
-  
-  COLOR_WHITE = 0x07
-};
-
-
-enum PieceType : u8
-{
-  PIECE_AIR,
-  PIECE_WALL,
-  PIECE_SOURCE,
-  PIECE_TARGET,
-  PIECE_MIRROR
-};
-  
-enum Direction : u8
-{
-  NORTH = 0,
-  NORTH_EAST,
-  EAST,
-  SOUTH_EAST,
-  SOUTH,
-  SOUTH_WEST,
-  WEST,
-  NORTH_WEST
-};
-  
-struct Position
-{
-  s8 x, y;
-  
-  Position(u8 x, u8 y) : x(x), y(y) { }
-  
-};
-  
-struct Laser
-{
-  Position position;
-  Direction direction;
-  LaserColor color;
-  
-  Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
-  
-  bool isValid() { return position.x >= 0 && position.y >= 0 && position.x < FIELD_WIDTH && position.y < FIELD_HEIGHT; }
-  void invalidate() { position.x = -1; position.y = -1; }
-  
-  void rotateLeft(u8 steps)
-  {
-    u8 delta = direction - steps;
-    if (delta < 0) delta += 8;
-    direction = static_cast<Direction>(delta);
-  }
-  
-  void rotateRight(u8 steps)
-  {
-    u8 delta = direction + steps;
-    delta %= 8;
-    direction = static_cast<Direction>(delta);
-  }
-  
-  void flip() { rotateLeft(4); }
-};
-
-
-class Piece
-{
-  protected:
-    PieceType type_;
-    Direction rotation_;
-    LaserColor color_;
-  
-  public:
-    Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color) { }
-  
-    Direction rotation() { return rotation_; }
-    PieceType type() { return type_; }
-    LaserColor color() { return color_; }
-  
-    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
-    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
-  
-    virtual bool produceLaser() = 0;
-    virtual bool blocksLaser(Laser &laser) = 0;
-    virtual void receiveLaser(Laser &laser, std::list<Laser> &lasers) = 0;
-  
-    virtual u8 gfxRow() = 0;
-  
-    s8 deltaDirection(Laser& laser)
-    {
-      s8 delta = laser.direction - rotation_ + 4;
-      
-      if (delta > 4) delta -= 8;
-      else if (delta < -4) delta += 8;
-      else if (delta == -4) delta = 4;
-      
-      return delta;
-    }
-
-};
-
-class Wall : public Piece
-{
-  public:
-    Wall(Direction rotation, LaserColor color) : Piece(PIECE_WALL, rotation, color) { }
-
-    bool produceLaser() override { return false; }
-    bool blocksLaser(Laser &laser) override { return true; }
-    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override { }
-  
-    u8 gfxRow() override { return 1; }
-};
-
-class LaserSource : public Piece
-{
-  public:
-    LaserSource(Direction rotation, LaserColor color) : Piece(PIECE_SOURCE, rotation, color) { }
+  public:  
+    u8 colors[8];
     
-    bool produceLaser() override { return true; }
-    bool blocksLaser(Laser &laser) override { return true; }
-    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override { /*laser.invalidate();*/ }
-  
-    u8 gfxRow() override { return 1; }
-};
 
-class Mirror : public Piece
-{
-  public:
-    Mirror(Direction rotation, LaserColor color) : Piece(PIECE_MIRROR, rotation, color) { }
+    u8 x, y;
     
-    bool produceLaser() override { return false; }
-    bool blocksLaser(Laser &laser) override { return false; }
-    void receiveLaser(Laser &laser, std::list<Laser> &lasers) override
+    Tile() : colors{COLOR_NONE}, piece_{nullptr}, x{0}, y{0} { }
+    
+    void resetLasers()
     {
-      s8 delta = deltaDirection(laser);
-      
-      // opposite
-      if (delta == 0)
-        laser.flip();
-      else if (delta == -1)
-        laser.rotateLeft(2);
-      else if (delta == 1)
-        laser.rotateRight(2);
-      else
-        laser.invalidate();
+      for (int i = 0; i < 8; ++i)
+        colors[i] = COLOR_NONE;
     }
-  
-    u8 gfxRow() override { return 0; }
-};
-
-
-struct Tile
-{
-  u8 colors[8];
-  Piece *piece;
-
-  u8 x, y;
-  
-  Tile() : colors{COLOR_NONE}, piece{nullptr}, x{0}, y{0} { }
-  
-  void resetLasers()
-  {
-    for (int i = 0; i < 8; ++i)
-      colors[i] = COLOR_NONE;
-  }
-
+    
+    void place(Piece* piece) { this->piece_ = piece; }
+    Piece *piece() { return piece_; }
 };
   
 
@@ -226,14 +57,7 @@ class Gfx
     static SDL_PixelFormat *format;
     static const u16 WIDTH = 320;
     static const u16 HEIGHT = 240;
-  
-    static const u16 TILE_SIZE = 14;
-    static const u16 PIECE_SIZE = 12;
-  
-    static const s16 GFX_PIECE_ROWS[];
-    static const s16 GFX_LASER_ROWS[];
-    static const u16 GFX_FIELD_POS_X, GFX_FIELD_POS_Y, GFX_INVENTORY_POS_X;
-  
+      
     static u16 coordX(u16 x, bool isInventory) {
       if (!isInventory || x < FIELD_WIDTH)
         return TILE_SIZE*x + GFX_FIELD_POS_X;
@@ -282,12 +106,11 @@ class Gfx
   
   
 class Field
-{
-  static const s8 directions[8][2];
-    
+{  
   private:
     Tile *tiles;
     Tile *inventory;
+    std::list<Laser> lasers;
   
   public:
     Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT])
@@ -308,9 +131,27 @@ class Field
           tile->y = j;
         }
       
-      tileAt(3,3)->piece = new Mirror(NORTH, COLOR_NONE);
-      tileAt(5,5)->piece = new LaserSource(NORTH, COLOR_RED);
-      tileAt(7,7)->piece = new LaserSource(NORTH, COLOR_GREEN);
+      
+      for (int i = 0; i < 7; ++i)
+      {
+        tileAt(i+3,12)->place(new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
+        
+        if (i < 6)
+          tileAt(i+3,13)->place(new Filter(static_cast<LaserColor>(i+1), this));
+
+      }
+      
+      tileAt(2,14)->place(new Polarizer(NORTH, this));
+      tileAt(3,14)->place(new Tunnel(NORTH, this));
+
+      tileAt(3,3)->place(new Mirror(NORTH, this));
+      tileAt(4,3)->place(new DoubleMirror(NORTH, this));
+
+
+      tileAt(2,2)->place(new Splitter(NORTH, this));
+      tileAt(3,2)->place(new DSplitter(NORTH, this));
+      tileAt(4,2)->place(new Wall(this));
+      tileAt(5,2)->place(new Wall(this));
       updateLasers();
     }
   
@@ -324,6 +165,7 @@ class Field
   
     Tile* tileAt(Position p) { return tileAt(p.x, p.y); }
   
+    void generateBeam(Position position, Direction direction, LaserColor color);
     void updateLasers();
 };
   

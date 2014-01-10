@@ -10,6 +10,7 @@
 
 using namespace std;
 
+#define PIXEL(s, w, x, y) s[(y)*(w) + x]
 SDL_PixelFormat *Gfx::format = nullptr;
 
 SDL_Surface *Gfx::screen = nullptr;
@@ -19,12 +20,6 @@ SDL_Surface *Gfx::screen = nullptr;
 
 
 SDL_Surface *Gfx::tiles = nullptr;
-
-const s16 Gfx::GFX_LASER_ROWS[] = {-1, 2, 3, 4, 5, 6, 7, 8};
-const s16 Gfx::GFX_PIECE_ROWS[] = {-1, 1, -1, 0};
-const u16 Gfx::GFX_FIELD_POS_X = 0;
-const u16 Gfx::GFX_FIELD_POS_Y = 10;
-const u16 Gfx::GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 5;
 
 void Gfx::init()
 {
@@ -54,9 +49,9 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/mirror.png");
+    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/tiles.png");
   #else
-    tiles = IMG_Load("./mirror.png");
+    tiles = IMG_Load("./tiles.png");
   #endif
   
   SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
@@ -181,9 +176,9 @@ void Gfx::drawField(Game *game)
     {
       Tile *tile = field->tileAt(x,y);
       
-      if (tile->piece)
+      if (tile->piece())
       {
-        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*tile->piece->gfxRow()),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect src = tile->piece()->gfxRect();
         SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
@@ -192,7 +187,7 @@ void Gfx::drawField(Game *game)
       {
         if (tile->colors[i])
         {
-          SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*GFX_LASER_ROWS[tile->colors[i]]),PIECE_SIZE,PIECE_SIZE};
+          SDL_Rect src = {static_cast<s16>(96+(PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*(tile->colors[i]-1)),PIECE_SIZE,PIECE_SIZE};
           SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
           SDL_BlitSurface(tiles, &src, screen, &dst);
         }
@@ -204,9 +199,9 @@ void Gfx::drawField(Game *game)
     {
       Tile *tile = field->tileAt(x+FIELD_WIDTH,y);
       
-      if (tile->piece)
+      if (tile->piece())
       {
-        SDL_Rect src = {static_cast<s16>((PIECE_SIZE)*tile->piece->rotation()),static_cast<s16>(PIECE_SIZE*tile->piece->gfxRow()),PIECE_SIZE,PIECE_SIZE};
+        SDL_Rect src = tile->piece()->gfxRect();
         SDL_Rect dst = {static_cast<s16>(coordX(x+FIELD_WIDTH, true)+1),static_cast<s16>(coordY(y)+1),0,0};
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
@@ -214,22 +209,29 @@ void Gfx::drawField(Game *game)
 }
 
 
-const s8 Field::directions[8][2] = {{0,-1},{1,-1},{1,0},{1,1},{0,1},{-1,1},{-1,0},{-1,-1}};
+void Field::generateBeam(Position position, Direction direction, LaserColor color)
+{
+  Laser beam = Laser(position.derived(direction), direction, color);
+  
+  if (beam.isValid())
+  {
+    lasers.push_back(beam);
+    tileAt(position.x, position.y)->colors[direction] |= color;
+  }
+}
 
 void Field::updateLasers()
 {
-  list<Laser> lasers;
-  
   for (int i = 0; i < FIELD_WIDTH; ++i)
     for (int j = 0; j < FIELD_HEIGHT; ++j)
     {
       Tile *tile = tileAt(i,j);
       tile->resetLasers();
-      Piece *piece = tile->piece;
+      Piece *piece = tile->piece();
       
       if (piece && piece->produceLaser())
       {
-        Laser laser = Laser(Position(i+directions[piece->rotation()][0],j+directions[piece->rotation()][1]), piece->rotation(), piece->color());
+        Laser laser = Laser(Position(i+Position::directions[piece->rotation()][0],j+Position::directions[piece->rotation()][1]), piece->rotation(), piece->color());
         lasers.push_back(laser);
       }
     }
@@ -243,7 +245,7 @@ void Field::updateLasers()
     {
       Tile *tile = tileAt(laser.position);
       
-      Piece *piece = tile->piece;
+      Piece *piece = tile->piece();
       
       if (piece && piece->blocksLaser(laser))
         break;
@@ -253,15 +255,14 @@ void Field::updateLasers()
 
       // update existing laser or add new lasers according to piece behavior
       if (piece)
-        piece->receiveLaser(laser, lasers);
+        piece->receiveLaser(laser);
       
       // keep drawing the other laser if receiveLaser didn't invalidate it
       if (laser.isValid())
       {
         tile->colors[laser.direction] |= laser.color;
-        laser.position.x += directions[laser.direction][0];
-        laser.position.y += directions[laser.direction][1];
-        }
+        laser.position.shift(laser.direction);
+      }
     }
 
     it = lasers.erase(it);
@@ -333,7 +334,7 @@ void Game::handleEvents()
           {
             Tile *curTile = field_.tileAt(*position);
             
-            if (!selectedTile_ && curTile->piece)
+            if (!selectedTile_ && curTile->piece())
             {
               selectedTile_ = curTile;
             }
@@ -341,7 +342,10 @@ void Game::handleEvents()
               selectedTile_ = nullptr;
             else if (selectedTile_)
             {
-              std::swap(selectedTile_->piece, curTile->piece);
+              Piece *tmpPiece = selectedTile_->piece();
+              selectedTile_->place(curTile->piece());
+              curTile->place(tmpPiece);
+              //std::swap(selectedTile_->piece, curTile->piece);
               selectedTile_ = nullptr;
               field_.updateLasers();
             }
@@ -363,7 +367,7 @@ void Game::handleEvents()
             
           case SDLK_TAB: // L
           {
-            Piece *piece = field_.tileAt(position->x, position->y)->piece;
+            Piece *piece = field_.tileAt(position->x, position->y)->piece();
             if (piece)
             {
               piece->rotateLeft();
@@ -376,7 +380,7 @@ void Game::handleEvents()
             
           case SDLK_BACKSPACE: // R
           {
-            Piece *piece = field_.tileAt(position->x, position->y)->piece;
+            Piece *piece = field_.tileAt(position->x, position->y)->piece();
             if (piece)
             {
               piece->rotateRight();
