@@ -223,6 +223,9 @@ void Field::generateBeam(Position position, Direction direction, LaserColor colo
 
 void Field::updateLasers()
 {
+  for (auto g : goals)
+    g->reset();
+  
   for (int i = 0; i < FIELD_WIDTH; ++i)
     for (int j = 0; j < FIELD_HEIGHT; ++j)
     {
@@ -351,12 +354,18 @@ void Game::handleEvents()
             {
               Piece *tmpPiece = selectedTile_->piece();
               
-              if (!tmpPiece || tmpPiece->canBeMoved())
+              if (!curTile->piece() || curTile->piece()->canBeMoved())
               {
                 selectedTile_->place(curTile->piece());
                 curTile->place(tmpPiece);
                 //std::swap(selectedTile_->piece, curTile->piece);
+
+                tmpPiece->moved();
+                if (selectedTile_->piece())
+                  selectedTile_->piece()->moved();
+                
                 selectedTile_ = nullptr;
+ 
                 field_.updateLasers();
               }
             }

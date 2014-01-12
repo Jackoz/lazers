@@ -16,18 +16,18 @@ typedef unsigned short u16;
 typedef signed char s8;
 typedef signed short s16;
 
-static const u16 FIELD_WIDTH = 15;
+static const u16 FIELD_WIDTH = 16;
 static const u16 FIELD_HEIGHT = 15;
 
-static const u16 INVENTORY_WIDTH = 6;
-static const u16 INVENTORY_HEIGHT = 4;
+static const u16 INVENTORY_WIDTH = 4;
+static const u16 INVENTORY_HEIGHT = 6;
 
 static const u16 TILE_SIZE = 15;
 static const u16 PIECE_SIZE = 14;
 
 static const u16 GFX_FIELD_POS_X = 0;
 static const u16 GFX_FIELD_POS_Y = 5;
-static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 4;
+static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 10;
 
 
 
@@ -63,7 +63,10 @@ enum PieceType : u8
   PIECE_POLARIZER,
   PIECE_TUNNEL,
   PIECE_COLOR_SHIFTER,
-  PIECE_COLOR_INVERTER
+  PIECE_COLOR_INVERTER,
+  
+  PIECE_STRICT_GOAL,
+  PIECE_SPLIT_GOAL
 };
   
 enum Direction : u8

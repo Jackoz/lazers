@@ -78,3 +78,11 @@ void Prism::receiveLaser(Laser &laser)
   
   laser.invalidate();
 }
+
+
+
+
+Goal::Goal(PieceType type, LaserColor color, Field *field) : Piece(type, NORTH, color, field), satisfied(false), satisfyDirection(0), satisfyColor(COLOR_NONE)
+{
+  field->addGoal(this);
+}

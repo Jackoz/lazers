@@ -83,6 +83,8 @@ class Piece
     virtual bool canBeMoved() = 0;
     virtual bool canBeRotated() = 0;
   
+    virtual void moved() { }
+  
     SDL_Rect gfxRect()
     {
       Position tile = gfxTile();
@@ -354,6 +356,66 @@ public:
   bool canBeRotated() { return roteable; }
   
   Position gfxTile() { return Position{rotation_, 7}; }
+};
+
+class Goal : public Piece
+{
+  protected:
+    bool satisfied;
+    u8 satisfyDirection;
+    LaserColor satisfyColor;
+  
+  public:
+    Goal(PieceType type, LaserColor color, Field *field);
+  
+    bool produceLaser() = 0;
+    bool blocksLaser(Laser &laser) = 0;
+    void receiveLaser(Laser &laser) = 0;
+    
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+  
+    bool isSatisfied() { return satisfied; }
+    void reset() {
+      satisfied = false;
+      satisfyColor = COLOR_NONE;
+      satisfyDirection = 0;
+    }
+  
+    void moved() {
+      satisfyColor = COLOR_NONE;
+      satisfyDirection = 0;
+    }
+  
+    Position gfxTile() = 0;
+};
+
+class StrictGoal : public Goal
+{
+  private:
+    
+  public:
+    StrictGoal(LaserColor color, Field *field) : Goal(PIECE_STRICT_GOAL, color, field) { }
+
+    bool produceLaser() { return false; }
+    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+    void receiveLaser(Laser &laser)
+    {
+      satisfyColor = static_cast<LaserColor>(satisfyColor | laser.color);
+      satisfyDirection |= 1 << laser.direction;
+      
+      u8 foundDirections = 0;
+      for (int i = 0; i < 4; ++i)
+        if ((satisfyDirection & 1<<(4+i)) || (satisfyDirection & 1<<(i)))
+          ++foundDirections;
+      
+      satisfied = (satisfyColor == color_) && (foundDirections == 1);
+    }
+  
+    bool canBeMoved() { return movable; }
+    bool canBeRotated() { return roteable; }
+    
+    Position gfxTile() { return Position{color_+8, isSatisfied() ? 14 : 13}; }
 };
 
 

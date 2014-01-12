@@ -118,6 +118,7 @@ class Field
     Tile *tiles;
     Tile *inventory;
     std::list<Laser> lasers;
+    std::list<Goal*> goals;
   
   public:
     Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT])
@@ -153,6 +154,7 @@ class Field
       tileAt(3,14)->place(new Tunnel(NORTH, this));
       tileAt(4,14)->place(new ColorShifter(NORTH, this));
       tileAt(5,14)->place(new ColorInverter(NORTH, this));
+      tileAt(6,14)->place(new StrictGoal(COLOR_MAGENTA, this));
 
 
       tileAt(3,3)->place(new Mirror(NORTH, this));
@@ -165,6 +167,7 @@ class Field
       tileAt(5,2)->place(new Wall(this));
       tileAt(6,2)->place(new Prism(NORTH, this));
       tileAt(7,2)->place(new Bender(this));
+      
 
       updateLasers();
     }
@@ -178,6 +181,8 @@ class Field
     }
   
     Tile* tileAt(Position p) { return tileAt(p.x, p.y); }
+  
+    void addGoal(Goal *goal) { goals.push_back(goal); }
   
     void generateBeam(Position position, Direction direction, LaserColor color);
     void updateLasers();
