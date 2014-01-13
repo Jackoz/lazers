@@ -118,6 +118,21 @@ class Wall : public Piece
     Position gfxTile() { return Position(13,7); }
 };
 
+class Glass : public Piece
+{
+public:
+  Glass(Field *field) : Piece(PIECE_GLASS, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser) { UNUSED(laser); }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position(11,7); }
+};
+
 class LaserSource : public Piece
 {
   public:
@@ -235,7 +250,7 @@ public:
 class Bender : public Piece
 {
 public:
-  Bender(Field *field) : Piece(PIECE_PRISM, NORTH, COLOR_NONE, field) { }
+  Bender(Field *field) : Piece(PIECE_BENDER, NORTH, COLOR_NONE, field) { }
   
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
@@ -249,6 +264,25 @@ public:
   
   Position gfxTile() { return Position{14, 7}; }
 };
+
+class Twister : public Piece
+{
+public:
+  Twister(Field *field) : Piece(PIECE_TWISTER, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser)
+  {
+    laser.rotateLeft(2);
+  }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position{12, 7}; }
+};
+
 
 class Filter : public Piece
 {
@@ -266,6 +300,49 @@ class Filter : public Piece
     bool canBeRotated() { return false; }
   
     Position gfxTile() { return Position{color_+8, 8}; }
+};
+
+class RoundFilter : public Piece
+{
+public:
+  RoundFilter(Field *field) : Piece(PIECE_FILTER, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser)
+  {
+    s8 delta = deltaDirection(laser) % 4;
+    if (delta < 0) delta += 4;
+    
+    if (delta == 3)
+      return true;
+    else if (delta == 0)
+      return (laser.color & COLOR_RED) == 0;
+    else if (delta == 1)
+      return (laser.color & COLOR_GREEN) == 0;
+    else if (delta == 2)
+      return (laser.color & COLOR_BLUE) == 0;
+    else return true;
+  }
+  
+  void receiveLaser(Laser &laser)
+  {
+    s8 delta = deltaDirection(laser) % 4;
+    if (delta < 0) delta += 4;
+    
+    printf("%d\n", delta);
+
+    if (delta == 0)
+      laser.color = static_cast<LaserColor>(laser.color & COLOR_RED);
+    else if (delta == 1)
+      laser.color = static_cast<LaserColor>(laser.color & COLOR_GREEN);
+    else if (delta == 2)
+      laser.color = static_cast<LaserColor>(laser.color & COLOR_BLUE);
+  }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position{rotation_%4, 9}; }
 };
 
 class Polarizer : public Piece
@@ -375,9 +452,9 @@ class Goal : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    bool isSatisfied() { return satisfied; }
+    bool isSatisfied() const { return satisfied; }
     void reset() {
-      satisfied = false;
+      satisfied = color_ == COLOR_NONE;
       satisfyColor = COLOR_NONE;
       satisfyDirection = 0;
     }
@@ -409,7 +486,10 @@ class StrictGoal : public Goal
         if ((satisfyDirection & 1<<(4+i)) || (satisfyDirection & 1<<(i)))
           ++foundDirections;
       
-      satisfied = (satisfyColor == color_) && (foundDirections == 1);
+      if (color_ == COLOR_NONE)
+        satisfied = satisfyColor == COLOR_NONE && foundDirections == 0;
+      else
+        satisfied = satisfyColor == color_ && foundDirections == 1;
     }
   
     bool canBeMoved() { return movable; }
@@ -417,6 +497,5 @@ class StrictGoal : public Goal
     
     Position gfxTile() { return Position{color_+8, isSatisfied() ? 14 : 13}; }
 };
-
 
 #endif

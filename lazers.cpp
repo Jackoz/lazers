@@ -273,6 +273,11 @@ void Field::updateLasers()
   }
 }
 
+bool Field::checkForWin()
+{
+  return std::all_of(goals.begin(), goals.end(), [](const Goal *goal){ return goal->isSatisfied(); });
+}
+
 
 
 void Game::init()

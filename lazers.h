@@ -155,6 +155,8 @@ class Field
       tileAt(4,14)->place(new ColorShifter(NORTH, this));
       tileAt(5,14)->place(new ColorInverter(NORTH, this));
       tileAt(6,14)->place(new StrictGoal(COLOR_MAGENTA, this));
+      tileAt(6,14)->place(new StrictGoal(COLOR_NONE, this));
+      tileAt(7,14)->place(new StrictGoal(COLOR_YELLOW, this));
 
 
       tileAt(3,3)->place(new Mirror(NORTH, this));
@@ -164,9 +166,12 @@ class Field
       tileAt(2,2)->place(new Splitter(NORTH, this));
       tileAt(3,2)->place(new DSplitter(NORTH, this));
       tileAt(4,2)->place(new Wall(this));
-      tileAt(5,2)->place(new Wall(this));
+      tileAt(5,2)->place(new Glass(this));
       tileAt(6,2)->place(new Prism(NORTH, this));
       tileAt(7,2)->place(new Bender(this));
+      tileAt(8,2)->place(new Twister(this));
+      tileAt(9,2)->place(new RoundFilter(this));
+
       
 
       updateLasers();
@@ -186,6 +191,7 @@ class Field
   
     void generateBeam(Position position, Direction direction, LaserColor color);
     void updateLasers();
+    bool checkForWin();
 };
   
 class Game
