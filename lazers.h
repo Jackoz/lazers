@@ -27,14 +27,68 @@ typedef SDL_Color color;
 #include "pieces.h"
 
 
+class Game;
+
+class Gfx
+{
+private:
+  static SDL_PixelFormat *format;
+  static const u16 WIDTH = 320;
+  static const u16 HEIGHT = 240;
+  
+  static u16 coordX(u16 x, bool isInventory) {
+    if (!isInventory || x < FIELD_WIDTH)
+      return TILE_SIZE*x + GFX_FIELD_POS_X;
+    else
+      return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
+  }
+  static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
+  
+public:
+  static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
+  static void rect(u16 x1, u16 y1, u16 w, u16 h, u32 color);
+  static void rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color);
+  static void clear(u32 color);
+  static inline void lock() { SDL_LockSurface(screen); }
+  static inline void unlock() { SDL_UnlockSurface(screen); }
+  static void blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f);
+  
+  
+  static void setFormat(SDL_PixelFormat *format) { Gfx::format = format; }
+  static void init();
+  static void render(Game *game);
+  
+  static void drawField(Game *game);
+  
+  //static inline color makeColor(u8 r, u8 g, u8 b) { return (color){r,g,b,0}; }
+  
+  static inline u32 ccc(u8 r, u8 g, u8 b)
+  {
+    return SDL_MapRGB(format, r, g, b);
+  }
+  
+  static inline u32 makeColor(color color)
+  {
+    return SDL_MapRGB(format, color.r, color.g, color.b);
+    //return (r << format->Rshift) | (g << format->Gshift) | (b << format->Bshift);
+  }
+  
+  static SDL_Surface *tiles;
+  
+  #ifdef SCALE
+    static SDL_Surface *realScreen;
+  #endif
+    static SDL_Surface *screen;
+  
+};
 
 
 class Tile
 {
   private:
     Piece *piece_;
-  
-  public:  
+
+  public:
     u8 colors[8];
     
 
@@ -47,69 +101,17 @@ class Tile
       for (int i = 0; i < 8; ++i)
         colors[i] = COLOR_NONE;
     }
-    
-    void place(Piece* piece) { this->piece_ = piece; }
+  
     Piece *piece() { return piece_; }
+    void place(Piece* piece) { this->piece_ = piece; if (piece) piece->place(this); }
+
 };
   
 
   
   
   
-class Game;
-  
-class Gfx
-{
-  private:
-    static SDL_PixelFormat *format;
-    static const u16 WIDTH = 320;
-    static const u16 HEIGHT = 240;
-      
-    static u16 coordX(u16 x, bool isInventory) {
-      if (!isInventory || x < FIELD_WIDTH)
-        return TILE_SIZE*x + GFX_FIELD_POS_X;
-      else
-        return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
-    }
-    static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
-  
-  public:
-    static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
-    static void rect(u16 x1, u16 y1, u16 w, u16 h, u32 color);
-    static void rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color);
-    static void clear(u32 color);
-    static inline void lock() { SDL_LockSurface(screen); }
-    static inline void unlock() { SDL_UnlockSurface(screen); }
-    static void blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f);
 
-  
-    static void setFormat(SDL_PixelFormat *format) { Gfx::format = format; }
-    static void init();
-    static void render(Game *game);
-  
-    static void drawField(Game *game);
-  
-    //static inline color makeColor(u8 r, u8 g, u8 b) { return (color){r,g,b,0}; }
-  
-    static inline u32 ccc(u8 r, u8 g, u8 b)
-    {
-      return SDL_MapRGB(format, r, g, b);
-    }
-  
-    static inline u32 makeColor(color color)
-    {
-      return SDL_MapRGB(format, color.r, color.g, color.b);
-      //return (r << format->Rshift) | (g << format->Gshift) | (b << format->Bshift);
-    }
-  
-  static SDL_Surface *tiles;
-  
-  #ifdef SCALE
-    static SDL_Surface *realScreen;
-  #endif
-  static SDL_Surface *screen;
-  
-};
   
   
 class Field
@@ -142,44 +144,52 @@ class Field
       
       for (int i = 0; i < 7; ++i)
       {
-        tileAt(i+3,12)->place(new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
+        place(i+3,12, new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
         
         if (i < 6)
-          tileAt(i+3,13)->place(new Filter(static_cast<LaserColor>(i+1), this));
-
+          place(i+3,13, new Filter(static_cast<LaserColor>(i+1), this));
       }
       
-      tileAt(2,14)->place(new Polarizer(NORTH, COLOR_MAGENTA, this));
-      tileAt(1,14)->place(new Polarizer(NORTH, COLOR_WHITE, this));
-      tileAt(3,14)->place(new Tunnel(NORTH, this));
-      tileAt(4,14)->place(new ColorShifter(NORTH, this));
-      tileAt(5,14)->place(new ColorInverter(NORTH, this));
-      tileAt(6,14)->place(new StrictGoal(COLOR_MAGENTA, this));
-      tileAt(6,14)->place(new StrictGoal(COLOR_NONE, this));
-      tileAt(7,14)->place(new StrictGoal(COLOR_YELLOW, this));
+      place(2,14, new Polarizer(NORTH, COLOR_MAGENTA, this));
+      place(1, 14, new Polarizer(NORTH, COLOR_WHITE, this));
+      place(3, 14, new Tunnel(NORTH, this));
+      place(4, 14, new ColorShifter(NORTH, this));
+      place(5, 14, new ColorInverter(NORTH, this));
+      place(6, 14, new StrictGoal(COLOR_NONE, this));
+      place(7, 14, new StrictGoal(COLOR_YELLOW, this));
+      place(8, 14, new Teleporter(this));
+      place(9, 14, new Teleporter(this));
+      //tileAt(8,14)->place(new Gate(COLOR_NONE, this));
+      //tileAt(9,14)->place(new PrimaryGate(COLOR_YELLOW, this));
 
 
-      tileAt(3,3)->place(new Mirror(NORTH, this));
-      tileAt(4,3)->place(new DoubleMirror(NORTH, this));
+      place(3, 3, new Mirror(NORTH, this));
+      place(4, 3, new DoubleMirror(NORTH, this));
 
 
-      tileAt(2,2)->place(new Splitter(NORTH, this));
-      tileAt(3,2)->place(new DSplitter(NORTH, this));
-      tileAt(4,2)->place(new Wall(this));
-      tileAt(5,2)->place(new Glass(this));
-      tileAt(6,2)->place(new Prism(NORTH, this));
-      tileAt(7,2)->place(new Bender(this));
-      tileAt(8,2)->place(new Twister(this));
-      tileAt(9,2)->place(new RoundFilter(this));
-      tileAt(10,2)->place(new CrossColorInverter(NORTH, this));
-      tileAt(10,2)->place(new SkewMirror(NORTH, this));
-      tileAt(11,2)->place(new DoubleSkewMirror(NORTH, this));
-      tileAt(12,2)->place(new DoubleSplitterMirror(NORTH, this));
-      tileAt(13,2)->place(new StarSplitter(this));
+      place(2, 2, new Splitter(NORTH, this));
+      place(3, 2, new DSplitter(NORTH, this));
+      place(4, 2, new Wall(this));
+      place(5, 2, new Glass(this));
+      place(6, 2, new Prism(NORTH, this));
+      place(7, 2, new Bender(this));
+      place(8, 2, new Twister(this));
+      place(9, 2, new RoundFilter(this));
+      place(10, 2, new CrossColorInverter(NORTH, this));
+      place(11, 2, new SkewMirror(NORTH, this));
+      place(12, 2, new DoubleSkewMirror(NORTH, this));
+      place(13, 2, new DoubleSplitterMirror(NORTH, this));
+      place(14, 2, new StarSplitter(this));
 
       
 
       updateLasers();
+    }
+  
+    void place(u8 x, u8 y, Piece *piece)
+    {
+      Tile *tile = tileAt(x,y);
+      tile->place(piece);
     }
   
     Tile* tileAt(int x, int y)

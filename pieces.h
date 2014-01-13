@@ -24,7 +24,7 @@ struct Laser
   
   Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
   
-  bool isValid() { return position.x >= 0 && position.y >= 0 && position.x < FIELD_WIDTH && position.y < FIELD_HEIGHT; }
+  bool isValid() { return position.isValid(); }
   void invalidate() { position.x = -1; position.y = -1; }
   
   void rotateLeft(u8 steps)
@@ -53,6 +53,7 @@ struct Laser
 };
 
 class Field;
+class Tile;
 
 class Piece
 {
@@ -62,16 +63,19 @@ class Piece
     LaserColor color_;
     bool movable, roteable;
   
+    Tile *tile;
     Field *field;
   
     virtual Position gfxTile() = 0;
   
   public:
-    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), field(field) { }
+    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), tile(nullptr), field(field) { }
   
     Direction rotation() { return rotation_; }
     PieceType type() { return type_; }
     LaserColor color() { return color_; }
+  
+    void place(Tile *tile) { this->tile = tile; }
   
     void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
     void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
@@ -82,9 +86,7 @@ class Piece
   
     virtual bool canBeMoved() = 0;
     virtual bool canBeRotated() = 0;
-  
-    virtual void moved() { }
-  
+    
     SDL_Rect gfxRect()
     {
       Position tile = gfxTile();
@@ -549,6 +551,24 @@ public:
   Position gfxTile() { return Position{4 + rotation_%2, 9}; }
 };
 
+
+class Teleporter : public Piece
+{
+public:
+  Teleporter(Field *field) : Piece(PIECE_TELEPORTER, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position{9, 7}; }
+};
+
+
+
 class Goal : public Piece
 {
   protected:
@@ -569,11 +589,6 @@ class Goal : public Piece
     bool isSatisfied() const { return satisfied; }
     void reset() {
       satisfied = color_ == COLOR_NONE;
-      satisfyColor = COLOR_NONE;
-      satisfyDirection = 0;
-    }
-  
-    void moved() {
       satisfyColor = COLOR_NONE;
       satisfyDirection = 0;
     }
@@ -611,5 +626,6 @@ class StrictGoal : public Goal
     
     Position gfxTile() { return Position{color_+8, isSatisfied() ? 14 : 13}; }
 };
+
 
 #endif

@@ -357,18 +357,15 @@ void Game::handleEvents()
               selectedTile_ = nullptr;
             else if (selectedTile_)
             {
-              Piece *tmpPiece = selectedTile_->piece();
+              Piece *oldPiece = selectedTile_->piece();
+              Piece *newPiece = curTile->piece();
               
-              if (!curTile->piece() || curTile->piece()->canBeMoved())
+              if (!newPiece || newPiece->canBeMoved())
               {
-                selectedTile_->place(curTile->piece());
-                curTile->place(tmpPiece);
+                selectedTile_->place(newPiece);
+                curTile->place(oldPiece);
                 //std::swap(selectedTile_->piece, curTile->piece);
 
-                tmpPiece->moved();
-                if (selectedTile_->piece())
-                  selectedTile_->piece()->moved();
-                
                 selectedTile_ = nullptr;
  
                 field_.updateLasers();

@@ -49,7 +49,6 @@ enum LaserColor : u8
   
 enum PieceType : u8
 {
-  PIECE_AIR,
   PIECE_WALL,
   PIECE_GLASS,
   PIECE_SOURCE,
@@ -59,6 +58,7 @@ enum PieceType : u8
   PIECE_DOUBLE_MIRROR,
   PIECE_DOUBLE_SKEW_MIRROR,
   PIECE_DOUBLE_SPLITTER_MIRROR,
+  PIECE_DOUBLE_PASS_MIRROR, // TODO
   PIECE_SPLITTER,
   PIECE_DSPLITTER, // TODO: rename
   PIECE_PRISM,
@@ -72,7 +72,17 @@ enum PieceType : u8
   PIECE_COLOR_INVERTER,
   PIECE_CROSS_COLOR_INVERTER,
   PIECE_STAR_SPLITTER,
+  PIECE_GATE,  // TODO
+  PIECE_PRIMARY_GATE,  // TODO
+  PIECE_QUANTUM_SPLITTER, // TODO
+  PIECE_TELEPORTER, // TODO
+  PIECE_COMPLEX_PRISM, // TODO
+  PIECE_THREE_WAY_SPLITTER, // TODO
   
+  PIECE_TNT, // TODO
+  PIECE_SLIME, // TODO
+  PIECE_MINE, // TODO
+
   PIECE_STRICT_GOAL,
   PIECE_SPLIT_GOAL
 };
@@ -95,6 +105,7 @@ struct Position
   
   Position(s8 x, s8 y) : x(x), y(y) { }
   
+  bool isValid() { return x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
   void shift(Direction direction) { x += directions[direction][0]; y += directions[direction][1]; }
   Position derived(Direction direction) { return Position(x+directions[direction][0], y+directions[direction][1]); }
   

@@ -38,8 +38,6 @@ void Splitter::receiveLaser(Laser &laser)
 
 void StarSplitter::receiveLaser(Laser &laser)
 {
-  int base = (laser.direction+1)%2;
-  
   for (int i = 0; i < 4; ++i)
     field->generateBeam(laser.position, laser.rotatedDirection(1+i*2), laser.color);
 
@@ -96,6 +94,29 @@ void Prism::receiveLaser(Laser &laser)
   {
     if (laser.color & COLOR_BLUE)
       field->generateBeam(laser.position, laser.rotatedDirection(-2), COLOR_BLUE);
+  }
+  
+  laser.invalidate();
+}
+
+void Teleporter::receiveLaser(Laser &laser)
+{
+  Direction dir = laser.direction;
+  Position p = laser.position;
+
+  p.shift(dir);
+  
+  while (p.isValid())
+  {
+    Tile *tile = field->tileAt(p);
+    
+    if (tile->piece() && tile->piece()->type() == PIECE_TELEPORTER)
+    {
+      field->generateBeam(p, laser.direction, laser.color);
+      break;
+    }
+    
+    p.shift(dir);
   }
   
   laser.invalidate();
