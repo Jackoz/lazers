@@ -62,6 +62,11 @@ public:
   
   //static inline color makeColor(u8 r, u8 g, u8 b) { return (color){r,g,b,0}; }
   
+  static inline SDL_Rect ccr(int x, int y, int w, int h)
+  {
+    return SDL_Rect{static_cast<s16>(x),static_cast<s16>(y),static_cast<u16>(w),static_cast<u16>(h)};
+  }
+  
   static inline u32 ccc(u8 r, u8 g, u8 b)
   {
     return SDL_MapRGB(format, r, g, b);

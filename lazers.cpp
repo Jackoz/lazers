@@ -128,25 +128,25 @@ void Gfx::clear(u32 color)
 void Gfx::render(Game *game)
 {
   clear(ccc(220, 220, 220));
-  
-  //rect = {0,0,20,20};
-  //SDL_BlitSurface(Gfx::tiles, &rect, screen, &rect);
-  
+
+  // draw field
+  SDL_Rect bgRect = {176,264,16,16};
+  for (int i = 0; i < FIELD_WIDTH; ++i)
+  {
+    for (int j = 0; j < FIELD_HEIGHT; ++j)
+    {
+      SDL_Rect tileRect = {static_cast<Sint16>(coordX(i, false)), static_cast<Sint16>(coordY(j)), 15, 15};
+      SDL_BlitSurface(tiles, &bgRect, screen, &tileRect);
+      
+      if (i < INVENTORY_WIDTH && j < INVENTORY_HEIGHT)
+      {
+        SDL_Rect tileRect = {static_cast<Sint16>(coordX(i+FIELD_WIDTH, true)), static_cast<Sint16>(coordY(j)), 15, 15};
+        SDL_BlitSurface(tiles, &bgRect, screen, &tileRect);
+      }
+    }
+  }
+
   lock();
-  
-  u32 color = ccc(180, 180, 180);
-  
-  for (int i = 0; i < FIELD_WIDTH+1; ++i)
-    line(coordX(i, false), coordY(0), coordX(i, false), coordY(FIELD_HEIGHT), color);
-  
-  for (int i = 0; i < FIELD_HEIGHT+1; ++i)
-    line(coordX(0, false), coordY(i), coordX(FIELD_WIDTH, false), coordY(i), color);
-  
-  for (int i = 0; i < INVENTORY_WIDTH+1; ++i)
-    line(coordX(i+FIELD_WIDTH, true), coordY(0), coordX(i+FIELD_WIDTH, true), coordY(INVENTORY_HEIGHT), color);
-  
-  for (int i = 0; i < INVENTORY_HEIGHT+1; ++i)
-    line(coordX(FIELD_WIDTH, true), coordY(i), coordX(FIELD_WIDTH+INVENTORY_WIDTH, true), coordY(i), color);
   
   rect(coordX(game->position->x, true), coordY(game->position->y), TILE_SIZE, TILE_SIZE, ccc(180, 0, 0));
   
@@ -180,7 +180,7 @@ void Gfx::drawField(Game *game)
       if (tile->piece())
       {
         SDL_Rect src = tile->piece()->gfxRect();
-        SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
+        SDL_Rect dst = ccr(coordX(x, false)+1,coordY(y)+1,0,0);
         SDL_BlitSurface(tiles, &src, screen, &dst);
       }
       
@@ -188,10 +188,63 @@ void Gfx::drawField(Game *game)
       {
         if (tile->colors[i])
         {
-          SDL_Rect src = {static_cast<s16>(PIECE_SIZE*8+(PIECE_SIZE)*i),static_cast<s16>(PIECE_SIZE*(tile->colors[i]-1)),PIECE_SIZE,PIECE_SIZE};
-          SDL_Rect dst = {static_cast<s16>(coordX(x, false)+1),static_cast<s16>(coordY(y)+1),0,0};
+          SDL_Rect src = ccr(PIECE_SIZE*8+(PIECE_SIZE)*i, PIECE_SIZE*(tile->colors[i]-1), PIECE_SIZE, PIECE_SIZE);
+          SDL_Rect dst = ccr(coordX(x, false)+1, coordY(y)+1, 0, 0);
           SDL_BlitSurface(tiles, &src, screen, &dst);
         }
+      }
+      
+      // diagonal middle filler '\'
+      if (tile->colors[NORTH_WEST] && tile->colors[NORTH_WEST] == tile->colors[SOUTH_EAST])
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*17, PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 5, 4, 4);
+        SDL_Rect dst = ccr(coordX(x, false)+ 1 + 5, coordY(y)+ 1 + 5, 0, 0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      // diagonal middle filler '/'
+      if (tile->colors[SOUTH_WEST] && tile->colors[SOUTH_WEST] == tile->colors[NORTH_EAST])
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*17, PIECE_SIZE*(tile->colors[SOUTH_WEST]-1), 4, 4);
+        SDL_Rect dst = ccr(coordX(x, false)+ 1 + 5, coordY(y)+ 1 + 5, 0, 0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      
+      
+      
+      Tile *upper = y > 0 ? field->tileAt(x, y-1) : nullptr;
+      Tile *left = x > 0 ? field->tileAt(x-1, y) : nullptr;
+      Tile *upperLeft = upper && left ? field->tileAt(x-1, y-1) : nullptr;
+      Tile *upperRight = upper && x < FIELD_WIDTH ? field->tileAt(x+1, y-1) : nullptr;
+      
+      // place horizontal fillers
+      if (tile->colors[NORTH] && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*16,PIECE_SIZE*(tile->colors[NORTH]-1),PIECE_SIZE,1);
+        SDL_Rect dst = ccr(coordX(x, false)+1,coordY(y),0,0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      
+      // place vertical fillers
+      if (tile->colors[WEST] && (left && left->colors[EAST] == tile->colors[WEST]))
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*16,PIECE_SIZE*(tile->colors[WEST]-1),1,PIECE_SIZE);
+        SDL_Rect dst = ccr(coordX(x, false),coordY(y)+1,0,0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      
+      // place cross filler upper left
+      if (tile->colors[NORTH_WEST] && (upperLeft && upperLeft->colors[SOUTH_EAST] == tile->colors[NORTH_WEST]))
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*16 + 9,PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 9 , 5, 5);
+        SDL_Rect dst = ccr(coordX(x, false)-2,coordY(y)-2,0,0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
+      }
+      // place cross filler upper right
+      if (tile->colors[NORTH_EAST] && (upperRight && upperRight->colors[SOUTH_WEST] == tile->colors[NORTH_EAST]))
+      {
+        SDL_Rect src = ccr(PIECE_SIZE*16 + 9,PIECE_SIZE*(tile->colors[NORTH_EAST]-1) + 9 , 5, 5);
+        SDL_Rect dst = ccr(coordX(x+1, false)-2,coordY(y)-2,0,0);
+        SDL_BlitSurface(tiles, &src, screen, &dst);
       }
     }
   

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0401E190187F89B800678A0F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18F187F89B800678A0F /* common.cpp */; };
 		0401E191187F93F600678A0F /* pieces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18C187F885F00678A0F /* pieces.cpp */; };
+		047785CF18844BF7004EB2ED /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785CD18844B7F004EB2ED /* files.cpp */; };
 		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
 		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
 		04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB488187E705800CA4BFB /* AppKit.framework */; };
@@ -37,6 +38,8 @@
 		0401E18D187F885F00678A0F /* pieces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pieces.h; sourceTree = SOURCE_ROOT; };
 		0401E18E187F889200678A0F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = SOURCE_ROOT; };
 		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = SOURCE_ROOT; };
+		047785CD18844B7F004EB2ED /* files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = files.cpp; sourceTree = SOURCE_ROOT; };
+		047785CE18844B7F004EB2ED /* files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = files.h; sourceTree = SOURCE_ROOT; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04EEB485187E705800CA4BFB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		04EEB488187E705800CA4BFB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -116,6 +119,8 @@
 				0401E18C187F885F00678A0F /* pieces.cpp */,
 				04EEB4AE187E70EE00CA4BFB /* lazers.h */,
 				04EEB4AD187E70EE00CA4BFB /* lazers.cpp */,
+				047785CE18844B7F004EB2ED /* files.h */,
+				047785CD18844B7F004EB2ED /* files.cpp */,
 				04EEB4AF187E70EE00CA4BFB /* SDLMain.h */,
 				04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */,
 				04EEB48C187E705800CA4BFB /* Supporting Files */,
@@ -208,6 +213,7 @@
 				04EEB4B2187E710400CA4BFB /* lazers.cpp in Sources */,
 				0401E190187F89B800678A0F /* common.cpp in Sources */,
 				0401E191187F93F600678A0F /* pieces.cpp in Sources */,
+				047785CF18844BF7004EB2ED /* files.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
