@@ -10,6 +10,18 @@
 
 #include "lazers.h"
 
+void DoubleSplitterMirror::receiveLaser(Laser &laser)
+{
+  s8 delta = deltaDirection(laser);
+  
+  if (delta == -1 || delta == 3)
+    field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color);
+  else if (delta == 1 || delta == -3)
+    field->generateBeam(laser.position, laser.rotatedDirection(2), laser.color);
+  else
+    laser.invalidate();
+}
+
 void Splitter::receiveLaser(Laser &laser)
 {
   s8 delta = deltaDirection(laser);
@@ -22,6 +34,16 @@ void Splitter::receiveLaser(Laser &laser)
   }
   else
     laser.invalidate();
+}
+
+void StarSplitter::receiveLaser(Laser &laser)
+{
+  int base = (laser.direction+1)%2;
+  
+  for (int i = 0; i < 4; ++i)
+    field->generateBeam(laser.position, laser.rotatedDirection(1+i*2), laser.color);
+
+  laser.invalidate();
 }
 
 void DSplitter::receiveLaser(Laser &laser)

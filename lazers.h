@@ -171,6 +171,11 @@ class Field
       tileAt(7,2)->place(new Bender(this));
       tileAt(8,2)->place(new Twister(this));
       tileAt(9,2)->place(new RoundFilter(this));
+      tileAt(10,2)->place(new CrossColorInverter(NORTH, this));
+      tileAt(10,2)->place(new SkewMirror(NORTH, this));
+      tileAt(11,2)->place(new DoubleSkewMirror(NORTH, this));
+      tileAt(12,2)->place(new DoubleSplitterMirror(NORTH, this));
+      tileAt(13,2)->place(new StarSplitter(this));
 
       
 
