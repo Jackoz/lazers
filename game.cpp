@@ -239,7 +239,6 @@ void LevelView::handleEvent(SDL_Event &event)
         }
         case SDLK_BACKSPACE: // R
         {
-          
           break;
         }
         default: break;
