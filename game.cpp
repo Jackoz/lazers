@@ -250,6 +250,10 @@ void LevelView::handleEvent(SDL_Event &event)
 
 void Game::init()
 {
+  const char* test = "any carnal pleasur";
+  char *output = nullptr;
+  Files::encode(test, strlen(test), &output);
+  
   Gfx::init();
   running = true;
 }

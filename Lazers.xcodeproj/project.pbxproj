@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0401E190187F89B800678A0F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18F187F89B800678A0F /* common.cpp */; };
 		0401E191187F93F600678A0F /* pieces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18C187F885F00678A0F /* pieces.cpp */; };
-		040AD74418850C8D00BFA5CD /* base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040AD74218850C3300BFA5CD /* base64.cpp */; };
 		047785CF18844BF7004EB2ED /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785CD18844B7F004EB2ED /* files.cpp */; };
 		047785D21884CED9004EB2ED /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D01884CEB0004EB2ED /* gfx.cpp */; };
 		047785D51884D50C004EB2ED /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D31884D4E5004EB2ED /* game.cpp */; };
@@ -41,8 +40,6 @@
 		0401E18D187F885F00678A0F /* pieces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pieces.h; sourceTree = SOURCE_ROOT; };
 		0401E18E187F889200678A0F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = SOURCE_ROOT; };
 		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = SOURCE_ROOT; };
-		040AD74218850C3300BFA5CD /* base64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cpp; sourceTree = SOURCE_ROOT; };
-		040AD74318850C3300BFA5CD /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = SOURCE_ROOT; };
 		047785CD18844B7F004EB2ED /* files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = files.cpp; sourceTree = SOURCE_ROOT; };
 		047785CE18844B7F004EB2ED /* files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = files.h; sourceTree = SOURCE_ROOT; };
 		047785D01884CEB0004EB2ED /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = SOURCE_ROOT; };
@@ -134,8 +131,6 @@
 				047785D31884D4E5004EB2ED /* game.cpp */,
 				047785CE18844B7F004EB2ED /* files.h */,
 				047785CD18844B7F004EB2ED /* files.cpp */,
-				040AD74318850C3300BFA5CD /* base64.h */,
-				040AD74218850C3300BFA5CD /* base64.cpp */,
 				04EEB4AF187E70EE00CA4BFB /* SDLMain.h */,
 				04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */,
 				04EEB48C187E705800CA4BFB /* Supporting Files */,
@@ -231,7 +226,6 @@
 				047785CF18844BF7004EB2ED /* files.cpp in Sources */,
 				047785D21884CED9004EB2ED /* gfx.cpp in Sources */,
 				047785D51884D50C004EB2ED /* game.cpp in Sources */,
-				040AD74418850C8D00BFA5CD /* base64.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

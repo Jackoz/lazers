@@ -10,6 +10,27 @@
 
 #include "level.h"
 
+const u8 base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+void Files::encode(const char *input, size_t length, char **outputPtr)
+{
+  size_t steps = length/3;
+
+  char *output = new char [steps*4];
+  *outputPtr = output;
+  
+  for (size_t i = 0; i < steps; ++i)
+  {
+    const char *inputPiece = input+(i*3);
+    char *outputPiece = output+(i*4);
+
+    outputPiece[0] = base64map[ (inputPiece[0] & 0xFC) >> 2 ];
+    outputPiece[1] = base64map[ ((inputPiece[0] & 0x03) << 4) | ((inputPiece[1] & 0xF0) >> 4) ];
+    outputPiece[2] = base64map[ ((inputPiece[1] & 0x0F) << 2) | ((inputPiece[2] & 0xC0) >> 6) ];
+    outputPiece[3] = base64map[ (inputPiece[2] & 0x3F) ];
+  }
+}
+
 
 
 PieceInfoSpec specs[PIECES_COUNT] =

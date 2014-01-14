@@ -17,7 +17,6 @@
 
 #include <sstream>
 #include <string>
-#include "base64.h"
 
 #include "pieces.h"
 #include "files.h"
@@ -138,8 +137,7 @@ class Field
           }
       
       std::string res = ss.str();
-      std::string encoded = base64_encode(reinterpret_cast<unsigned const char*>(res.c_str()), res.length());
-      printf("%s\n",encoded.c_str());
+      printf("%s\n",res.c_str());
       
       
       updateLasers();

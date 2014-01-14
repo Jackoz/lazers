@@ -43,6 +43,9 @@ class Files
 {
   
   public:
+    static void encode(const char *input, size_t length, char **outputPtr);
+  
+  
     static u8 charForPiece(PieceType type);
     static PieceType pieceForChar(u8 type);
     static PieceInfoSpec *specForPiece(PieceType type);

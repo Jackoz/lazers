@@ -49,9 +49,7 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    //tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/tiles.png");
-  tiles = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/tiles.png");
-
+    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/data/tiles.png");
   #else
     tiles = IMG_Load("./tiles.png");
   #endif
