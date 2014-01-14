@@ -420,8 +420,6 @@ public:
     s8 delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
     
-    printf("%d\n", delta);
-
     if (delta == 0)
       laser.color = static_cast<LaserColor>(laser.color & COLOR_RED);
     else if (delta == 1)

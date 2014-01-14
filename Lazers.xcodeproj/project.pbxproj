@@ -10,11 +10,13 @@
 		0401E190187F89B800678A0F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18F187F89B800678A0F /* common.cpp */; };
 		0401E191187F93F600678A0F /* pieces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0401E18C187F885F00678A0F /* pieces.cpp */; };
 		047785CF18844BF7004EB2ED /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785CD18844B7F004EB2ED /* files.cpp */; };
+		047785D21884CED9004EB2ED /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D01884CEB0004EB2ED /* gfx.cpp */; };
+		047785D51884D50C004EB2ED /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D31884D4E5004EB2ED /* game.cpp */; };
 		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
 		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
 		04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB488187E705800CA4BFB /* AppKit.framework */; };
 		04EEB4B1187E710200CA4BFB /* SDLMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */; };
-		04EEB4B2187E710400CA4BFB /* lazers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4AD187E70EE00CA4BFB /* lazers.cpp */; };
+		04EEB4B2187E710400CA4BFB /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4AD187E70EE00CA4BFB /* level.cpp */; };
 		04EEB4D7187E76F600CA4BFB /* tiles.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04EEB4BD187E72E200CA4BFB /* tiles.png */; };
 		04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CA18805A1B000E8E4E /* SDL_image.framework */; };
 		04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CB18805A1B000E8E4E /* SDL.framework */; };
@@ -40,6 +42,10 @@
 		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = SOURCE_ROOT; };
 		047785CD18844B7F004EB2ED /* files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = files.cpp; sourceTree = SOURCE_ROOT; };
 		047785CE18844B7F004EB2ED /* files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = files.h; sourceTree = SOURCE_ROOT; };
+		047785D01884CEB0004EB2ED /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = SOURCE_ROOT; };
+		047785D11884CEB0004EB2ED /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = SOURCE_ROOT; };
+		047785D31884D4E5004EB2ED /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = SOURCE_ROOT; };
+		047785D41884D4E5004EB2ED /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = SOURCE_ROOT; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04EEB485187E705800CA4BFB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		04EEB488187E705800CA4BFB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -47,8 +53,8 @@
 		04EEB48D187E705800CA4BFB /* Lazers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Lazers-Info.plist"; sourceTree = SOURCE_ROOT; };
 		04EEB48F187E705800CA4BFB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		04EEB4A3187E706E00CA4BFB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		04EEB4AD187E70EE00CA4BFB /* lazers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lazers.cpp; sourceTree = SOURCE_ROOT; };
-		04EEB4AE187E70EE00CA4BFB /* lazers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lazers.h; sourceTree = SOURCE_ROOT; };
+		04EEB4AD187E70EE00CA4BFB /* level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = SOURCE_ROOT; };
+		04EEB4AE187E70EE00CA4BFB /* level.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = SOURCE_ROOT; };
 		04EEB4AF187E70EE00CA4BFB /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = SOURCE_ROOT; };
 		04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLMain.mm; sourceTree = SOURCE_ROOT; };
 		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tiles.png; path = data/tiles.png; sourceTree = SOURCE_ROOT; };
@@ -117,8 +123,12 @@
 				0401E18F187F89B800678A0F /* common.cpp */,
 				0401E18D187F885F00678A0F /* pieces.h */,
 				0401E18C187F885F00678A0F /* pieces.cpp */,
-				04EEB4AE187E70EE00CA4BFB /* lazers.h */,
-				04EEB4AD187E70EE00CA4BFB /* lazers.cpp */,
+				047785D11884CEB0004EB2ED /* gfx.h */,
+				047785D01884CEB0004EB2ED /* gfx.cpp */,
+				04EEB4AE187E70EE00CA4BFB /* level.h */,
+				04EEB4AD187E70EE00CA4BFB /* level.cpp */,
+				047785D41884D4E5004EB2ED /* game.h */,
+				047785D31884D4E5004EB2ED /* game.cpp */,
 				047785CE18844B7F004EB2ED /* files.h */,
 				047785CD18844B7F004EB2ED /* files.cpp */,
 				04EEB4AF187E70EE00CA4BFB /* SDLMain.h */,
@@ -210,10 +220,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				04EEB4B1187E710200CA4BFB /* SDLMain.mm in Sources */,
-				04EEB4B2187E710400CA4BFB /* lazers.cpp in Sources */,
 				0401E190187F89B800678A0F /* common.cpp in Sources */,
 				0401E191187F93F600678A0F /* pieces.cpp in Sources */,
+				04EEB4B2187E710400CA4BFB /* level.cpp in Sources */,
 				047785CF18844BF7004EB2ED /* files.cpp in Sources */,
+				047785D21884CED9004EB2ED /* gfx.cpp in Sources */,
+				047785D51884D50C004EB2ED /* game.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

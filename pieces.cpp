@@ -8,7 +8,7 @@
 
 #include "pieces.h"
 
-#include "lazers.h"
+#include "level.h"
 
 void DoubleSplitterMirror::receiveLaser(Laser &laser)
 {

@@ -14,14 +14,37 @@
 
 class Field;
 
+struct PieceInfoSpec
+{
+  PieceType type;
+  u8 mapping;
+  bool canBeColored;
+  bool canBeRotated;
+};
+
+struct PieceInfo
+{
+  PieceInfoSpec *spec;
+  u8 x, y;
+  LaserColor color;
+  Direction direction;
+  bool moveable;
+  bool roteable;
+};
+
 class Files
 {
   
   public:
     u8 charForPiece(PieceType type);
     PieceType pieceForChar(u8 type);
+    PieceInfoSpec *specForPiece(PieceType type);
   
-    void loadPiece(std::istream is, Field *field);
+    LaserColor colorForChar(u8 color);
+    Direction directionForChar(u8 dir);
+  
+  
+    PieceInfo loadPiece(std::istream is, Field *field);
 };
   
 #endif

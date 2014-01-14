@@ -7,15 +7,10 @@
 //
 
 #include "files.h"
-#include "lazers.h"
 
-struct PieceInfoSpec
-{
-  PieceType type;
-  u8 mapping;
-  bool canBeColored;
-  bool canBeRotated;
-};
+#include "level.h"
+
+
 
 PieceInfoSpec specs[PIECES_COUNT] =
 {
@@ -72,33 +67,70 @@ PieceType Files::pieceForChar(u8 type)
   return PIECE_WALL;
 }
 
-const int PIECE_INFO_SIZE = 1 + 2 + 2 + 1 + 1 + 1 + 1;
+PieceInfoSpec* Files::specForPiece(PieceType type)
+{
+  for (int i = 0; i < sizeof(specs)/sizeof(specs[0]); ++i)
+    if (specs[i].type == type)
+      return &specs[i];
+  
+  return nullptr;
+}
 
-union PieceInfo
+LaserColor Files::colorForChar(u8 color)
+{
+  switch (color) {
+    case 'n': case 'N': return COLOR_NONE;
+    case 'r': case 'R': return COLOR_RED;
+    case 'g': case 'G': return COLOR_GREEN;
+    case 'b': case 'B': return COLOR_BLUE;
+    case 'c': case 'C': return COLOR_CYAN;
+    case 'm': case 'M': return COLOR_MAGENTA;
+    case 'y': case 'Y': return COLOR_YELLOW;
+    case 'w': case 'W': return COLOR_WHITE;
+    default: return COLOR_WHITE;
+  }
+}
+
+Direction Files::directionForChar(u8 dir)
+{
+  switch (dir) {
+    case 'N': case 'n': case '0': return NORTH;
+    case 'O': case 'o': case '1': return NORTH_EAST;
+    case 'E': case 'e': case '2': return EAST;
+    case 'A': case 'a': case '3': return SOUTH_EAST;
+    case 'S': case 's': case '4': return SOUTH;
+    case 'U': case 'u': case '5': return SOUTH_WEST;
+    case 'W': case 'w': case '6': return WEST;
+    case 'R': case 'r': case '7': return NORTH_WEST;
+    default: return NORTH;
+  }
+}
+
+const int PIECE_INFO_SIZE = 1 + 2 + 2 + 1 + 1 + 1 + 1;
+// type x y color direction roteable moveable
+
+
+PieceInfo Files::loadPiece(std::istream is, Field *field)
 {
   char buffer[PIECE_INFO_SIZE];
-  struct {
-    u8 type;
-    u8 x1;
-    u8 x2;
-    u8 y1;
-    u8 y2;
-    u8 dir;
-    u8 col;
-    u8 mov;
-    u8 rot;
-  };
-};
-
-
-
-void Files::loadPiece(std::istream is, Field *field)
-{
-  /*char buffer[PIECE_INFO_SIZE];
   is.read(buffer, PIECE_INFO_SIZE);
   
   PieceType type = pieceForChar(buffer[0]);
-  Piece *piece;
+  PieceInfoSpec *spec = specForPiece(type);
+  PieceInfo info;
   
-  switch*/
+  if (spec)
+  {
+    info.spec = spec;
+    info.x = (buffer[1] - '0')*10 + (buffer[2]-'0');
+    info.y = (buffer[3] - '0')*10 + (buffer[4]-'0');
+    info.color = colorForChar(buffer[5]);
+    info.direction = directionForChar(buffer[6]);
+    info.roteable = buffer[7] == 'y' || buffer[7] == 'Y' ? true : false;
+    info.moveable = buffer[8] == 'y' || buffer[8] == 'Y' ? true : false;
+  }
+  else
+    info.spec = nullptr;
+  
+  return info;
 }
