@@ -15,7 +15,12 @@
 
 #include <list>
 
+#include <sstream>
+#include <string>
+#include "base64.h"
+
 #include "pieces.h"
+#include "files.h"
 
 
 class Game;
@@ -122,7 +127,21 @@ class Field
       place(14, 2, new StarSplitter(this));
 
       
-
+      std::stringstream ss;
+      for (int i = 0; i < FIELD_WIDTH; ++i)
+        for (int j = 0; j < FIELD_HEIGHT; ++j)
+          if (tileAt(i, j)->piece())
+          {
+            PieceSaveInfo info = Files::savePiece(tileAt(i, j)->piece());
+            ss << info.data;
+            
+          }
+      
+      std::string res = ss.str();
+      std::string encoded = base64_encode(reinterpret_cast<unsigned const char*>(res.c_str()), res.length());
+      printf("%s\n",encoded.c_str());
+      
+      
       updateLasers();
     }
   

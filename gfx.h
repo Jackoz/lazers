@@ -12,6 +12,7 @@
 #include "common.h"
 #include "level.h"
 
+#define OSX
 #define SCALE (3)
 
 #include <SDL/SDL.h>

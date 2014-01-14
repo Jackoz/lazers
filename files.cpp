@@ -91,6 +91,20 @@ LaserColor Files::colorForChar(u8 color)
   }
 }
 
+u8 Files::charForColor(LaserColor color)
+{
+  switch (color) {
+    case COLOR_NONE: return 'n';
+    case COLOR_RED: return 'r';
+    case COLOR_GREEN: return 'g';
+    case COLOR_BLUE: return 'b';
+    case COLOR_CYAN: return 'c';
+    case COLOR_MAGENTA: return 'm';
+    case COLOR_YELLOW: return 'y';
+    case COLOR_WHITE: return 'w';
+  }
+}
+
 Direction Files::directionForChar(u8 dir)
 {
   switch (dir) {
@@ -106,7 +120,20 @@ Direction Files::directionForChar(u8 dir)
   }
 }
 
-const int PIECE_INFO_SIZE = 1 + 2 + 2 + 1 + 1 + 1 + 1;
+u8 Files::charForDirection(Direction dir)
+{
+  switch (dir) {
+    case NORTH: return 'n';
+    case NORTH_EAST: return 'o';
+    case EAST: return 'e';
+    case SOUTH_EAST: return 'a';
+    case SOUTH: return 's';
+    case SOUTH_WEST: return 'u';
+    case WEST: return 'w';
+    case NORTH_WEST: return 'r';
+  }
+}
+
 // type x y color direction roteable moveable
 
 
@@ -122,15 +149,50 @@ PieceInfo Files::loadPiece(std::istream is, Field *field)
   if (spec)
   {
     info.spec = spec;
-    info.x = (buffer[1] - '0')*10 + (buffer[2]-'0');
-    info.y = (buffer[3] - '0')*10 + (buffer[4]-'0');
-    info.color = colorForChar(buffer[5]);
-    info.direction = directionForChar(buffer[6]);
-    info.roteable = buffer[7] == 'y' || buffer[7] == 'Y' ? true : false;
-    info.moveable = buffer[8] == 'y' || buffer[8] == 'Y' ? true : false;
+    info.x = buffer[1] >= 'A' ? 10 + buffer[1] - 'A' : buffer[1] - '0';
+    info.y = buffer[2] >= 'A' ? 10 + buffer[2] - 'A' : buffer[2] - '0';
+    info.color = colorForChar(buffer[3]);
+    info.direction = directionForChar(buffer[4]);
+    if (buffer[5] == 'b')
+    {
+      info.roteable = true;
+      info.moveable = true;
+    }
+    else if (buffer[5] == 'm')
+    {
+      info.roteable = false;
+      info.moveable = true;
+    }
+    else if (buffer[5] == 'r')
+    {
+      info.roteable = true;
+      info.moveable = false;
+    }
+    else
+    {
+      info.moveable = false;
+      info.roteable = false;
+    }
   }
   else
     info.spec = nullptr;
   
+  return info;
+}
+
+PieceSaveInfo Files::savePiece(Piece *piece)
+{
+  PieceSaveInfo info;
+  
+  info.data[0] = charForPiece(piece->type());
+  Tile *tile = piece->getTile();
+  info.data[1] = tile->x >= 10 ? tile->x - 10 + 'A' : tile->x + '0';
+  info.data[2] = tile->y >= 10 ? tile->y - 10 + 'A' : tile->y + '0';
+  info.data[3] = charForColor(piece->color());
+  info.data[4] = charForDirection(piece->rotation());
+  if (piece->canBeMoved() && piece->canBeRotated()) info.data[5] = 'b';
+  else if (piece->canBeMoved()) info.data[5] = 'm';
+  else if (piece->canBeRotated()) info.data[5] = 'r';
+  else info.data[5] = 'n';
   return info;
 }

@@ -10,7 +10,10 @@
 #define _FILES_H_
 
 #include "common.h"
+#include "pieces.h"
 #include <fstream>
+
+const int PIECE_INFO_SIZE = 1 + 1 + 1 + 1 + 1 + 1;
 
 class Field;
 
@@ -32,19 +35,28 @@ struct PieceInfo
   bool roteable;
 };
 
+struct PieceSaveInfo {
+  u8 data[PIECE_INFO_SIZE];
+};
+
 class Files
 {
   
   public:
-    u8 charForPiece(PieceType type);
-    PieceType pieceForChar(u8 type);
-    PieceInfoSpec *specForPiece(PieceType type);
+    static u8 charForPiece(PieceType type);
+    static PieceType pieceForChar(u8 type);
+    static PieceInfoSpec *specForPiece(PieceType type);
   
-    LaserColor colorForChar(u8 color);
-    Direction directionForChar(u8 dir);
+    static LaserColor colorForChar(u8 color);
+    static Direction directionForChar(u8 dir);
+  
+    static u8 charForColor(LaserColor color);
+    static u8 charForDirection(Direction dir);
   
   
-    PieceInfo loadPiece(std::istream is, Field *field);
+    static PieceInfo loadPiece(std::istream is, Field *field);
+    static PieceSaveInfo savePiece(Piece *piece);
+  
 };
   
 #endif
