@@ -50,9 +50,10 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
-    font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
-    ui = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/ui.png");
+    //"/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers"
+    tiles = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/tiles.png");
+    font = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/font.png");
+    ui = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/ui.png");
 
 
   #else

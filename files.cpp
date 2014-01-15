@@ -222,14 +222,19 @@ u8 Files::charForDirection(Direction dir)
 
 vector<LevelPack> Files::packs = {
   LevelPack("Baffling Beams", "Twilight Games", {
-    LevelSpec("White Ribbon"),
-    LevelSpec("Danger Zone"),
-    LevelSpec("Ice Corridor"),
-    LevelSpec("Filter Cube"),
-    LevelSpec("Inner Lair"),
-    LevelSpec("Crossed Lines"),
-    LevelSpec("First Place"),
-    LevelSpec("Multi-Tasking")
+    LevelSpec("0. White Ribbon"),
+    LevelSpec("1. Danger Zone"),
+    LevelSpec("2. Ice Corridor"),
+    LevelSpec("3. Filter Cube"),
+    LevelSpec("4. Inner Lair"),
+    LevelSpec("5. Crossed Lines"),
+    LevelSpec("6. First Place"),
+    LevelSpec("7. Multi-Tasking"),
+    LevelSpec("8. Multi-Tasking"),
+    LevelSpec("9. Multi-Tasking"),
+    LevelSpec("10. Multi-Tasking"),
+    LevelSpec("11. Multi-Tasking"),
+    LevelSpec("12. Multi-Tasking"),
   })
 };
 

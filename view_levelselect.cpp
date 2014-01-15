@@ -14,19 +14,23 @@
 const u16 LIST_X = 20;
 const u16 LIST_Y = 30;
 const u16 LIST_DY = 10;
-const u16 LIST_SIZE = 4;
+const u16 LIST_SIZE = 8;
 
 void LevelSelectView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
   Gfx::drawString(20, 10, "Pack name: %s (%s)", game->pack->name.c_str(), game->pack->author.c_str());
+
+  Gfx::drawString(20, 220, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
+
+  
   
   for (int i = 0; i < LIST_SIZE && i + offset < game->pack->count(); ++i)
   {
     LevelSpec *spec = game->pack->at(offset+i);
     
-    Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, spec->name.c_str());
+    Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, "%s%s", spec->name.c_str(), " \x1D");
     
     if (i+offset == game->pack->selected)
       Gfx::blit(Gfx::ui, 0, 0, 4, 7, LIST_X-8, LIST_Y+LIST_DY*i);
@@ -85,6 +89,29 @@ void LevelSelectView::handleEvent(SDL_Event &event)
               u8 delta = LIST_SIZE <= offset ? LIST_SIZE : offset;
               offset -= delta;
               game->pack->selected -= delta;
+            }
+          }
+          break;
+        }
+          
+        case KEY_R:
+        {
+          if (game->pack->selected < maxOffset)
+            game->pack->selected = maxOffset;
+          else
+          {
+            if (offset < game->pack->count()-1)
+            {
+              if (game->pack->selected+LIST_SIZE <= game->pack->count()-1)
+              {
+                offset += LIST_SIZE;
+                game->pack->selected += LIST_SIZE;
+              }
+              else
+              {
+                offset = game->pack->count() - LIST_SIZE;
+                game->pack->selected = game->pack->count()-1;
+              }
             }
           }
           break;
