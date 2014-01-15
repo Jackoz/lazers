@@ -154,8 +154,8 @@ u8 Gfx::charWidth(char c)
     case '}':
       return 3;
     case 'f':
-    case 'p':
-    case 'q':
+    //case 'p':
+    //case 'q':
     case 'r':
     case 't':
       return 4;
@@ -168,7 +168,7 @@ u8 Gfx::charWidth(char c)
 void Gfx::drawString(const char *text, int x, int y)
 {
   u16 len = strlen(text);
-  u16 dy = 8;
+  u16 dy = 9;
   u16 space = 3;
   
   SDL_Rect rect;
@@ -190,7 +190,7 @@ void Gfx::drawString(const char *text, int x, int y)
     else
     {    
       u8 w = charWidth(c);
-      rect = ccr(6 * (c%32), 8 * (c/32), w, 7);
+      rect = ccr(6 * (c%32), 9 * (c/32), w, 9);
       SDL_BlitSurface(font, &rect, screen, &out);
       out.x += w+1;
     }
