@@ -13,7 +13,7 @@
 #include "pieces.h"
 #include <fstream>
 
-const int PIECE_INFO_SIZE = 1 + 1 + 1 + 1 + 1 + 1;
+const int PIECE_INFO_SIZE = 1 + 1 + 1;
 
 class Field;
 
@@ -37,13 +37,15 @@ struct PieceInfo
 
 struct PieceSaveInfo {
   u8 data[PIECE_INFO_SIZE];
+  u8 padding;
 };
 
 class Files
 {
   
   public:
-    static void encode(const char *input, size_t length, char **outputPtr);
+    static void encode(const char *input, size_t length, char **outputPtr, size_t *outputLength);
+    static void decode(const char *input, size_t length, char **outputPtr, size_t *outputLength);
   
   
     static u8 charForPiece(PieceType type);

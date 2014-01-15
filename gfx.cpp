@@ -18,8 +18,8 @@ SDL_Surface *Gfx::screen = nullptr;
 SDL_Surface *Gfx::realScreen = nullptr;
 #endif
 
-
 SDL_Surface *Gfx::tiles = nullptr;
+SDL_Surface *Gfx::font = nullptr;
 
 void Gfx::init()
 {
@@ -49,8 +49,11 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    tiles = IMG_Load("/Users/xsx/cpp-lazers/data/tiles.png");
+    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
+    font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
+
   #else
+    font = IMG_Load("./font.png");
     tiles = IMG_Load("./tiles.png");
   #endif
   
@@ -120,6 +123,78 @@ void Gfx::clear(u32 color)
 {
   SDL_Rect frect = {0,0,WIDTH,HEIGHT};
   SDL_FillRect(screen, &frect, color);
+}
+
+u8 Gfx::charWidth(char c)
+{
+  switch (c) {
+    case '!':
+    case '\'':
+    case '.':
+    case ':':
+    case '|':
+      return 1;
+    case '(':
+    case ')':
+    case ',':
+    case ';':
+    case '`':
+      return 2;
+    case ' ':
+    case '\"':
+    case '<':
+    case '=':
+    case '>':
+    case '[':
+    case ']':
+    case 'i':
+    case 'j':
+    case 'l':
+    case '{':
+    case '}':
+      return 3;
+    case 'f':
+    case 'p':
+    case 'q':
+    case 'r':
+    case 't':
+      return 4;
+      
+      
+    default: return 5;
+  }
+}
+
+void Gfx::drawString(const char *text, int x, int y)
+{
+  u16 len = strlen(text);
+  u16 dy = 8;
+  u16 space = 3;
+  
+  SDL_Rect rect;
+  SDL_Rect out = ccr(x, y, 0, 0);
+  
+  for (u16 i = 0; i < len; ++i)
+  {
+    char c = text[i];
+    
+    if (c == '\n')
+    {
+      out.y += dy;
+      out.x = x;
+    }
+    else if (c == ' ')
+    {
+      out.x += space;
+    }
+    else
+    {    
+      u8 w = charWidth(c);
+      rect = ccr(6 * (c%32), 8 * (c/32), w, 7);
+      SDL_BlitSurface(font, &rect, screen, &out);
+      out.x += w+1;
+    }
+  }
 }
 
 void Gfx::postDraw()

@@ -136,6 +136,8 @@ void LevelView::draw()
   
   drawField();
   
+  Gfx::drawString("Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece", 245, 110);
+  
   Gfx::postDraw();
 }
 
@@ -250,9 +252,11 @@ void LevelView::handleEvent(SDL_Event &event)
 
 void Game::init()
 {
-  const char* test = "any carnal pleasur";
+  const char* test = "any carnal pleasure.";
   char *output = nullptr;
-  Files::encode(test, strlen(test), &output);
+  size_t length;
+  Files::encode(test, strlen(test), &output, &length);
+  printf("\n%*s\n",static_cast<int>(length),output);
   
   Gfx::init();
   running = true;

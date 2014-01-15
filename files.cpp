@@ -12,25 +12,79 @@
 
 const u8 base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-void Files::encode(const char *input, size_t length, char **outputPtr)
+u8 value(u8 v)
+{
+  if (v >= 'A' && v <= 'Z')
+    return v - 'A';
+  else if (v >= 'a' && v <= 'z')
+    return v - 'a' + 26;
+  else if (v >= '0' && v <= '9')
+    return v - '0' + 26 + 26;
+  else if (v == '+')
+    return 26+26+10;
+  else
+    return 26+26+10+1;
+}
+
+void Files::encode(const char *input, size_t length, char **outputPtr, size_t *outputLength)
 {
   size_t steps = length/3;
-
-  char *output = new char [steps*4];
+  *outputLength = steps*4;
+  size_t extraBytes = length%3;
+  
+  if (extraBytes != 0)
+  {
+    *outputLength += extraBytes + 1;
+    ++steps;
+  }
+  
+  char *output = new char [*outputLength];
   *outputPtr = output;
   
   for (size_t i = 0; i < steps; ++i)
   {
-    const char *inputPiece = input+(i*3);
+    const char *inputPiece;
+    
+    if (i == steps - 1 && extraBytes != 0)
+    {
+      if (extraBytes == 1)
+      {
+        const char tmp[] = {input[i*3], '\0', '\0'};
+        inputPiece = tmp;
+      }
+      else
+      {
+        const char tmp[] = {input[i*3], input[i*3+1], '\0'};
+        inputPiece = tmp;
+      }
+    }
+    else
+      inputPiece = input+(i*3);
+    
     char *outputPiece = output+(i*4);
 
     outputPiece[0] = base64map[ (inputPiece[0] & 0xFC) >> 2 ];
     outputPiece[1] = base64map[ ((inputPiece[0] & 0x03) << 4) | ((inputPiece[1] & 0xF0) >> 4) ];
-    outputPiece[2] = base64map[ ((inputPiece[1] & 0x0F) << 2) | ((inputPiece[2] & 0xC0) >> 6) ];
+    
+    if (i*4+2 < *outputLength)
+      outputPiece[2] = base64map[ ((inputPiece[1] & 0x0F) << 2) | ((inputPiece[2] & 0xC0) >> 6) ];
+    if (i*4+3 < *outputLength)
     outputPiece[3] = base64map[ (inputPiece[2] & 0x3F) ];
   }
 }
 
+void Files::decode(const char *input, size_t length, char **outputPtr, size_t *outputLength)
+{
+  *outputLength = (length/4) * 3;
+  size_t extraBytes = length%4;
+  if (extraBytes) *outputLength += extraBytes - 1;
+  
+  
+  for (u32 i = 0; i < length; ++i)
+  {
+    //u32 w = i%4;
+  }
+}
 
 
 PieceInfoSpec specs[PIECES_COUNT] =
@@ -170,30 +224,12 @@ PieceInfo Files::loadPiece(std::istream is, Field *field)
   if (spec)
   {
     info.spec = spec;
-    info.x = buffer[1] >= 'A' ? 10 + buffer[1] - 'A' : buffer[1] - '0';
-    info.y = buffer[2] >= 'A' ? 10 + buffer[2] - 'A' : buffer[2] - '0';
-    info.color = colorForChar(buffer[3]);
-    info.direction = directionForChar(buffer[4]);
-    if (buffer[5] == 'b')
-    {
-      info.roteable = true;
-      info.moveable = true;
-    }
-    else if (buffer[5] == 'm')
-    {
-      info.roteable = false;
-      info.moveable = true;
-    }
-    else if (buffer[5] == 'r')
-    {
-      info.roteable = true;
-      info.moveable = false;
-    }
-    else
-    {
-      info.moveable = false;
-      info.roteable = false;
-    }
+    info.x = (buffer[1] & 0xF0) >> 4;
+    info.y = buffer[1] & 0x0F;
+    info.color = static_cast<LaserColor>((buffer[2] >> 3) & 0x07);
+    info.direction = static_cast<Direction>(buffer[2] & 0x07);
+    info.roteable = (buffer[2] & 0x80) != 0;
+    info.moveable = (buffer[2] & 0x40) != 0;
   }
   else
     info.spec = nullptr;
@@ -207,13 +243,13 @@ PieceSaveInfo Files::savePiece(Piece *piece)
   
   info.data[0] = charForPiece(piece->type());
   Tile *tile = piece->getTile();
-  info.data[1] = tile->x >= 10 ? tile->x - 10 + 'A' : tile->x + '0';
-  info.data[2] = tile->y >= 10 ? tile->y - 10 + 'A' : tile->y + '0';
-  info.data[3] = charForColor(piece->color());
-  info.data[4] = charForDirection(piece->rotation());
-  if (piece->canBeMoved() && piece->canBeRotated()) info.data[5] = 'b';
-  else if (piece->canBeMoved()) info.data[5] = 'm';
-  else if (piece->canBeRotated()) info.data[5] = 'r';
-  else info.data[5] = 'n';
+  info.data[1] = (tile->x << 4) | tile->y;
+  info.data[2] = 0;
+  info.data[2] |= piece->rotation();
+  info.data[2] |= (piece->color() << 3);
+  if (piece->canBeRotated())
+    info.data[2] |= 0x80;
+  if (piece->canBeMoved())
+    info.data[2] |= 0x40;
   return info;
 }

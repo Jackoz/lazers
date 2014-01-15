@@ -137,7 +137,10 @@ class Field
           }
       
       std::string res = ss.str();
-      printf("%s\n",res.c_str());
+      char *output;
+      size_t outLen;
+      Files::encode(res.c_str(), res.length(), &output, &outLen);
+      printf("%*s\n",static_cast<int>(outLen),output);
       
       
       updateLasers();
