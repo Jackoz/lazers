@@ -29,6 +29,9 @@ class View
     View(Game *game) : game(game) { }
     virtual void handleEvent(SDL_Event &event) = 0;
     virtual void draw() = 0;
+  
+    virtual void activate() { };
+    virtual void deactivate() { };
 };
 
 

@@ -11,18 +11,21 @@
 #include "gfx.h"
 #include <SDL/SDL.h>
 
-void LevelView::drawField()
+void LevelView::drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < FIELD_WIDTH; ++x)
     for (int y = 0; y < FIELD_HEIGHT; ++y)
     {
       Tile *tile = field.tileAt(x,y);
       
+      u16 cx = bx + x*TILE_SIZE;
+      u16 cy = by + y*TILE_SIZE;
+      
       if (tile->piece())
       {
         SDL_Rect src = tile->piece()->gfxRect();
-        SDL_Rect dst = Gfx::ccr(coordX(x, false)+1,coordY(y)+1,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx+1,cy+1,0,0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       
       for (int i = 0; i < 8; ++i)
@@ -30,8 +33,8 @@ void LevelView::drawField()
         if (tile->colors[i])
         {
           SDL_Rect src = Gfx::ccr(PIECE_SIZE*8+(PIECE_SIZE)*i, PIECE_SIZE*(tile->colors[i]-1), PIECE_SIZE, PIECE_SIZE);
-          SDL_Rect dst = Gfx::ccr(coordX(x, false)+1, coordY(y)+1, 0, 0);
-          SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+          SDL_Rect dst = Gfx::ccr(cx+1, cy+1, 0, 0);
+          SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
         }
       }
       
@@ -39,15 +42,15 @@ void LevelView::drawField()
       if (tile->colors[NORTH_WEST] && tile->colors[NORTH_WEST] == tile->colors[SOUTH_EAST])
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*17, PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 5, 4, 4);
-        SDL_Rect dst = Gfx::ccr(coordX(x, false)+ 1 + 5, coordY(y)+ 1 + 5, 0, 0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       // diagonal middle filler '/'
       if (tile->colors[SOUTH_WEST] && tile->colors[SOUTH_WEST] == tile->colors[NORTH_EAST])
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*17, PIECE_SIZE*(tile->colors[SOUTH_WEST]-1), 4, 4);
-        SDL_Rect dst = Gfx::ccr(coordX(x, false)+ 1 + 5, coordY(y)+ 1 + 5, 0, 0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       
       
@@ -61,34 +64,39 @@ void LevelView::drawField()
       if (tile->colors[NORTH] && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*16,PIECE_SIZE*(tile->colors[NORTH]-1),PIECE_SIZE,1);
-        SDL_Rect dst = Gfx::ccr(coordX(x, false)+1,coordY(y),0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx + 1, cy,0,0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       
       // place vertical fillers
       if (tile->colors[WEST] && (left && left->colors[EAST] == tile->colors[WEST]))
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*16,PIECE_SIZE*(tile->colors[WEST]-1),1,PIECE_SIZE);
-        SDL_Rect dst = Gfx::ccr(coordX(x, false),coordY(y)+1,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx,cy + 1,0,0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       
       // place cross filler upper left
       if (tile->colors[NORTH_WEST] && (upperLeft && upperLeft->colors[SOUTH_EAST] == tile->colors[NORTH_WEST]))
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*16 + 9,PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(coordX(x, false)-2,coordY(y)-2,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx - 2,cy - 2,0,0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
       // place cross filler upper right
       if (tile->colors[NORTH_EAST] && (upperRight && upperRight->colors[SOUTH_WEST] == tile->colors[NORTH_EAST]))
       {
         SDL_Rect src = Gfx::ccr(PIECE_SIZE*16 + 9,PIECE_SIZE*(tile->colors[NORTH_EAST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(coordX(x+1, false)-2,coordY(y)-2,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx - 2, cy - 2,0,0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
     }
   
+
+}
+
+void LevelView::drawInventory()
+{
   for (int x = 0; x < INVENTORY_WIDTH; ++x)
     for (int y = 0; y < INVENTORY_HEIGHT; ++y)
     {
@@ -103,28 +111,27 @@ void LevelView::drawField()
     }
 }
 
+void LevelView::drawGrid(int x, int y, int w, int h, SDL_Surface *screen)
+{
+  SDL_Rect bgRect = {176,264,16,16};
+  for (int i = 0; i < w; ++i)
+    for (int j = 0; j < h; ++j)
+    {
+      SDL_Rect tileRect = Gfx::ccr(x+i*TILE_SIZE, y+j*TILE_SIZE, 15, 15);
+      SDL_BlitSurface(Gfx::tiles, &bgRect, screen, &tileRect);
+    }
+}
+
 
 void LevelView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
   // draw field
-  SDL_Rect bgRect = {176,264,16,16};
-  for (int i = 0; i < FIELD_WIDTH; ++i)
-  {
-    for (int j = 0; j < FIELD_HEIGHT; ++j)
-    {
-      SDL_Rect tileRect = Gfx::ccr(coordX(i, false), coordY(j), 15, 15);
-      SDL_BlitSurface(Gfx::tiles, &bgRect, Gfx::screen, &tileRect);
-      
-      if (i < INVENTORY_WIDTH && j < INVENTORY_HEIGHT)
-      {
-        SDL_Rect tileRect = Gfx::ccr(coordX(i+FIELD_WIDTH, true), coordY(j), 15, 15);
-        SDL_BlitSurface(Gfx::tiles, &bgRect, Gfx::screen, &tileRect);
-      }
-    }
-  }
   
+  drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, FIELD_WIDTH, FIELD_HEIGHT, Gfx::screen);
+  drawGrid(GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT, Gfx::screen);
+
   Gfx::lock();
   
   Gfx::rect(coordX(position->x, true), coordY(position->y), TILE_SIZE, TILE_SIZE, Gfx::ccc(180, 0, 0));
@@ -134,7 +141,8 @@ void LevelView::draw()
   
   Gfx::unlock();
   
-  drawField();
+  drawField(field, Gfx::screen, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
+  drawInventory();
   
   Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
   

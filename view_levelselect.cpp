@@ -8,6 +8,7 @@
 
 #include "view_levelselect.h"
 
+#include "view_level.h"
 #include "gfx.h"
 #include <SDL/SDL.h>
 
@@ -15,6 +16,17 @@ const u16 LIST_X = 20;
 const u16 LIST_Y = 30;
 const u16 LIST_DY = 10;
 const u16 LIST_SIZE = 8;
+
+LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nullptr), scaledPreview(nullptr)
+{
+
+}
+
+void LevelSelectView::activate()
+{
+  if (!preview) preview = Gfx::generateSurface(FIELD_WIDTH*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE);
+  if (!scaledPreview) scaledPreview = Gfx::generateSurface(FIELD_WIDTH*10, FIELD_HEIGHT*10);
+}
 
 void LevelSelectView::draw()
 {
@@ -37,9 +49,11 @@ void LevelSelectView::draw()
   }
   
 
-  Gfx::lock();
+  Gfx::blit(scaledPreview, 0, 0, 160, 150, 150, 30);
+  
+  /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
-  Gfx::unlock();
+  Gfx::unlock();*/
   
   Gfx::postDraw();
 }
@@ -60,6 +74,7 @@ void LevelSelectView::handleEvent(SDL_Event &event)
           if (game->pack->selected < game->pack->count() - 1)
           {
             ++game->pack->selected;
+            rebuildPreview();
             
             if (game->pack->selected > maxOffset)
               ++offset;
@@ -71,6 +86,7 @@ void LevelSelectView::handleEvent(SDL_Event &event)
           if (game->pack->selected > 0)
           {
             --game->pack->selected;
+            rebuildPreview();
             
             if (game->pack->selected < minOffset)
               --offset;
@@ -81,7 +97,10 @@ void LevelSelectView::handleEvent(SDL_Event &event)
         case KEY_L:
         {          
           if (game->pack->selected > minOffset)
+          {
             game->pack->selected = minOffset;
+            rebuildPreview();
+          }
           else
           {
             if (offset > 0)
@@ -89,6 +108,7 @@ void LevelSelectView::handleEvent(SDL_Event &event)
               u8 delta = LIST_SIZE <= offset ? LIST_SIZE : offset;
               offset -= delta;
               game->pack->selected -= delta;
+              rebuildPreview();
             }
           }
           break;
@@ -97,7 +117,10 @@ void LevelSelectView::handleEvent(SDL_Event &event)
         case KEY_R:
         {
           if (game->pack->selected < maxOffset)
+          {
             game->pack->selected = maxOffset;
+            rebuildPreview();
+          }
           else
           {
             if (offset < game->pack->count()-1)
@@ -106,11 +129,13 @@ void LevelSelectView::handleEvent(SDL_Event &event)
               {
                 offset += LIST_SIZE;
                 game->pack->selected += LIST_SIZE;
+                rebuildPreview();
               }
               else
               {
                 offset = game->pack->count() - LIST_SIZE;
                 game->pack->selected = game->pack->count()-1;
+                rebuildPreview();
               }
             }
           }
@@ -121,4 +146,13 @@ void LevelSelectView::handleEvent(SDL_Event &event)
       }
     }
   }
+}
+
+void LevelSelectView::rebuildPreview()
+{
+  Gfx::clear(preview, Gfx::ccc(0, 0, 0));
+  LevelView::drawGrid(0, 0, FIELD_WIDTH, FIELD_HEIGHT, preview);
+  LevelView::drawField(field, preview, 0, 0);
+  Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, 7*FIELD_WIDTH/*scaledPreview->w*/, 7*FIELD_HEIGHT/*scaledPreview->h*/);
+  //Gfx::blit(preview, scaledPreview, 0, 0, 160, 150, 0, 0);
 }

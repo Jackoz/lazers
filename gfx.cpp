@@ -9,6 +9,7 @@
 #include "gfx.h"
 
 #include "game.h"
+#include <cmath>
 
 #define PIXEL(s, w, x, y) s[(y)*(w) + x]
 SDL_PixelFormat *Gfx::format = nullptr;
@@ -50,10 +51,10 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    //"/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers"
-    tiles = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/tiles.png");
-    font = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/font.png");
-    ui = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/ui.png");
+    //"/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers""/Users/jack/Desktop/lazers/cpp-lazers/data/
+    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
+    font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
+    ui = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/ui.png");
 
 
   #else
@@ -65,7 +66,12 @@ void Gfx::init()
   SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
 }
 
-void Gfx::blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
+SDL_Surface *Gfx::generateSurface(u16 w, u16 h)
+{
+  return SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 32, realScreen->format->Rmask, realScreen->format->Gmask, realScreen->format->Bmask, realScreen->format->Amask);
+}
+
+void Gfx::scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
 {
   SDL_LockSurface(src);
   SDL_LockSurface(dst);
@@ -90,11 +96,101 @@ void Gfx::blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 d
   SDL_UnlockSurface(dst);
 }
 
-void Gfx::blit(SDL_Surface *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+float cubicInterpolate (float p[4], float x) {
+	return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));
+}
+
+void Gfx::scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 dw, u16 dh)
+{
+  SDL_LockSurface(src);
+  SDL_LockSurface(dst);
+  
+  u32 *sp = (u32*)src->pixels;
+  u32 *dp = (u32*)dst->pixels;
+  
+  // calculate offset for each pixel
+  float dx = static_cast<float>(sw)/dw;
+  float dy = static_cast<float>(sh)/dh;
+  u32 pgrid[4][4];
+  float grid[3][4][4];
+  
+  // for each pixel in destination width
+  for (u16 x = 0; x < dw; ++x)
+  {
+    // for each pixel in destination height
+    for (u16 y = 0; y < dh; ++y)
+    {
+      // compute coordinates in source image for the 4x4 grid
+      float sxf[4] = {(dx)*(x-1), dx*x, dx*(x+1), dx*(x+2)};
+      float syf[4] = {(dy)*(y-1), dy*y, dy*(y+1), dy*(y+2)};
+
+      // clamp coordinates to min and max width/height
+      for (u16 t = 0; t < 4; ++t)
+      {
+        if (sxf[t] < 0) sxf[t] = 0;
+        else if (sxf[t] >= sw) sxf[t] = sw-1;
+        
+        if (syf[t] < 0) syf[t] = 0;
+        else if (syf[t] >= sh) syf[t] = sh-1;
+        
+        sxf[t] = roundf(sxf[t]);
+        syf[t] = roundf(syf[t]);
+      }
+      
+      // compute actual grid
+      for (int t = 0; t < 4; ++t)
+        for (int u = 0; u < 4; ++u)
+          pgrid[t][u] = PIXEL(sp, src->w, static_cast<int>(sxf[t]), static_cast<int>(syf[u]));
+      
+      // compute float grid for each channel
+      for (int t = 0; t < 4; ++t)
+      {
+        for (int u = 0; u < 4; ++u)
+        {
+          grid[0][t][u] = ((pgrid[t][u] & src->format->Rmask) >> src->format->Rshift) / 256.0f;
+          grid[1][t][u] = ((pgrid[t][u] & src->format->Gmask) >> src->format->Gshift) / 256.0f;
+          grid[2][t][u] = ((pgrid[t][u] & src->format->Bmask) >> src->format->Bshift) / 256.0f;
+        }
+      }
+      
+      float columns[3][4];
+      
+      for (int u = 0; u < 3; ++u)
+        for (int t = 0; t < 4; ++t)
+          columns[u][t] = cubicInterpolate(grid[u][t], static_cast<float>(y)/dh);
+      
+      float finalColor[3];
+      u8 ifinalColor[3];
+      
+      for (int u = 0; u < 3; ++u)
+      {
+        finalColor[u] = cubicInterpolate(columns[u], static_cast<float>(x)/dw)*256.0f;
+        if (finalColor[u] < 0.0f) ifinalColor[u] = 0;
+        else if (finalColor[u] > 255.0f) ifinalColor[u] = 255;
+        else ifinalColor[u] = static_cast<u8>(roundf(finalColor[u]));
+      }
+      
+      
+      u32 color = SDL_MapRGB(dst->format, ifinalColor[0], ifinalColor[1], ifinalColor[2]);
+      PIXEL(dp, dst->w, x, y) = color;
+    }
+  }
+  
+  
+  SDL_UnlockSurface(src);
+  SDL_UnlockSurface(dst);
+}
+
+void Gfx::blit(SDL_Surface *srcs, SDL_Surface *dest, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
 {
   SDL_Rect src = ccr(x, y, w, h);
   SDL_Rect dst = ccr(dx, dy, 0, 0);
-  SDL_BlitSurface(srcs, &src, screen, &dst);
+  SDL_BlitSurface(srcs, &src, dest, &dst);
+}
+
+void Gfx::blit(SDL_Surface *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+{
+  blit(srcs, screen, x, y, w, h, dx, dy);
 }
 
 
@@ -131,10 +227,15 @@ void Gfx::rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color)
    p[y*screen->w + x] = color;*/
 }
 
-void Gfx::clear(u32 color)
+void Gfx::clear(SDL_Surface *surf, u32 color)
 {
   SDL_Rect frect = {0,0,WIDTH,HEIGHT};
-  SDL_FillRect(screen, &frect, color);
+  SDL_FillRect(surf, &frect, color);
+}
+
+void Gfx::clear(u32 color)
+{
+  clear(screen, color);
 }
 
 u8 Gfx::charWidth(char c)
@@ -219,7 +320,7 @@ void Gfx::drawString(int x, int y, const char *text, ...)
 void Gfx::postDraw()
 {
   #ifdef SCALE
-    blit(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
+    scaleNN(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
     SDL_Flip(realScreen);
   #else
     SDL_Flip(screen);

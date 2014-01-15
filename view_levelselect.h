@@ -17,11 +17,17 @@ class LevelSelectView : public View
 {
 private:
   u32 offset;
+  SDL_Surface *preview;
+  SDL_Surface *scaledPreview;
+  Field field;
   
 public:
-  LevelSelectView(Game *game) : View(game), offset(0) { }
+  LevelSelectView(Game *game);
   void handleEvent(SDL_Event &event);
   void draw();
+  void rebuildPreview();
+  
+  void activate();
 };
 
 #endif

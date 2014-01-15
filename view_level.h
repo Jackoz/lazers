@@ -29,12 +29,14 @@ private:
   }
   static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
   
-  void drawField();
-  
 public:
   LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition) { }
   void handleEvent(SDL_Event &event);
   void draw();
+  
+  static void drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by);
+  static void drawGrid(int x, int y, int w, int h, SDL_Surface *screen);
+  void drawInventory();
 };
 
 #endif
