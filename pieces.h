@@ -148,7 +148,7 @@ class LaserSource : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{rotation_, 1}; }
+    Position gfxTile() { return Position(rotation_, 1); }
 };
 
 class Mirror : public Piece
@@ -175,7 +175,7 @@ class Mirror : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{rotation_, 0}; }
+    Position gfxTile() { return Position(rotation_, 0); }
 };
 
 class SkewMirror : public Piece
@@ -204,7 +204,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{rotation_, 10}; }
+  Position gfxTile() { return Position(rotation_, 10); }
 };
 
 class DoubleMirror : public Piece
@@ -231,7 +231,7 @@ class DoubleMirror : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{static_cast<s8>(rotation_%4 + 4), 5}; }
+    Position gfxTile() { return Position(rotation_%4 + 4, 5); }
 };
 
 class DoubleSplitterMirror : public Piece
@@ -246,7 +246,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{static_cast<s8>(rotation_%4 + 4), 11}; }
+  Position gfxTile() { return Position(rotation_%4 + 4, 11); }
 };
 
 class DoubleSkewMirror : public Piece
@@ -276,7 +276,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{static_cast<s8>(rotation_%4), 11}; }
+  Position gfxTile() { return Position(rotation_%4, 11); }
 };
 
 class Splitter : public Piece
@@ -291,7 +291,7 @@ class Splitter : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{rotation_, 2}; }
+    Position gfxTile() { return Position(rotation_, 2); }
 };
 
 class StarSplitter : public Piece
@@ -306,7 +306,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return false; }
   
-  Position gfxTile() { return Position{10, 7}; }
+  Position gfxTile() { return Position(10, 7); }
 };
 
 class DSplitter : public Piece
@@ -321,7 +321,7 @@ class DSplitter : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{rotation_, 3}; }
+    Position gfxTile() { return Position(rotation_, 3); }
 };
 
 class Prism : public Piece
@@ -336,7 +336,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{rotation_, 4}; }
+  Position gfxTile() { return Position(rotation_, 4); }
 };
 
 class Bender : public Piece
@@ -354,7 +354,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return false; }
   
-  Position gfxTile() { return Position{14, 7}; }
+  Position gfxTile() { return Position(14, 7); }
 };
 
 class Twister : public Piece
@@ -372,7 +372,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return false; }
   
-  Position gfxTile() { return Position{12, 7}; }
+  Position gfxTile() { return Position(12, 7); }
 };
 
 
@@ -391,7 +391,7 @@ class Filter : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return false; }
   
-    Position gfxTile() { return Position{static_cast<s8>(color_+8), 8}; }
+    Position gfxTile() { return Position(color_+8, 8); }
 };
 
 class RoundFilter : public Piece
@@ -432,7 +432,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{static_cast<s8>(rotation_%4), 9}; }
+  Position gfxTile() { return Position(rotation_%4, 9); }
 };
 
 class Polarizer : public Piece
@@ -450,7 +450,7 @@ class Polarizer : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{static_cast<s8>(color_+8), static_cast<s8>(9 + rotation_%4)}; }
+    Position gfxTile() { return Position(color_ + 8, 9 + rotation_%4); }
 };
 
 class Tunnel : public Piece
@@ -469,7 +469,7 @@ class Tunnel : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
   
-    Position gfxTile() { return Position{rotation_, 6}; }
+    Position gfxTile() { return Position(rotation_, 6); }
 };
 
 class ColorShifter : public Piece
@@ -497,7 +497,7 @@ class ColorShifter : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
     
-    Position gfxTile() { return Position{rotation_, 8}; }
+    Position gfxTile() { return Position(rotation_, 8); }
 };
 
 class ColorInverter : public Piece
@@ -522,7 +522,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{rotation_, 7}; }
+  Position gfxTile() { return Position(rotation_, 7); }
 };
 
 class CrossColorInverter : public Piece
@@ -563,7 +563,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return false; }
   
-  Position gfxTile() { return Position{9, 7}; }
+  Position gfxTile() { return Position(9, 7); }
 };
 
 
