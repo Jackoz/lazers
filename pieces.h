@@ -276,7 +276,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{rotation_%4, 11}; }
+  Position gfxTile() { return Position{static_cast<s8>(rotation_%4), 11}; }
 };
 
 class Splitter : public Piece
@@ -391,7 +391,7 @@ class Filter : public Piece
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return false; }
   
-    Position gfxTile() { return Position{color_+8, 8}; }
+    Position gfxTile() { return Position{static_cast<s8>(color_+8), 8}; }
 };
 
 class RoundFilter : public Piece
@@ -432,7 +432,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{rotation_%4, 9}; }
+  Position gfxTile() { return Position{static_cast<s8>(rotation_%4), 9}; }
 };
 
 class Polarizer : public Piece
@@ -547,7 +547,7 @@ public:
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return roteable; }
   
-  Position gfxTile() { return Position{4 + rotation_%2, 9}; }
+  Position gfxTile() { return Position(4 + rotation_%2, 9); }
 };
 
 
@@ -623,7 +623,7 @@ class StrictGoal : public Goal
     bool canBeMoved() { return movable; }
     bool canBeRotated() { return roteable; }
     
-    Position gfxTile() { return Position{color_+8, isSatisfied() ? 14 : 13}; }
+    Position gfxTile() { return Position(color_+8, isSatisfied() ? 14 : 13); }
 };
 
 

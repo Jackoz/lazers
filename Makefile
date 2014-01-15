@@ -18,6 +18,7 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(BINARIES)
 	$(CXX) $(BINARIES) -o $@ $(LDFLAGS)
 	cp -f data/tiles.png lazers/tiles.png
+	cp -f data/font.png lazers/font.png
 
 #.cpp.o:
 #	$(CC) $(CXXFLAGS) $< -o $@
