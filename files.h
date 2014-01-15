@@ -80,8 +80,8 @@ class Files
   
   
   public:
-    static void encode(const char *input, size_t length, char **outputPtr, size_t *outputLength);
-    static void decode(const char *input, size_t length, char **outputPtr, size_t *outputLength);
+    static void encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength);
+    static void decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength);
   
     static PieceInfo loadPiece(std::istream is, Field *field);
     static PieceSaveInfo savePiece(Piece *piece);

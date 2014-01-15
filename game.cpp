@@ -23,6 +23,15 @@ void Game::init()
   running = true;
   view->activate();
   
+  const char *input = "foobar testaaa";
+  char *encoded, *decoded;
+  size_t encodedLength, decodedLength;
+  Files::encode(reinterpret_cast<const u8*>(input), strlen(input), &encoded, &encodedLength);
+  Files::decode(encoded, encodedLength, reinterpret_cast<u8**>(&decoded), &decodedLength);
+  printf("  INPUT: %s (%d)\n",input, (u32)strlen(input));
+  printf("ENCODED: %.*s (%d)\n",(u32)encodedLength, encoded, (u32)encodedLength);
+  printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);
+  
   pack = Files::packAt(0);
 }
 

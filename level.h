@@ -126,7 +126,7 @@ class Field
       place(14, 2, new StarSplitter(this));
 
       
-      std::stringstream ss;
+      /*std::stringstream ss;
       for (int i = 0; i < FIELD_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)
           if (tileAt(i, j)->piece())
@@ -139,8 +139,8 @@ class Field
       std::string res = ss.str();
       char *output;
       size_t outLen;
-      Files::encode(res.c_str(), res.length(), &output, &outLen);
-      printf("%*s\n",static_cast<int>(outLen),output);
+      Files::encode(reinterpret_cast<const u8*>(res.c_str()), res.length(), &output, &outLen);
+      printf("%*s\n",static_cast<int>(outLen),output);*/
       
       
       updateLasers();

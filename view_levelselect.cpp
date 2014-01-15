@@ -25,7 +25,7 @@ LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nu
 void LevelSelectView::activate()
 {
   if (!preview) preview = Gfx::generateSurface(FIELD_WIDTH*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE);
-  if (!scaledPreview) scaledPreview = Gfx::generateSurface(FIELD_WIDTH*10, FIELD_HEIGHT*10);
+  if (!scaledPreview) scaledPreview = Gfx::generateSurface(FIELD_WIDTH*7, FIELD_HEIGHT*7);
 }
 
 void LevelSelectView::draw()
@@ -49,7 +49,7 @@ void LevelSelectView::draw()
   }
   
 
-  Gfx::blit(scaledPreview, 0, 0, 160, 150, 150, 30);
+  Gfx::blit(scaledPreview, 0, 0, 160, 150, 180, 30);
   
   /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));

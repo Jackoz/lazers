@@ -28,7 +28,7 @@ u8 value(u8 v)
     return 26+26+10+1;
 }
 
-void Files::encode(const char *input, size_t length, char **outputPtr, size_t *outputLength)
+void Files::encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength)
 {
   size_t steps = length/3;
   *outputLength = steps*4;
@@ -45,18 +45,18 @@ void Files::encode(const char *input, size_t length, char **outputPtr, size_t *o
   
   for (size_t i = 0; i < steps; ++i)
   {
-    const char *inputPiece;
+    const u8 *inputPiece;
     
     if (i == steps - 1 && extraBytes != 0)
     {
       if (extraBytes == 1)
       {
-        const char tmp[] = {input[i*3], '\0', '\0'};
+        const u8 tmp[] = {input[i*3], '\0', '\0'};
         inputPiece = tmp;
       }
       else
       {
-        const char tmp[] = {input[i*3], input[i*3+1], '\0'};
+        const u8 tmp[] = {input[i*3], input[i*3+1], '\0'};
         inputPiece = tmp;
       }
     }
@@ -75,16 +75,37 @@ void Files::encode(const char *input, size_t length, char **outputPtr, size_t *o
   }
 }
 
-void Files::decode(const char *input, size_t length, char **outputPtr, size_t *outputLength)
+void Files::decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength)
 {
-  *outputLength = (length/4) * 3;
+  size_t rlength = (length/4) * 3;
   size_t extraBytes = length%4;
-  if (extraBytes) *outputLength += extraBytes - 1;
+  if (extraBytes) rlength += extraBytes - 1;
+  *outputLength = rlength;
   
+  *outputPtr = new u8[rlength];
   
-  for (u32 i = 0; i < length; ++i)
+  size_t j = 0;
+  for (u32 i = 0; i < rlength; ++i)
   {
-    //u32 w = i%4;
+    u8 w = i%3;
+    u8 v1 = value(input[j]);
+    u8 v2 = value(input[j+1]);
+    
+    if (w == 0)
+    {
+      (*outputPtr)[i] = (v1 << 2) | (v2 & 0x30) >> 4;
+      ++j;
+    }
+    else if (w == 1)
+    {
+      (*outputPtr)[i] = ((v1 & 0x0F) << 4) | ((v2 & 0x3C) >> 2);
+      ++j;
+    }
+    else if (w == 2)
+    {
+      (*outputPtr)[i] = ((v1 & 0x03) << 6) | (v2 & 0x3F);
+      j += 2;
+    }
   }
 }
 
