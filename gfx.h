@@ -13,7 +13,7 @@
 #include "level.h"
 
 #define OSX
-//#define SCALE (3)
+#define SCALE (3)
 
 #include <SDL/SDL.h>
 
@@ -23,8 +23,10 @@
 #include <SDL_image.h>
 #endif
 
-typedef SDL_Color color;
 
+#define BACKGROUND_COLOR (Gfx::ccc(20, 20, 40))
+
+typedef SDL_Color color;
 
 class Gfx
 {
@@ -45,7 +47,8 @@ class Gfx
     static inline void lock() { SDL_LockSurface(screen); }
     static inline void unlock() { SDL_UnlockSurface(screen); }
     static void blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f);
-    static void drawString(const char *text, int x, int y); 
+    static void blit(SDL_Surface *src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
+    static void drawString(int x, int y, const char *text, ...);
     
     static void setFormat(SDL_PixelFormat *format) { Gfx::format = format; }
     static void init();
@@ -67,13 +70,12 @@ class Gfx
       return SDL_MapRGB(format, color.r, color.g, color.b);
       //return (r << format->Rshift) | (g << format->Gshift) | (b << format->Bshift);
     }
-  
     
-  
     static void postDraw();
     
     static SDL_Surface *tiles;
     static SDL_Surface *font;
+    static SDL_Surface *ui;
   
   #ifdef SCALE
     static SDL_Surface *realScreen;

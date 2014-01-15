@@ -29,7 +29,16 @@ static const u16 GFX_FIELD_POS_X = 0;
 static const u16 GFX_FIELD_POS_Y = 5;
 static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 10;
 
-
+#define KEY_LEFT (SDLK_LEFT)
+#define KEY_RIGHT (SDLK_RIGHT)
+#define KEY_UP (SDLK_UP)
+#define KEY_DOWN (SDLK_DOWN)
+#define KEY_X (SDLK_LSHIFT)
+#define KEY_Y (SDLK_SPACE)
+#define KEY_A (SDLK_LCTRL)
+#define KEY_B (SDLK_LALT)
+#define KEY_L (SDLK_TAB)
+#define KEY_R (SDLK_BACKSPACE)
 
 
 enum LaserColor : u8

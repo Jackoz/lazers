@@ -15,6 +15,7 @@
 enum ViewType
 {
   VIEW_LEVEL = 0,
+  VIEW_LEVEL_SELECT = 1,
   
   VIEWS_COUNT
 };
@@ -30,29 +31,7 @@ class View
     virtual void draw() = 0;
 };
 
-class LevelView : public View
-{
-  private:
-    Field field;
-    Tile *selectedTile;
-    Position fposition, iposition;
-    Position *position;
-  
-    static u16 coordX(u16 x, bool isInventory) {
-      if (!isInventory || x < FIELD_WIDTH)
-        return TILE_SIZE*x + GFX_FIELD_POS_X;
-      else
-        return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
-    }
-    static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
-  
-    void drawField();
-  
-  public:
-    LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition) { }
-    void handleEvent(SDL_Event &event);
-    void draw();
-};
+
 
 
 class Game
@@ -66,10 +45,12 @@ class Game
     void handleEvents();
 
   public:
-    Game() : running(true), views{new LevelView(this)}, view(views[0]), overView(nullptr) { }
+    Game();
     void init();
     void loop();
     void quit() { running = false; }
+  
+    LevelPack *pack;
 };
 
 #endif

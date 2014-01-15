@@ -10,6 +10,8 @@
 
 #include "level.h"
 
+using namespace std;
+
 const u8 base64map[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 u8 value(u8 v)
@@ -86,6 +88,13 @@ void Files::decode(const char *input, size_t length, char **outputPtr, size_t *o
   }
 }
 
+struct PieceInfoSpec
+{
+  PieceType type;
+  u8 mapping;
+  bool canBeColored;
+  bool canBeRotated;
+};
 
 PieceInfoSpec specs[PIECES_COUNT] =
 {
@@ -211,6 +220,18 @@ u8 Files::charForDirection(Direction dir)
 
 // type x y color direction roteable moveable
 
+vector<LevelPack> Files::packs = {
+  LevelPack("Baffling Beams", "Twilight Games", {
+    LevelSpec("White Ribbon"),
+    LevelSpec("Danger Zone"),
+    LevelSpec("Ice Corridor"),
+    LevelSpec("Filter Cube"),
+    LevelSpec("Inner Lair"),
+    LevelSpec("Crossed Lines"),
+    LevelSpec("First Place"),
+    LevelSpec("Multi-Tasking")
+  })
+};
 
 PieceInfo Files::loadPiece(std::istream is, Field *field)
 {

@@ -20,6 +20,7 @@ SDL_Surface *Gfx::realScreen = nullptr;
 
 SDL_Surface *Gfx::tiles = nullptr;
 SDL_Surface *Gfx::font = nullptr;
+SDL_Surface *Gfx::ui = nullptr;
 
 void Gfx::init()
 {
@@ -51,10 +52,13 @@ void Gfx::init()
   #ifdef SCALE
     tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
     font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
+    ui = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/ui.png");
+
 
   #else
     font = IMG_Load("./font.png");
     tiles = IMG_Load("./tiles.png");
+    ui = IMG_Load("./ui.png");
   #endif
   
   SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
@@ -83,6 +87,13 @@ void Gfx::blit(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 d
   
   SDL_UnlockSurface(src);
   SDL_UnlockSurface(dst);
+}
+
+void Gfx::blit(SDL_Surface *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+{
+  SDL_Rect src = ccr(x, y, w, h);
+  SDL_Rect dst = ccr(dx, dy, 0, 0);
+  SDL_BlitSurface(srcs, &src, screen, &dst);
 }
 
 
@@ -165,9 +176,16 @@ u8 Gfx::charWidth(char c)
   }
 }
 
-void Gfx::drawString(const char *text, int x, int y)
+void Gfx::drawString(int x, int y, const char *text, ...)
 {
-  u16 len = strlen(text);
+  char buffer[64];
+  va_list args;
+  va_start (args, text);
+  vsnprintf (buffer, 64, text, args);
+  va_end(args);
+  
+  
+  u16 len = strlen(buffer);
   u16 dy = 9;
   u16 space = 3;
   
@@ -176,7 +194,7 @@ void Gfx::drawString(const char *text, int x, int y)
   
   for (u16 i = 0; i < len; ++i)
   {
-    char c = text[i];
+    char c = buffer[i];
     
     if (c == '\n')
     {
