@@ -36,7 +36,7 @@ public:
   
   static void drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by);
   static void drawGrid(int x, int y, int w, int h, SDL_Surface *screen);
-  void drawInventory();
+  static void drawInventory(Field &field, SDL_Surface *screen, u16 bx, u16 by);
 };
 
 #endif

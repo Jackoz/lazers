@@ -13,10 +13,12 @@
 
 #include <string>
 
+struct LevelSpec;
+
 class Aargon
 {
   public:
-    static void parseLevel(std::string name);
+    static LevelSpec parseLevel(std::string name);
     static void parseLevels();
 };
 

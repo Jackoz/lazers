@@ -86,6 +86,8 @@ class Piece
     virtual bool blocksLaser(Laser &laser) = 0;
     virtual void receiveLaser(Laser &laser) = 0;
   
+    void setCanBeMoved(bool value) { movable = value; };
+    void setCanBeRotated(bool value) { roteable = value; }
     virtual bool canBeMoved() = 0;
     virtual bool canBeRotated() = 0;
     

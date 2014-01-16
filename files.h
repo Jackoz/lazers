@@ -34,6 +34,14 @@ struct PieceInfo
   PieceInfo(PieceType type);
 };
 
+struct PieceInfoSpec
+{
+  PieceType type;
+  u8 mapping;
+  bool canBeColored;
+  bool canBeRotated;
+};
+
 struct PieceSaveInfo {
   u8 data[PIECE_INFO_SIZE];
 };

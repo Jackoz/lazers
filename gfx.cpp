@@ -52,9 +52,9 @@ void Gfx::init()
   
   #ifdef SCALE
     //"/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers""/Users/jack/Desktop/lazers/cpp-lazers/data/
-    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
-    font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
-    ui = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/ui.png");
+    tiles = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/tiles.png");
+    font = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/font.png");
+    ui = IMG_Load("/Users/jack/Desktop/lazers/cpp-lazers/data/ui.png");
 
 
   #else

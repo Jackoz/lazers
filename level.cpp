@@ -12,7 +12,51 @@
 
 using namespace std;
 
+Piece* Field::generatePiece(const PieceInfo *info)
+{
+  if (info->spec)
+  {
+  switch (info->spec->type)
+  {
+    case PIECE_MIRROR: return new Mirror(info->direction, this);
+    case PIECE_STRICT_GOAL: return new StrictGoal(info->color, this);
+    case PIECE_SOURCE: return new LaserSource(info->direction, info->color, this);
+    // TODO: finire
+    default: return nullptr;
+  }
+  }
+  return nullptr;
+}
 
+void Field::load(LevelSpec* level)
+{
+  u8 curInvSlot = 0;
+  
+  for (u32 i = 0; i < level->count(); ++i)
+  {
+    const PieceInfo *info = level->at(i);
+    
+    Piece *piece = generatePiece(info);
+    
+    if (piece)
+    {
+      if (info->spec->canBeRotated)
+        piece->setCanBeRotated(info->roteable);
+      if (info->spec->canBeColored)
+        piece->setCanBeMoved(info->moveable);
+      
+      if (info->inventory)
+      {
+        place(FIELD_WIDTH + curInvSlot%INVENTORY_WIDTH, curInvSlot/INVENTORY_WIDTH, piece);
+        ++curInvSlot;
+      }
+      else
+        place(info->x, info->y, piece);
+    }
+  }
+  
+  updateLasers();
+}
 
 void Field::generateBeam(Position position, Direction direction, LaserColor color)
 {

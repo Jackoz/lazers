@@ -116,14 +116,7 @@ PieceInfo::PieceInfo(PieceType type)
   spec = Files::specForPiece(type);
 }
 
-struct PieceInfoSpec
-{
-  PieceType type;
-  u8 mapping;
-  bool canBeColored;
-  bool canBeRotated;
-};
-
+// TODO: mancano pezzi nuovi
 PieceInfoSpec specs[PIECES_COUNT] =
 {
   {PIECE_WALL, 'W', false, false},
@@ -249,21 +242,7 @@ u8 Files::charForDirection(Direction dir)
 // type x y color direction roteable moveable
 
 vector<LevelPack> Files::packs = {
-  LevelPack("Baffling Beams", "Twilight Games", {
-    LevelSpec("0. White Ribbon"),
-    LevelSpec("1. Danger Zone"),
-    LevelSpec("2. Ice Corridor"),
-    LevelSpec("3. Filter Cube"),
-    LevelSpec("4. Inner Lair"),
-    LevelSpec("5. Crossed Lines"),
-    LevelSpec("6. First Place"),
-    LevelSpec("7. Multi-Tasking"),
-    LevelSpec("8. Multi-Tasking"),
-    LevelSpec("9. Multi-Tasking"),
-    LevelSpec("10. Multi-Tasking"),
-    LevelSpec("11. Multi-Tasking"),
-    LevelSpec("12. Multi-Tasking"),
-  })
+  LevelPack("Baffling Beams", "Twilight Games")
 };
 
 PieceInfo Files::loadPiece(const u8 *ptr)

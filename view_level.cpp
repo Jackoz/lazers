@@ -95,7 +95,7 @@ void LevelView::drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by)
 
 }
 
-void LevelView::drawInventory()
+void LevelView::drawInventory(Field &field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < INVENTORY_WIDTH; ++x)
     for (int y = 0; y < INVENTORY_HEIGHT; ++y)
@@ -105,8 +105,8 @@ void LevelView::drawInventory()
       if (tile->piece())
       {
         SDL_Rect src = tile->piece()->gfxRect();
-        SDL_Rect dst = {static_cast<s16>(coordX(x+FIELD_WIDTH, true)+1),static_cast<s16>(coordY(y)+1),0,0};
-        SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+        SDL_Rect dst = Gfx::ccr(bx+TILE_SIZE*x + 1, by + TILE_SIZE*y + 1, 0, 0);
+        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
     }
 }
@@ -142,7 +142,7 @@ void LevelView::draw()
   Gfx::unlock();
   
   drawField(field, Gfx::screen, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
-  drawInventory();
+  drawInventory(field, Gfx::screen, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y);
   
   Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
   

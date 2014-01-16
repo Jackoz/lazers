@@ -24,8 +24,8 @@ LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nu
 
 void LevelSelectView::activate()
 {
-  if (!preview) preview = Gfx::generateSurface(FIELD_WIDTH*TILE_SIZE, FIELD_HEIGHT*TILE_SIZE);
-  if (!scaledPreview) scaledPreview = Gfx::generateSurface(FIELD_WIDTH*7, FIELD_HEIGHT*7);
+  if (!preview) preview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*TILE_SIZE+10, FIELD_HEIGHT*TILE_SIZE);
+  if (!scaledPreview) scaledPreview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*7+5, FIELD_HEIGHT*7);
 }
 
 void LevelSelectView::draw()
@@ -49,7 +49,7 @@ void LevelSelectView::draw()
   }
   
 
-  Gfx::blit(scaledPreview, 0, 0, 160, 150, 180, 30);
+  Gfx::blit(scaledPreview, 0, 0, 160, 150, 170, 30);
   
   /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
@@ -150,9 +150,15 @@ void LevelSelectView::handleEvent(SDL_Event &event)
 
 void LevelSelectView::rebuildPreview()
 {
-  Gfx::clear(preview, Gfx::ccc(0, 0, 0));
+  field.reset();
+  field.load(game->pack->at(game->pack->selected));
+  
+  
+  Gfx::clear(preview, BACKGROUND_COLOR);
   LevelView::drawGrid(0, 0, FIELD_WIDTH, FIELD_HEIGHT, preview);
+  LevelView::drawGrid(FIELD_WIDTH*TILE_SIZE + 10, 0, INVENTORY_WIDTH, INVENTORY_HEIGHT, preview);
   LevelView::drawField(field, preview, 0, 0);
-  Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, 7*FIELD_WIDTH/*scaledPreview->w*/, 7*FIELD_HEIGHT/*scaledPreview->h*/);
+  LevelView::drawInventory(field, preview, FIELD_WIDTH*TILE_SIZE + 10, 0);
+  Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, scaledPreview->w, scaledPreview->h);
   //Gfx::blit(preview, scaledPreview, 0, 0, 160, 150, 0, 0);
 }

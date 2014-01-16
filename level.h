@@ -152,9 +152,12 @@ class Field
     {
       goals.clear();
       
-      for (int i = 0; i < FIELD_WIDTH; ++i)
+      for (int i = 0; i < FIELD_WIDTH+INVENTORY_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)
         {
+          if (i >= FIELD_WIDTH && j >= INVENTORY_HEIGHT)
+            continue;
+          
           Tile *tile = tileAt(i,j);
           tile->resetLasers();
 
@@ -166,6 +169,9 @@ class Field
           }
         }
     }
+  
+    Piece* generatePiece(const PieceInfo *info);
+    void load(LevelSpec* level);
   
     void place(u8 x, u8 y, Piece *piece)
     {

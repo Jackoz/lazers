@@ -168,7 +168,7 @@ bool canHaveColor(PieceType type)
   }
 }
 
-void Aargon::parseLevel(string filename)
+LevelSpec Aargon::parseLevel(string filename)
 {
   ifstream in = ifstream(filename);
   
@@ -194,7 +194,7 @@ void Aargon::parseLevel(string filename)
   
   for (int i = 0; i < tmpName.length(); ++i)
   {
-    if (i == 0 || tmpName[i-1] == ' ')
+    if (i == 0 || tmpName[i-1] == ' ' || tmpName[i] == ' ')
       nameBuffer << tmpName[i];
     else if (tmpName[i] >= 'A' && tmpName[i] <= 'Z')
       nameBuffer << static_cast<char>(tmpName[i] - 'A' + 'a');
@@ -238,7 +238,7 @@ void Aargon::parseLevel(string filename)
         
         if (!info.inventory)
         {
-          info.x = j - (INVENTORY_ROWS + 1);
+          info.x = j - (INVENTORY_ROWS + 2);
           info.y = i - 1;
         }
         
@@ -264,14 +264,18 @@ void Aargon::parseLevel(string filename)
           case 'r': info.moveable = false; info.roteable = true; break;
           case 'm': info.moveable = true; info.roteable = false; break;
         }
+        
+        spec.add(info);
       }
     }
   }
+  
+  return spec;
 }
 
 void Aargon::parseLevels()
 {
-  string base = "/Users/jack/Desktop/Twilight/Aargon Deluxe/Level Packs/";
+  /*string base = "/Users/jack/Desktop/Twilight/Aargon Deluxe/Level Packs/";
   string packs[] = {"Tutorial", "Deluxe", "Classic", "Smooth Sailing", "Demo Level Set", "Level Pack 1"};
   int amount[] = {2, 4, 4, 4, 3, 1};
   
@@ -291,5 +295,16 @@ void Aargon::parseLevels()
         parseLevel(ss.str());
       }
     }
+  }*/
+  
+  for (int i = 1; i <= 30; ++i)
+  {
+    string base = "/Users/jack/Desktop/lazers/SKILL1/";
+    stringstream ss;
+    ss << base;
+    ss << "Level_0";
+    if (i < 10) ss << '0';
+    ss << i << ".map";
+    Files::packAt(0)->addLevel(parseLevel(ss.str()));
   }
 }

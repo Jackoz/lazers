@@ -17,7 +17,7 @@ typedef signed char s8;
 typedef signed short s16;
 
 static const u16 FIELD_WIDTH = 16;
-static const u16 FIELD_HEIGHT = 15;
+static const u16 FIELD_HEIGHT = 11;
 
 static const u16 INVENTORY_WIDTH = 4;
 static const u16 INVENTORY_HEIGHT = 6;
