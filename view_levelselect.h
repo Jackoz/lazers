@@ -19,7 +19,7 @@ private:
   u32 offset;
   SDL_Surface *preview;
   SDL_Surface *scaledPreview;
-  Field field;
+  Field *field;
   
 public:
   LevelSelectView(Game *game);

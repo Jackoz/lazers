@@ -39,6 +39,9 @@ class View
 
 class Game
 {
+  public:
+    Field *field;
+
   private:
     bool running;
     View* views[VIEWS_COUNT];
@@ -53,7 +56,10 @@ class Game
     void loop();
     void quit() { running = false; }
   
+    void switchView(ViewType type);
+  
     LevelPack *pack;
+    
 };
 
 #endif

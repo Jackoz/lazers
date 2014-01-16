@@ -90,21 +90,23 @@ class Field
       
       for (int i = 0; i < 7; ++i)
       {
-        place(i+3,12, new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
+        place(i+3,8, new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
         
         if (i < 6)
-          place(i+3,13, new Filter(static_cast<LaserColor>(i+1), this));
+          place(i+3,9, new Filter(static_cast<LaserColor>(i+1), this));
       }
       
-      place(2,14, new Polarizer(NORTH, COLOR_MAGENTA, this));
-      place(1, 14, new Polarizer(NORTH, COLOR_WHITE, this));
-      place(3, 14, new Tunnel(NORTH, this));
-      place(4, 14, new ColorShifter(NORTH, this));
-      place(5, 14, new ColorInverter(NORTH, this));
-      place(6, 14, new StrictGoal(COLOR_NONE, this));
-      place(7, 14, new StrictGoal(COLOR_YELLOW, this));
-      place(8, 14, new Teleporter(this));
-      place(9, 14, new Teleporter(this));
+      place(2,10, new Polarizer(NORTH, COLOR_MAGENTA, this));
+      place(1, 10, new Polarizer(NORTH, COLOR_WHITE, this));
+      place(3, 10, new Tunnel(NORTH, this));
+      place(4, 10, new ColorShifter(NORTH, this));
+      place(5, 10, new ColorInverter(NORTH, this));
+      place(6, 10, new StrictGoal(COLOR_NONE, this));
+      place(7, 10, new StrictGoal(COLOR_YELLOW, this));
+      place(8, 10, new Teleporter(this));
+      place(9, 10, new Teleporter(this));
+      place(10, 10, new Refractor(NORTH,this));
+
       //tileAt(8,14)->place(new Gate(COLOR_NONE, this));
       //tileAt(9,14)->place(new PrimaryGate(COLOR_YELLOW, this));
 

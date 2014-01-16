@@ -19,8 +19,15 @@ Piece* Field::generatePiece(const PieceInfo *info)
   switch (info->spec->type)
   {
     case PIECE_MIRROR: return new Mirror(info->direction, this);
+    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info->direction, this);
     case PIECE_STRICT_GOAL: return new StrictGoal(info->color, this);
     case PIECE_SOURCE: return new LaserSource(info->direction, info->color, this);
+    case PIECE_SPLITTER: return new Splitter(info->direction, this);
+    case PIECE_DSPLITTER: return new DSplitter(info->direction, this);
+    case PIECE_REFRACTOR: return new Refractor(info->direction, this);
+    case PIECE_FILTER: return new Filter(info->color, this);
+    case PIECE_WALL: return new Wall(this);
+    case PIECE_GLASS: return new Glass(this);
     // TODO: finire
     default: return nullptr;
   }
@@ -40,10 +47,9 @@ void Field::load(LevelSpec* level)
     
     if (piece)
     {
-      if (info->spec->canBeRotated)
-        piece->setCanBeRotated(info->roteable);
-      if (info->spec->canBeColored)
-        piece->setCanBeMoved(info->moveable);
+      //if (info->spec->canBeRotated)
+      piece->setCanBeRotated(info->roteable);
+      piece->setCanBeMoved(info->moveable);
       
       if (info->inventory)
       {
@@ -52,6 +58,10 @@ void Field::load(LevelSpec* level)
       }
       else
         place(info->x, info->y, piece);
+    }
+    else
+    {
+      printf("Missing allocation: %c (%s)\n",info->spec->mapping,level->name.c_str());
     }
   }
   

@@ -130,6 +130,7 @@ PieceInfoSpec specs[PIECES_COUNT] =
   {PIECE_DOUBLE_SPLITTER_MIRROR, 'd', false, true},
   {PIECE_SPLITTER, 'T', false, true},
   {PIECE_DSPLITTER, 'U', false, true},
+  {PIECE_REFRACTOR, 'r', false, true},
   {PIECE_PRISM, 'p', false, true},
   {PIECE_BENDER, 'B', false, false},
   {PIECE_TWISTER, 'b', false, false},

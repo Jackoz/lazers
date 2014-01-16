@@ -17,7 +17,7 @@ const u16 LIST_Y = 30;
 const u16 LIST_DY = 10;
 const u16 LIST_SIZE = 8;
 
-LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nullptr), scaledPreview(nullptr)
+LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nullptr), scaledPreview(nullptr), field(game->field)
 {
 
 }
@@ -26,6 +26,7 @@ void LevelSelectView::activate()
 {
   if (!preview) preview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*TILE_SIZE+10, FIELD_HEIGHT*TILE_SIZE);
   if (!scaledPreview) scaledPreview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*7+5, FIELD_HEIGHT*7);
+  rebuildPreview();
 }
 
 void LevelSelectView::draw()
@@ -69,6 +70,8 @@ void LevelSelectView::handleEvent(SDL_Event &event)
     {
       switch(event.key.keysym.sym)
       {
+        case KEY_START: game->quit(); break;
+        
         case KEY_DOWN:
         {
           if (game->pack->selected < game->pack->count() - 1)
@@ -142,6 +145,11 @@ void LevelSelectView::handleEvent(SDL_Event &event)
           break;
         }
           
+        case KEY_B:
+        {
+          game->switchView(VIEW_LEVEL);
+        }
+          
         default: break;
       }
     }
@@ -150,8 +158,8 @@ void LevelSelectView::handleEvent(SDL_Event &event)
 
 void LevelSelectView::rebuildPreview()
 {
-  field.reset();
-  field.load(game->pack->at(game->pack->selected));
+  field->reset();
+  field->load(game->pack->at(game->pack->selected));
   
   
   Gfx::clear(preview, BACKGROUND_COLOR);

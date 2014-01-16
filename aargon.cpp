@@ -42,7 +42,7 @@ s8 pieceType(char c)
 {
   switch (c) {
     case '=': return PIECE_IGNORE; // wall
-    case '#': return PIECE_IGNORE; // wall for title
+    case '#': return PIECE_WALL; // wall for title
     case ' ': return PIECE_IGNORE; // empty
       
     case '<': return PIECE_SPLITTER;
@@ -116,6 +116,7 @@ bool canHaveRotation(PieceType type)
     case PIECE_UFO:
     case PIECE_CRYSTAL:
     case PIECE_VOID_HOLE:
+    case PIECE_WALL:
       return false;
       
     default: return false;
@@ -155,6 +156,7 @@ bool canHaveColor(PieceType type)
     case PIECE_UFO:
     case PIECE_CRYSTAL:
     case PIECE_VOID_HOLE:
+    case PIECE_WALL:
       return false;
       
     case PIECE_STRICT_GOAL:
@@ -206,7 +208,7 @@ LevelSpec Aargon::parseLevel(string filename)
   if (lines[1][12] == '=')
     INVENTORY_ROWS = 2;
   
-  for (int i = 0; i < 13; ++i)
+  for (int i = 1; i < 12; ++i)
   {
     const char *line = lines[i].c_str();
     char *data;
@@ -234,6 +236,8 @@ LevelSpec Aargon::parseLevel(string filename)
         
         PieceInfo info = PieceInfo(pieceType);
         
+        ASSERT(info.spec, "spec mapping is null for " << data[0]);
+        
         info.inventory = j <= INVENTORY_ROWS;
         
         if (!info.inventory)
@@ -245,12 +249,12 @@ LevelSpec Aargon::parseLevel(string filename)
         //ASSERT(canHaveRotation(pieceType) || data[1] == ' ', "direction is specified for piece " << data[0] << ": " << data[1] << "  " << i << "," << (j*4));
         
         if (canHaveRotation(pieceType))
-          info.direction = static_cast<Direction>(baseDirection(pieceType) + direction);
+          info.direction = static_cast<Direction>((baseDirection(pieceType) + direction)%8);
         else
           info.direction = NORTH;
         
         ASSERT(!canHaveColor(pieceType) || color != COLOR_NONE || pieceType == PIECE_STRICT_GOAL, "X color specifier found for not a goal");
-        ASSERT(canHaveColor(pieceType) || data[2] == ' ', "color is specified for piece " << data[0]);
+        ASSERT(canHaveColor(pieceType) || data[2] == ' ' || pieceType == PIECE_WALL, "color is specified for piece " << data[0]);
         
         if (canHaveColor(pieceType))
           info.color = color;
@@ -263,6 +267,12 @@ LevelSpec Aargon::parseLevel(string filename)
           case 'n': info.moveable = false; info.roteable = false; break;
           case 'r': info.moveable = false; info.roteable = true; break;
           case 'm': info.moveable = true; info.roteable = false; break;
+        }
+        
+        if (info.spec->type == PIECE_FILTER && info.color == COLOR_WHITE)
+        {
+          info.spec = Files::specForPiece(PIECE_GLASS);
+          info.color = COLOR_NONE;
         }
         
         spec.add(info);
@@ -299,7 +309,7 @@ void Aargon::parseLevels()
   
   for (int i = 1; i <= 30; ++i)
   {
-    string base = "/Users/jack/Desktop/lazers/SKILL1/";
+    string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/SKILL1/";
     stringstream ss;
     ss << base;
     ss << "Level_0";

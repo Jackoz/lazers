@@ -14,17 +14,15 @@
 
 #include "aargon.h"
 
-Game::Game() : running(true), views{new LevelView(this), new LevelSelectView(this)}, view(views[1]), overView(nullptr)
+Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this)}, view(views[1]), overView(nullptr)
 {
-  
+
 }
 
 void Game::init()
 {
   Gfx::init();
-  running = true;
-  view->activate();
-  
+  running = true;  
   /*const char *input = "foobar testaaa";
   char *encoded, *decoded;
   size_t encodedLength, decodedLength;
@@ -36,6 +34,8 @@ void Game::init()
   Aargon::parseLevels();
   
   pack = Files::packAt(0);
+  
+  view->activate();
 }
 
 void Game::handleEvents()
@@ -54,6 +54,12 @@ void Game::handleEvents()
       }
     }
   }
+}
+
+void Game::switchView(ViewType type)
+{
+  view->deactivate();
+  view = views[type];
 }
 
 

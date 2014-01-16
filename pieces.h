@@ -282,6 +282,57 @@ public:
   Position gfxTile() { return Position(rotation_%4, 11); }
 };
 
+class DoublePassMirror : public Piece
+{
+public:
+  DoublePassMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser)
+  {
+    s8 delta = deltaDirection(laser);
+    
+    if (delta == 0 || delta == 4)
+      laser.flip();
+    else if (delta == -1 || delta == 3)
+      laser.rotateLeft(2);
+    else if (delta == 1 || delta == -3)
+      laser.rotateRight(2);
+  }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_%4, 12); }
+};
+
+class Refractor : public Piece
+{
+public:
+  Refractor(Direction rotation, Field *field) : Piece(PIECE_REFRACTOR, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser)
+  {
+    s8 delta = deltaDirection(laser)%4;
+    if (delta < 0) delta += 4;
+    
+    if (delta == 0)
+      laser.rotateRight(1);
+    else if (delta == 1)
+      laser.rotateLeft(1);
+    else
+      laser.invalidate();
+  }
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_%4, 5); }
+};
+
 class Splitter : public Piece
 {
   public:

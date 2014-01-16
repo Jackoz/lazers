@@ -11,12 +11,12 @@
 #include "gfx.h"
 #include <SDL/SDL.h>
 
-void LevelView::drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by)
+void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < FIELD_WIDTH; ++x)
     for (int y = 0; y < FIELD_HEIGHT; ++y)
     {
-      Tile *tile = field.tileAt(x,y);
+      Tile *tile = field->tileAt(x,y);
       
       u16 cx = bx + x*TILE_SIZE;
       u16 cy = by + y*TILE_SIZE;
@@ -55,10 +55,10 @@ void LevelView::drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by)
       
       
       
-      Tile *upper = y > 0 ? field.tileAt(x, y-1) : nullptr;
-      Tile *left = x > 0 ? field.tileAt(x-1, y) : nullptr;
-      Tile *upperLeft = upper && left ? field.tileAt(x-1, y-1) : nullptr;
-      Tile *upperRight = upper && x < FIELD_WIDTH ? field.tileAt(x+1, y-1) : nullptr;
+      Tile *upper = y > 0 ? field->tileAt(x, y-1) : nullptr;
+      Tile *left = x > 0 ? field->tileAt(x-1, y) : nullptr;
+      Tile *upperLeft = upper && left ? field->tileAt(x-1, y-1) : nullptr;
+      Tile *upperRight = upper && x < FIELD_WIDTH ? field->tileAt(x+1, y-1) : nullptr;
       
       // place horizontal fillers
       if (tile->colors[NORTH] && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
@@ -95,12 +95,12 @@ void LevelView::drawField(Field &field, SDL_Surface *screen, u16 bx, u16 by)
 
 }
 
-void LevelView::drawInventory(Field &field, SDL_Surface *screen, u16 bx, u16 by)
+void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < INVENTORY_WIDTH; ++x)
     for (int y = 0; y < INVENTORY_HEIGHT; ++y)
     {
-      Tile *tile = field.tileAt(x+FIELD_WIDTH,y);
+      Tile *tile = field->tileAt(x+FIELD_WIDTH,y);
       
       if (tile->piece())
       {
@@ -159,7 +159,8 @@ void LevelView::handleEvent(SDL_Event &event)
     {
       switch(event.key.keysym.sym)
       {
-        case SDLK_ESCAPE: game->quit(); break;
+        case KEY_START: game->quit(); break;
+        case KEY_SELECT: game->switchView(VIEW_LEVEL_SELECT); break;
           
         case SDLK_LEFT:
         {
@@ -191,18 +192,18 @@ void LevelView::handleEvent(SDL_Event &event)
           //   B
         case SDLK_LCTRL: // A
         {
-          Piece *piece = field.tileAt(position->x, position->y)->piece();
+          Piece *piece = field->tileAt(position->x, position->y)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateRight();
-            field.updateLasers();
+            field->updateLasers();
           }
           
           break;
         }
         case SDLK_LALT: // B
         {
-          Tile *curTile = field.tileAt(*position);
+          Tile *curTile = field->tileAt(*position);
           
           if (!selectedTile && curTile->piece() && curTile->piece()->canBeMoved())
           {
@@ -223,7 +224,7 @@ void LevelView::handleEvent(SDL_Event &event)
               
               selectedTile = nullptr;
               
-              field.updateLasers();
+              field->updateLasers();
             }
           }
           
@@ -231,11 +232,11 @@ void LevelView::handleEvent(SDL_Event &event)
         }
         case SDLK_LSHIFT: // X
         {
-          Piece *piece = field.tileAt(position->x, position->y)->piece();
+          Piece *piece = field->tileAt(position->x, position->y)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateLeft();
-            field.updateLasers();
+            field->updateLasers();
           }
           
           break;

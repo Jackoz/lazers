@@ -82,7 +82,6 @@ class Files
 {
   static u8 charForPiece(PieceType type);
   static PieceType pieceForChar(u8 type);
-  static PieceInfoSpec *specForPiece(PieceType type);
   
   static LaserColor colorForChar(u8 color);
   static Direction directionForChar(u8 dir);
@@ -97,10 +96,11 @@ class Files
     static void encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength);
     static void decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength);
   
+    static PieceInfoSpec *specForPiece(PieceType type);
+  
     static PieceInfo loadPiece(const u8 *ptr);
     static PieceSaveInfo savePiece(Piece *piece);
     static PieceSaveInfo savePiece(const PieceInfo* piece);
-
   
     static LevelSpec loadLevel(const u8 *ptr);
     static void saveLevel(const LevelSpec& level, u8 **ptr, size_t *length);
@@ -108,6 +108,7 @@ class Files
     static LevelPack* packAt(u32 index) { return &packs[index]; }
     static u32 packCount() { return static_cast<u32>(packs.size()); }
   
+
   friend struct PieceInfo;
 };
   
