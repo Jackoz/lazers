@@ -109,6 +109,13 @@ void Files::decode(const char *input, size_t length, u8 **outputPtr, size_t *out
   }
 }
 
+
+
+PieceInfo::PieceInfo(PieceType type)
+{
+  spec = Files::specForPiece(type);
+}
+
 struct PieceInfoSpec
 {
   PieceType type;
@@ -259,24 +266,23 @@ vector<LevelPack> Files::packs = {
   })
 };
 
-PieceInfo Files::loadPiece(std::istream is, Field *field)
+PieceInfo Files::loadPiece(const u8 *ptr)
 {
-  char buffer[PIECE_INFO_SIZE];
-  is.read(buffer, PIECE_INFO_SIZE);
+  //char buffer[PIECE_INFO_SIZE];
+  //is.read(buffer, PIECE_INFO_SIZE);
   
-  PieceType type = pieceForChar(buffer[0]);
-  PieceInfoSpec *spec = specForPiece(type);
-  PieceInfo info;
+  PieceType type = pieceForChar(ptr[0] & 0x7F);
+  PieceInfo info(type);
   
-  if (spec)
+  if (info.spec)
   {
-    info.spec = spec;
-    info.x = (buffer[1] & 0xF0) >> 4;
-    info.y = buffer[1] & 0x0F;
-    info.color = static_cast<LaserColor>((buffer[2] >> 3) & 0x07);
-    info.direction = static_cast<Direction>(buffer[2] & 0x07);
-    info.roteable = (buffer[2] & 0x80) != 0;
-    info.moveable = (buffer[2] & 0x40) != 0;
+    info.x = (ptr[1] & 0xF0) >> 4;
+    info.y = ptr[1] & 0x0F;
+    info.color = static_cast<LaserColor>((ptr[2] >> 3) & 0x07);
+    info.direction = static_cast<Direction>(ptr[2] & 0x07);
+    info.roteable = (ptr[2] & 0x80) != 0;
+    info.moveable = (ptr[2] & 0x40) != 0;
+    info.inventory = ptr[0] & 0x80;
   }
   else
     info.spec = nullptr;
@@ -289,6 +295,7 @@ PieceSaveInfo Files::savePiece(Piece *piece)
   PieceSaveInfo info;
   
   info.data[0] = charForPiece(piece->type());
+  // TODO: inventory
   Tile *tile = piece->getTile();
   info.data[1] = (tile->x << 4) | tile->y;
   info.data[2] = 0;
@@ -300,3 +307,65 @@ PieceSaveInfo Files::savePiece(Piece *piece)
     info.data[2] |= 0x40;
   return info;
 }
+
+PieceSaveInfo Files::savePiece(const PieceInfo* piece)
+{
+  PieceSaveInfo info;
+  
+  info.data[0] = piece->spec->mapping;
+  if (piece->inventory)
+    info.data[0] |= 0x80;
+  info.data[1] = (piece->x << 4) | piece->y;
+  info.data[2] = 0;
+  info.data[2] |= piece->direction;
+  info.data[2] |= (piece->color << 3);
+  if (piece->roteable)
+    info.data[2] |= 0x80;
+  if (piece->moveable)
+    info.data[2] |= 0x40;
+  
+  return info;
+}
+
+
+
+LevelSpec Files::loadLevel(const u8 *ptr)
+{
+  u8 nameLength = ptr[0];
+  u8 piecesCount = ptr[1];
+  
+  LevelSpec level = LevelSpec(string(reinterpret_cast<const char*>(ptr+2),nameLength));
+  
+  ptr += 2 + nameLength;
+  for (u32 i = 0; i < piecesCount; ++i)
+  {
+    level.add(loadPiece(ptr));
+    ptr += PIECE_INFO_SIZE;
+  }
+  
+  return level;
+}
+
+void Files::saveLevel(const LevelSpec& level, u8 **ptr, size_t *length)
+{
+  *length = 1 + 1 + level.name.length() + PIECE_INFO_SIZE*level.count();
+  *ptr = new u8[*length];
+  
+  u8 *optr = *ptr;
+  
+  optr[0] = static_cast<u8>(level.name.length());
+  optr[1] = static_cast<u8>(level.count());
+  strncpy(reinterpret_cast<char*>(optr+2), level.name.c_str(), level.name.length());
+  
+  optr += 1 + 1 + level.name.length();
+  
+  for (u32 i = 0; i < level.count(); ++i)
+  {
+    PieceSaveInfo info = savePiece(level.at(i));
+    memcpy(optr, info.data, PIECE_INFO_SIZE);
+    optr += 3;
+  }
+}
+
+
+

@@ -70,6 +70,7 @@ class Piece
   
   public:
     Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), tile(nullptr), field(field) { }
+    virtual ~Piece() { }
   
     Direction rotation() { return rotation_; }
     PieceType type() { return type_; }

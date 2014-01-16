@@ -24,6 +24,7 @@
 		04EEB4D7187E76F600CA4BFB /* tiles.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04EEB4BD187E72E200CA4BFB /* tiles.png */; };
 		04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CA18805A1B000E8E4E /* SDL_image.framework */; };
 		04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CB18805A1B000E8E4E /* SDL.framework */; };
+		04FC03B318876D940088949A /* aargon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04FC03B118876D780088949A /* aargon.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -70,6 +71,8 @@
 		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tiles.png; path = data/tiles.png; sourceTree = SOURCE_ROOT; };
 		04FA39CA18805A1B000E8E4E /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/../../../../../../../../Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
 		04FA39CB18805A1B000E8E4E /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		04FC03B118876D780088949A /* aargon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aargon.cpp; sourceTree = SOURCE_ROOT; };
+		04FC03B218876D780088949A /* aargon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aargon.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +148,8 @@
 				047785D31884D4E5004EB2ED /* game.cpp */,
 				047785CE18844B7F004EB2ED /* files.h */,
 				047785CD18844B7F004EB2ED /* files.cpp */,
+				04FC03B218876D780088949A /* aargon.h */,
+				04FC03B118876D780088949A /* aargon.cpp */,
 				04EEB4AF187E70EE00CA4BFB /* SDLMain.h */,
 				04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */,
 				04EEB48C187E705800CA4BFB /* Supporting Files */,
@@ -246,6 +251,7 @@
 				047785D51884D50C004EB2ED /* game.cpp in Sources */,
 				042BE7F0188636F100EB0DF0 /* view_level.cpp in Sources */,
 				042BE7F31886378600EB0DF0 /* view_levelselect.cpp in Sources */,
+				04FC03B318876D940088949A /* aargon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

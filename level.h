@@ -66,6 +66,8 @@ class Field
     std::list<Laser> lasers;
     std::list<Goal*> goals;
   
+    void resetLasers();
+  
   public:
     Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT])
     {
@@ -144,6 +146,25 @@ class Field
       
       
       updateLasers();
+    }
+  
+    void reset()
+    {
+      goals.clear();
+      
+      for (int i = 0; i < FIELD_WIDTH; ++i)
+        for (int j = 0; j < FIELD_HEIGHT; ++j)
+        {
+          Tile *tile = tileAt(i,j);
+          tile->resetLasers();
+
+          Piece *piece = tile->piece();
+          if (piece)
+          {
+            delete piece;
+            tile->place(nullptr);
+          }
+        }
     }
   
     void place(u8 x, u8 y, Piece *piece)

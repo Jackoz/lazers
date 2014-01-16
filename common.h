@@ -58,7 +58,7 @@ enum LaserColor : u8
   
 enum PieceType : u8
 {
-  PIECE_WALL,
+  PIECE_WALL = 0,
   PIECE_GLASS,
   PIECE_SOURCE,
   PIECE_MIRROR,
@@ -71,6 +71,7 @@ enum PieceType : u8
   PIECE_DSPLITTER, // TODO: rename
   PIECE_PRISM,
   PIECE_BENDER,
+  PIECE_REFRACTOR,
   PIECE_TWISTER,
   PIECE_FILTER,
   PIECE_ROUND_FILTER,
@@ -87,9 +88,15 @@ enum PieceType : u8
   PIECE_COMPLEX_PRISM, // TODO
   PIECE_THREE_WAY_SPLITTER, // TODO
   
+  PIECE_SELECTOR, // TODO (level pack 1, 1, 2) PARTE -> CAPIRE SELECTOR BIANCO (1, 13)
+  
+  PIECE_UFO, // TODO (level pack 1, 1, 4)
+  PIECE_CRYSTAL, // TODO (level pack 1, 1, 4)
+  
   PIECE_TNT, // TODO
   PIECE_SLIME, // TODO
   PIECE_MINE, // TODO
+  PIECE_VOID_HOLE, // TODO
 
   PIECE_STRICT_GOAL,
   PIECE_LOOSE_GOAL,

@@ -29,11 +29,13 @@ struct PieceInfo
   Direction direction;
   bool moveable;
   bool roteable;
+  bool inventory;
+  
+  PieceInfo(PieceType type);
 };
 
 struct PieceSaveInfo {
   u8 data[PIECE_INFO_SIZE];
-  u8 padding;
 };
 
 struct LevelSpec {
@@ -42,6 +44,10 @@ struct LevelSpec {
   
   public:
     LevelSpec(std::string name) : name(name) { }
+  
+    void add(PieceInfo piece) { pieces.push_back(piece); }
+    size_t count() const { return pieces.size(); }
+    const PieceInfo *at(u32 index) const { return &pieces[index]; }
   
     std::string name;
 };
@@ -83,12 +89,18 @@ class Files
     static void encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength);
     static void decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength);
   
-    static PieceInfo loadPiece(std::istream is, Field *field);
+    static PieceInfo loadPiece(const u8 *ptr);
     static PieceSaveInfo savePiece(Piece *piece);
+    static PieceSaveInfo savePiece(const PieceInfo* piece);
+
   
+    static LevelSpec loadLevel(const u8 *ptr);
+    static void saveLevel(const LevelSpec& level, u8 **ptr, size_t *length);
+
     static LevelPack* packAt(u32 index) { return &packs[index]; }
     static u32 packCount() { return static_cast<u32>(packs.size()); }
   
+  friend struct PieceInfo;
 };
   
 #endif
