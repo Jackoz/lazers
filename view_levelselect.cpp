@@ -15,9 +15,14 @@
 const u16 LIST_X = 20;
 const u16 LIST_Y = 30;
 const u16 LIST_DY = 10;
-const u16 LIST_SIZE = 8;
+const u16 LIST_SIZE = 14;
 
-LevelSelectView::LevelSelectView(Game *game) : View(game), offset(0), preview(nullptr), scaledPreview(nullptr), field(game->field)
+
+
+
+
+
+LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), scaledPreview(nullptr), field(game->field), levelList(LevelList(game))
 {
 
 }
@@ -33,19 +38,17 @@ void LevelSelectView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
-  Gfx::drawString(20, 10, "Pack name: %s (%s)", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 10, "- %s - by %s", game->pack->name.c_str(), game->pack->author.c_str());
 
   Gfx::drawString(20, 220, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
 
-  
-  
-  for (int i = 0; i < LIST_SIZE && i + offset < game->pack->count(); ++i)
+  for (int i = 0; i < levelList.LIST_SIZE; ++i)
   {
-    LevelSpec *spec = game->pack->at(offset+i);
+    LevelSpec *spec = levelList.get(i);
     
     Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, "%s%s", spec->name.c_str(), " \x1D");
     
-    if (i+offset == game->pack->selected)
+    if (levelList.isSelected(i))
       Gfx::blit(Gfx::ui, 0, 0, 4, 7, LIST_X-8, LIST_Y+LIST_DY*i);
   }
   
@@ -61,9 +64,6 @@ void LevelSelectView::draw()
 
 void LevelSelectView::handleEvent(SDL_Event &event)
 {
-  u32 minOffset = offset;
-  u32 maxOffset = offset + LIST_SIZE - 1;
-  
   switch(event.type)
   {
     case SDL_KEYDOWN:			// Button press
@@ -74,74 +74,28 @@ void LevelSelectView::handleEvent(SDL_Event &event)
         
         case KEY_DOWN:
         {
-          if (game->pack->selected < game->pack->count() - 1)
-          {
-            ++game->pack->selected;
+          if (levelList.down())
             rebuildPreview();
-            
-            if (game->pack->selected > maxOffset)
-              ++offset;
-          }
           break;
         }
         case KEY_UP:
         {
-          if (game->pack->selected > 0)
-          {
-            --game->pack->selected;
+          if (levelList.up())
             rebuildPreview();
-            
-            if (game->pack->selected < minOffset)
-              --offset;
-          }
           break;
         }
           
         case KEY_L:
         {          
-          if (game->pack->selected > minOffset)
-          {
-            game->pack->selected = minOffset;
+          if (levelList.prevPage())
             rebuildPreview();
-          }
-          else
-          {
-            if (offset > 0)
-            {
-              u8 delta = LIST_SIZE <= offset ? LIST_SIZE : offset;
-              offset -= delta;
-              game->pack->selected -= delta;
-              rebuildPreview();
-            }
-          }
           break;
         }
           
         case KEY_R:
         {
-          if (game->pack->selected < maxOffset)
-          {
-            game->pack->selected = maxOffset;
+          if (levelList.nextPage())
             rebuildPreview();
-          }
-          else
-          {
-            if (offset < game->pack->count()-1)
-            {
-              if (game->pack->selected+LIST_SIZE <= game->pack->count()-1)
-              {
-                offset += LIST_SIZE;
-                game->pack->selected += LIST_SIZE;
-                rebuildPreview();
-              }
-              else
-              {
-                offset = game->pack->count() - LIST_SIZE;
-                game->pack->selected = game->pack->count()-1;
-                rebuildPreview();
-              }
-            }
-          }
           break;
         }
           

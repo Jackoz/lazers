@@ -63,7 +63,7 @@ void Gfx::init()
     ui = IMG_Load("./ui.png");
   #endif
   
-  SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
+  //SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
 }
 
 SDL_Surface *Gfx::generateSurface(u16 w, u16 h)
