@@ -51,13 +51,14 @@ struct LevelSpec {
     std::vector<PieceInfo> pieces;
   
   public:
-    LevelSpec(std::string name) : name(name) { }
+    LevelSpec(std::string name) : name(name), solved(false) { }
   
     void add(PieceInfo piece) { pieces.push_back(piece); }
     size_t count() const { return pieces.size(); }
     const PieceInfo *at(u32 index) const { return &pieces[index]; }
   
     std::string name;
+    bool solved;
 };
 
 class LevelPack {
@@ -65,16 +66,17 @@ class LevelPack {
     std::vector<LevelSpec> levels;
   
   public:
-    LevelPack(std::string name, std::string author, std::vector<LevelSpec> lvls) : LevelPack(name, author) {
+    LevelPack(std::string name, std::string author, std::string filename, std::vector<LevelSpec> lvls) : LevelPack(name, author, filename) {
       levels.insert(levels.begin(), lvls.begin(), lvls.end());
     }
-    LevelPack(std::string name, std::string author) : name(name), author(author), selected(0) { }
+    LevelPack(std::string name, std::string author, std::string filename) : name(name), author(author), filename(filename), selected(0) { }
     void addLevel(LevelSpec level) { levels.push_back(level); }
     u32 count() { return static_cast<u32>(levels.size()); }
     LevelSpec *at(u32 index) { return &levels[index]; }
   
     std::string name;
     std::string author;
+    std::string filename;
     u32 selected;
 };
 
@@ -104,6 +106,9 @@ class Files
   
     static LevelSpec loadLevel(const u8 *ptr);
     static void saveLevel(const LevelSpec& level, u8 **ptr, size_t *length);
+  
+    static void loadSolvedStatus();
+    static void saveSolvedStatus();
 
     static LevelPack* packAt(u32 index) { return &packs[index]; }
     static u32 packCount() { return static_cast<u32>(packs.size()); }

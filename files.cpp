@@ -256,7 +256,7 @@ u8 Files::charForDirection(Direction dir)
 // type x y color direction roteable moveable
 
 vector<LevelPack> Files::packs = {
-  LevelPack("Baffling Beams", "Twilight Games")
+  LevelPack("Aargon Deluxe: Easy", "Twilight Games", "aargon-deluxe-easy")
 };
 
 PieceInfo Files::loadPiece(const u8 *ptr)
@@ -358,6 +358,89 @@ void Files::saveLevel(const LevelSpec& level, u8 **ptr, size_t *length)
     memcpy(optr, info.data, PIECE_INFO_SIZE);
     optr += 3;
   }
+}
+
+
+const string PATH_SAVE = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/save.dat";
+
+void Files::loadSolvedStatus()
+{
+  ifstream in = ifstream(PATH_SAVE);
+  string line;
+  
+  if (in)
+  {
+    while (getline(in, line))
+    {
+      u8 *output;
+      size_t outputLength;
+      
+      decode(line.c_str(), line.length(), &output, &outputLength);
+      
+      string packName = string(reinterpret_cast<const char *>(output+1), output[0]);
+      
+      for (LevelPack &pack : packs)
+      {
+        if (pack.filename == packName)
+        {
+          u8 *status = output + 1 + output[0];
+          
+          for (int i = 0; i < pack.count(); ++i)
+          {
+            int k = i%8;
+            int b = i/8;
+            
+            if (status[b] & (1 << k))
+              pack.at(i)->solved = true;
+          }
+
+          break;
+        }
+      }
+      
+      delete [] output;
+    }
+  }
+}
+
+void Files::saveSolvedStatus()
+{  
+  FILE *out = fopen(PATH_SAVE.c_str(), "wb");
+  
+  for (LevelPack &pack : packs)
+  {
+    stringstream ss;
+    
+    ss << static_cast<char>(pack.filename.length());
+    ss << pack.filename;
+    
+    u32 steps = pack.count() / 8 + (pack.count() % 8 != 0 ? 1 : 0);
+    
+    for (u32 i = 0; i < steps; ++i)
+    {
+      u8 byte = 0;
+      
+      for (u32 k = 0; k < 8 && i*8 + k < pack.count(); ++k)
+        if (pack.at(i*8 + k)->solved)
+        {
+          byte |= 1 << k;
+        }
+          
+      ss << static_cast<char>(byte);
+    }
+    
+    string result = ss.str();
+    
+    char *output;
+    size_t outputLength;
+    encode(reinterpret_cast<const u8*>(result.c_str()), result.length(), &output, &outputLength);
+    fwrite(output, sizeof(char), outputLength, out);
+    fwrite("\n", sizeof(char), 1, out);
+    delete [] output;
+  }
+  
+  fclose(out);
+  
 }
 
 

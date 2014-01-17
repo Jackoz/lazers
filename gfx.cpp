@@ -278,7 +278,29 @@ u8 Gfx::charWidth(char c)
   }
 }
 
-void Gfx::drawString(int x, int y, const char *text, ...)
+const u16 space = 3;
+
+
+u16 Gfx::stringWidth(const char *text)
+{
+  u16 len = strlen(text);
+  u16 strLen = 0;
+
+  for (u16 i = 0; i < len; ++i)
+  {
+    char c = text[i];
+
+    if (c == ' ')
+      strLen += space;
+    else
+      strLen += charWidth(c);
+  }
+  
+  return strLen;
+}
+
+
+void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
 {
   char buffer[64];
   va_list args;
@@ -286,10 +308,14 @@ void Gfx::drawString(int x, int y, const char *text, ...)
   vsnprintf (buffer, 64, text, args);
   va_end(args);
   
+  if (centered)
+  {
+    u16 length = stringWidth(buffer);
+    x -= length/2;
+  }
   
   u16 len = strlen(buffer);
   u16 dy = 9;
-  u16 space = 3;
   
   SDL_Rect rect;
   SDL_Rect out = ccr(x, y, 0, 0);

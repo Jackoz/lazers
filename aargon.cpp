@@ -331,12 +331,12 @@ void Aargon::parseLevels()
   // Creepy 3 - DONE
   // Deluxe 4 - DONE
   // Demo Level Set - SKIP?
-  // Hospital 4 -
+  // Hospital 4 - DONE
   // Level Pack 1 4 - DONE
   // Smooth Sailing - DONE
   // Tutorial - SKIP?
   
-  string pack = "Hospital";
+  string pack = "Deluxe";
   int skill = 3;
   
   for (int j = 1; j <= 4; ++j)

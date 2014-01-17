@@ -32,6 +32,7 @@ void Game::init()
   printf("ENCODED: %.*s (%d)\n",(u32)encodedLength, encoded, (u32)encodedLength);
   printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
   Aargon::parseLevels();
+  Files::loadSolvedStatus();
   
   pack = Files::packAt(0);
   

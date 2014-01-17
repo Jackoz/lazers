@@ -52,6 +52,8 @@ Piece* Field::generatePiece(const PieceInfo *info)
 
 void Field::load(LevelSpec* level)
 {
+  this->level = level;
+  
   u8 curInvSlot = 0;
   
   for (u32 i = 0; i < level->count(); ++i)
@@ -157,6 +159,9 @@ void Field::updateLasers()
     
     it = lasers.erase(it);
   }
+  
+  if (checkForWin() && !level->solved)
+    level->solved = true;
 }
 
 bool Field::checkForWin()

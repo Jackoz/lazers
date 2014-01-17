@@ -38,19 +38,22 @@ void LevelSelectView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
-  Gfx::drawString(20, 10, "- %s - by %s", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 10, false, "- %s - by %s", game->pack->name.c_str(), game->pack->author.c_str());
 
-  Gfx::drawString(20, 220, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
 
   for (int i = 0; i < levelList.LIST_SIZE; ++i)
   {
     LevelSpec *spec = levelList.get(i);
     
-    Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, "%s%s", spec->name.c_str(), " \x1D");
+    Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, false, "%s%s", spec->name.c_str(), spec->solved ? " \x1D" : "");
     
     if (levelList.isSelected(i))
       Gfx::blit(Gfx::ui, 0, 0, 4, 7, LIST_X-8, LIST_Y+LIST_DY*i);
   }
+  
+  Gfx::drawString(LIST_X+30, LIST_Y+LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
+
   
 
   Gfx::blit(scaledPreview, 0, 0, 160, 150, 170, 30);
@@ -70,8 +73,13 @@ void LevelSelectView::handleEvent(SDL_Event &event)
     {
       switch(event.key.keysym.sym)
       {
-        case KEY_START: game->quit(); break;
-        
+        case KEY_START:
+        {
+          Files::saveSolvedStatus();
+          game->quit();
+          break;
+        }
+
         case KEY_DOWN:
         {
           if (levelList.down())

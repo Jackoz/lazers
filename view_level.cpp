@@ -135,6 +135,7 @@ void LevelView::draw()
   Gfx::lock();
   
   Gfx::rect(coordX(position->x, true), coordY(position->y), TILE_SIZE, TILE_SIZE, Gfx::ccc(180, 0, 0));
+  Gfx::rect(coordX(position->x, true)+1, coordY(position->y)+1, TILE_SIZE-2, TILE_SIZE-2, Gfx::ccc(180, 0, 0));
   
   if (selectedTile)
     Gfx::rect(coordX(selectedTile->x, true), coordY(selectedTile->y), TILE_SIZE, TILE_SIZE, Gfx::ccc(240, 240, 0));
@@ -144,7 +145,42 @@ void LevelView::draw()
   drawField(field, Gfx::screen, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
   drawInventory(field, Gfx::screen, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y);
   
-  Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
+  
+  Gfx::drawString(GFX_FIELD_POS_X + FIELD_WIDTH*TILE_SIZE/2, 5, true, "%s%s", field->level->name.c_str(), field->level->solved ? " \x1D" : "");
+
+  // 245, 110
+  
+  const int BASE_X = 80;
+  const int BASE_Y = GFX_FIELD_POS_X + FIELD_HEIGHT*TILE_SIZE + 20;
+  const int STEP = 14;
+  
+  if (position == &iposition)
+    Gfx::drawString(BASE_X, BASE_Y, true, "Y: to field");
+  else
+    Gfx::drawString(BASE_X, BASE_Y, true, "Y: to inventory");
+  
+  Tile *curTile = field->tileAt(*position);
+  
+  //if (!selectedTile && curTile->piece() && curTile->piece()->canBeMoved())
+  //  Gfx::drawString(10, FIELD_HEIGHT*TILE_SIZE+28, "B: pick up piece");
+
+  if (!selectedTile && curTile->piece() && curTile->piece()->canBeMoved())
+    Gfx::drawString(BASE_X, BASE_Y + STEP*2, true, "B: pick up");
+  else if (selectedTile && curTile == selectedTile)
+    Gfx::drawString(BASE_X, BASE_Y + STEP*2, true, "B: drop");
+  else if (selectedTile && !curTile->piece())
+    Gfx::drawString(BASE_X, BASE_Y + STEP*2, true, "B: drop");
+  else if (selectedTile && curTile->piece())
+    Gfx::drawString(BASE_X, BASE_Y + STEP*2, true, "B: swap");
+
+  
+  if (curTile->piece() && curTile->piece()->canBeRotated())
+  {
+    Gfx::drawString(BASE_X - 40, BASE_Y + STEP, true, "X: rotate left");
+    Gfx::drawString(BASE_X + 40, BASE_Y + STEP, true, "A: rotate right");
+  }
+  
+  //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
   
   Gfx::postDraw();
 }
