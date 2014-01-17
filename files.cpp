@@ -257,6 +257,7 @@ u8 Files::charForDirection(Direction dir)
 // type x y color direction roteable moveable
 
 vector<LevelPack> Files::packs;
+u32 Files::selectedPack = 0;
 
 PieceInfo Files::loadPiece(const u8 *ptr)
 {
@@ -499,7 +500,10 @@ void Files::loadSolvedStatus()
             int b = i/8;
             
             if (status[b] & (1 << k))
+            {
               pack.at(i)->solved = true;
+              ++pack.solvedCount;
+            }
           }
 
           break;

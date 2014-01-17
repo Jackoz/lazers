@@ -16,6 +16,7 @@
 		047785CF18844BF7004EB2ED /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785CD18844B7F004EB2ED /* files.cpp */; };
 		047785D21884CED9004EB2ED /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D01884CEB0004EB2ED /* gfx.cpp */; };
 		047785D51884D50C004EB2ED /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D31884D4E5004EB2ED /* game.cpp */; };
+		04D7535B1889941D00595933 /* view_packselect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D75359188993DE00595933 /* view_packselect.cpp */; };
 		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
 		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
 		04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB488187E705800CA4BFB /* AppKit.framework */; };
@@ -57,6 +58,8 @@
 		047785D11884CEB0004EB2ED /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = SOURCE_ROOT; };
 		047785D31884D4E5004EB2ED /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = SOURCE_ROOT; };
 		047785D41884D4E5004EB2ED /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = SOURCE_ROOT; };
+		04D75359188993DE00595933 /* view_packselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_packselect.cpp; sourceTree = SOURCE_ROOT; };
+		04D7535A188993DE00595933 /* view_packselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_packselect.h; sourceTree = SOURCE_ROOT; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04EEB485187E705800CA4BFB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		04EEB488187E705800CA4BFB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -144,6 +147,8 @@
 				042BE7EE188636D900EB0DF0 /* view_level.cpp */,
 				042BE7F21886378000EB0DF0 /* view_levelselect.h */,
 				042BE7F11886378000EB0DF0 /* view_levelselect.cpp */,
+				04D7535A188993DE00595933 /* view_packselect.h */,
+				04D75359188993DE00595933 /* view_packselect.cpp */,
 				047785D41884D4E5004EB2ED /* game.h */,
 				047785D31884D4E5004EB2ED /* game.cpp */,
 				047785CE18844B7F004EB2ED /* files.h */,
@@ -251,6 +256,7 @@
 				047785D51884D50C004EB2ED /* game.cpp in Sources */,
 				042BE7F0188636F100EB0DF0 /* view_level.cpp in Sources */,
 				042BE7F31886378600EB0DF0 /* view_levelselect.cpp in Sources */,
+				04D7535B1889941D00595933 /* view_packselect.cpp in Sources */,
 				04FC03B318876D940088949A /* aargon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

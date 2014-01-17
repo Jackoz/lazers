@@ -42,7 +42,7 @@ void LevelSelectView::draw()
 
   Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
 
-  for (int i = 0; i < levelList.LIST_SIZE; ++i)
+  for (int i = 0; i < levelList.hasNext(i); ++i)
   {
     LevelSpec *spec = levelList.get(i);
     

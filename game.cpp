@@ -11,10 +11,11 @@
 #include "gfx.h"
 #include "view_level.h"
 #include "view_levelselect.h"
+#include "view_packselect.h"
 
 #include "aargon.h"
 
-Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this)}, view(views[1]), overView(nullptr)
+Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[2]), overView(nullptr)
 {
 
 }

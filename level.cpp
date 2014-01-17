@@ -161,7 +161,10 @@ void Field::updateLasers()
   }
   
   if (checkForWin() && !level->solved)
+  {
     level->solved = true;
+    ++Files::packAt(Files::selectedPack)->solvedCount;
+  }
 }
 
 bool Field::checkForWin()

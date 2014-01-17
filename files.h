@@ -69,7 +69,7 @@ class LevelPack {
     LevelPack(std::string name, std::string author, std::string filename, std::vector<LevelSpec> lvls) : LevelPack(name, author, filename) {
       levels.insert(levels.begin(), lvls.begin(), lvls.end());
     }
-    LevelPack(std::string name, std::string author, std::string filename) : name(name), author(author), filename(filename), selected(0) { }
+    LevelPack(std::string name, std::string author, std::string filename) : name(name), author(author), filename(filename), selected(0), solvedCount(0) { }
     void addLevel(LevelSpec level) { levels.push_back(level); }
     u32 count() { return static_cast<u32>(levels.size()); }
     LevelSpec *at(u32 index) { return &levels[index]; }
@@ -78,6 +78,7 @@ class LevelPack {
     std::string author;
     std::string filename;
     u32 selected;
+    u32 solvedCount;
 };
 
 class Files
@@ -118,6 +119,7 @@ class Files
     static void addPack(LevelPack pack) { packs.push_back(pack); };
     static LevelPack* packAt(u32 index) { return &packs[index]; }
     static u32 packCount() { return static_cast<u32>(packs.size()); }
+    static u32 selectedPack;
   
 
   friend struct PieceInfo;
