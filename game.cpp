@@ -31,10 +31,13 @@ void Game::init()
   printf("  INPUT: %s (%d)\n",input, (u32)strlen(input));
   printf("ENCODED: %.*s (%d)\n",(u32)encodedLength, encoded, (u32)encodedLength);
   printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
-  Aargon::parseLevels();
+  //Aargon::parseLevels();
+  Files::loadPacks();
+  
   Files::loadSolvedStatus();
   
   pack = Files::packAt(0);
+  //Files::savePack(Files::packAt(0));
   
   view->activate();
 }

@@ -336,6 +336,8 @@ void Aargon::parseLevels()
   // Smooth Sailing - DONE
   // Tutorial - SKIP?
   
+  LevelPack npack = LevelPack("Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy");
+  
   string pack = "Deluxe";
   int skill = 3;
   
@@ -350,6 +352,8 @@ void Aargon::parseLevels()
     ss << "Level_0";
     if (i < 10) ss << '0';
     ss << i << ".map";
-    Files::packAt(0)->addLevel(parseLevel(ss.str()));
+    npack.addLevel(parseLevel(ss.str()));
   }
+  
+  Files::addPack(npack);
 }

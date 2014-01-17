@@ -105,11 +105,17 @@ class Files
     static PieceSaveInfo savePiece(const PieceInfo* piece);
   
     static LevelSpec loadLevel(const u8 *ptr);
-    static void saveLevel(const LevelSpec& level, u8 **ptr, size_t *length);
+    static void saveLevel(const LevelSpec* level, u8 **ptr, size_t *length);
   
     static void loadSolvedStatus();
     static void saveSolvedStatus();
-
+  
+    static std::vector<std::string> findFiles(std::string path, const char *ext);
+    static void loadPacks();
+    static LevelPack loadPack(std::string filename);
+    static void savePack(LevelPack *pack);
+  
+    static void addPack(LevelPack pack) { packs.push_back(pack); };
     static LevelPack* packAt(u32 index) { return &packs[index]; }
     static u32 packCount() { return static_cast<u32>(packs.size()); }
   
