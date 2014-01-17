@@ -50,6 +50,8 @@ struct Laser
     else if (delta >= 8) delta %= 8;
     return static_cast<Direction>(delta);
   }
+  
+  bool operator==(const Laser &o) const { return (position.x == o.position.x && position.y == o.position.y && color == o.color && direction == o.direction); }
 };
 
 class Field;
@@ -348,6 +350,21 @@ class Splitter : public Piece
     Position gfxTile() { return Position(rotation_, 2); }
 };
 
+class ThreeWaySplitter : public Piece
+{
+public:
+  ThreeWaySplitter(Direction rotation, Field *field) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_ + 8, 17); }
+};
+
 class StarSplitter : public Piece
 {
 public:
@@ -392,7 +409,52 @@ public:
   
   Position gfxTile() { return Position(rotation_, 4); }
 };
+  
+class FlippedPrism : public Piece
+{
+public:
+  FlippedPrism(Direction rotation, Field *field) : Piece(PIECE_FLIPPED_PRISM, rotation, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_ + 8, 17); }
+};
+  
+class Selector : public Piece
+{
+public:
+  Selector(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_PRISM, rotation, color, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
+  void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_, 12 + color_); }
+};
 
+class Splicer : public Piece
+{
+public:
+  Splicer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SPLICER, rotation, color, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
+  void receiveLaser(Laser &laser);
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return roteable; }
+  
+  Position gfxTile() { return Position(rotation_, 12 + 7 + color_); }
+};
+  
 class Bender : public Piece
 {
 public:
@@ -618,6 +680,51 @@ public:
   bool canBeRotated() { return false; }
   
   Position gfxTile() { return Position(9, 7); }
+};
+
+class TNT : public Piece
+{
+public:
+  TNT(Field *field) : Piece(PIECE_TNT, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position(15, 7); }
+};
+
+class Slime : public Piece
+{
+public:
+  Slime(Field *field) : Piece(PIECE_SLIME, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position(8, 7); }
+};
+
+class Mine : public Piece
+{
+public:
+  Mine(Field *field) : Piece(PIECE_MINE, NORTH, COLOR_NONE, field) { }
+  
+  bool produceLaser() { return false; }
+  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
+  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
+  
+  bool canBeMoved() { return movable; }
+  bool canBeRotated() { return false; }
+  
+  Position gfxTile() { return Position(8, 8); }
 };
 
 

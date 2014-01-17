@@ -28,6 +28,21 @@ Piece* Field::generatePiece(const PieceInfo *info)
     case PIECE_FILTER: return new Filter(info->color, this);
     case PIECE_WALL: return new Wall(this);
     case PIECE_GLASS: return new Glass(this);
+    case PIECE_COLOR_SHIFTER: return new ColorShifter(info->direction, this);
+    case PIECE_PRISM: return new Prism(info->direction, this);
+    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info->direction, this);
+    case PIECE_TUNNEL: return new Tunnel(info->direction, this);
+    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info->direction, this);
+    case PIECE_POLARIZER: return new Polarizer(info->direction, info->color, this);
+    case PIECE_SELECTOR: return new Selector(info->direction, info->color, this);
+    case PIECE_SPLICER: return new Splicer(info->direction, info->color, this);
+    case PIECE_BENDER: return new Bender(this);
+    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info->direction, this);
+
+      
+    case PIECE_MINE: return new Mine(this);
+    case PIECE_TNT: return new TNT(this);
+    case PIECE_SLIME: return new Slime(this);
     // TODO: finire
     default: return nullptr;
   }
@@ -75,12 +90,18 @@ void Field::generateBeam(Position position, Direction direction, LaserColor colo
   if (beam.isValid())
   {
     lasers.push_back(beam);
-    tileAt(position.x, position.y)->colors[direction] |= color;
+    
+    Tile *tile = tileAt(position.x, position.y);
+    
+    if (!tile->piece() || tile->piece()->type() != PIECE_SOURCE)
+      tileAt(position.x, position.y)->colors[direction] |= color;
   }
 }
 
 void Field::updateLasers()
 {
+  beams.clear();
+  
   for (auto g : goals)
     g->reset();
   
@@ -93,8 +114,9 @@ void Field::updateLasers()
       
       if (piece && piece->produceLaser())
       {
-        Laser laser = Laser(Position(i+Position::directions[piece->rotation()][0],j+Position::directions[piece->rotation()][1]), piece->rotation(), piece->color());
-        lasers.push_back(laser);
+        generateBeam(Position(i,j), piece->rotation(), piece->color());
+        //Laser laser = Laser(Position(i+Position::directions[piece->rotation()][0],j+Position::directions[piece->rotation()][1]), piece->rotation(), piece->color());
+        //lasers.push_back(laser);
       }
     }
   
@@ -102,9 +124,15 @@ void Field::updateLasers()
   while (!lasers.empty())
   {
     Laser& laser = (*it);
-    
+
     while (laser.isValid())
     {
+      if (beams.find(laser) != beams.end())
+        break;
+      
+      beams.insert(laser);
+
+      
       Tile *tile = tileAt(laser.position);
       
       Piece *piece = tile->piece();
@@ -126,7 +154,7 @@ void Field::updateLasers()
         laser.position.shift(laser.direction);
       }
     }
-
+    
     it = lasers.erase(it);
   }
 }

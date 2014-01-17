@@ -11,9 +11,10 @@
 
 
 
-
+#include <cstdlib>
 
 #include <list>
+#include <unordered_set>
 
 #include <sstream>
 #include <string>
@@ -35,10 +36,10 @@ class Tile
   public:
     u8 colors[8];
     
-
     u8 x, y;
+    u8 variant;
     
-    Tile() : piece_{nullptr}, colors{COLOR_NONE}, x{0}, y{0} { }
+    Tile() : piece_{nullptr}, colors{COLOR_NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
     
     void resetLasers()
     {
@@ -53,7 +54,13 @@ class Tile
   
 
   
-  
+namespace std {
+  template <>
+  struct hash<Laser>
+  {
+    size_t operator()(const Laser& k) const { return (k.position.x << 24) | (k.position.y << 16) | (k.color << 8) | k.direction; }
+  };
+}
   
 
   
@@ -65,6 +72,7 @@ class Field
     Tile *inventory;
     std::list<Laser> lasers;
     std::list<Goal*> goals;
+    std::unordered_set<Laser> beams;
   
     void resetLasers();
   
@@ -153,6 +161,7 @@ class Field
     void reset()
     {
       goals.clear();
+      beams.clear();
       
       for (int i = 0; i < FIELD_WIDTH+INVENTORY_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)

@@ -111,12 +111,12 @@ void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
     }
 }
 
-void LevelView::drawGrid(int x, int y, int w, int h, SDL_Surface *screen)
+void LevelView::drawGrid(Field *field, int x, int y, int w, int h, SDL_Surface *screen)
 {
-  SDL_Rect bgRect = {176,264,16,16};
   for (int i = 0; i < w; ++i)
     for (int j = 0; j < h; ++j)
     {
+      SDL_Rect bgRect = Gfx::ccr(176+16*0,266,16,16);
       SDL_Rect tileRect = Gfx::ccr(x+i*TILE_SIZE, y+j*TILE_SIZE, 15, 15);
       SDL_BlitSurface(Gfx::tiles, &bgRect, screen, &tileRect);
     }
@@ -129,8 +129,8 @@ void LevelView::draw()
   
   // draw field
   
-  drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, FIELD_WIDTH, FIELD_HEIGHT, Gfx::screen);
-  drawGrid(GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT, Gfx::screen);
+  drawGrid(field, GFX_FIELD_POS_X, GFX_FIELD_POS_Y, FIELD_WIDTH, FIELD_HEIGHT, Gfx::screen);
+  drawGrid(field, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT, Gfx::screen);
 
   Gfx::lock();
   

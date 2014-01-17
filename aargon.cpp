@@ -43,6 +43,7 @@ s8 pieceType(char c)
   switch (c) {
     case '=': return PIECE_IGNORE; // wall
     case '#': return PIECE_WALL; // wall for title
+    case 'w': return PIECE_WALL;
     case ' ': return PIECE_IGNORE; // empty
       
     case '<': return PIECE_SPLITTER;
@@ -57,12 +58,16 @@ s8 pieceType(char c)
     case 'J': return PIECE_COLOR_SHIFTER;
     case 'R': return PIECE_REFRACTOR;
     case 'P': return PIECE_PRISM;
+    case 'M': return PIECE_FLIPPED_PRISM;
     case '%': return PIECE_DOUBLE_MIRROR;
     case 'W': return PIECE_TUNNEL;
     case 'm': return PIECE_MINE;
     case ':': return PIECE_POLARIZER;
-      
+    case 'y': return PIECE_THREE_WAY_SPLITTER;
     case 'I': return PIECE_SELECTOR;
+    case 'L': return PIECE_SPLICER;
+    case '@': return PIECE_BENDER;
+      
     case 'p': return PIECE_UFO;
     case 'c': return PIECE_CRYSTAL;
     case 'h': return PIECE_VOID_HOLE;
@@ -81,11 +86,14 @@ s8 baseDirection(PieceType type)
     case PIECE_DSPLITTER: return SOUTH;
     case PIECE_COLOR_SHIFTER: return EAST; // check
     case PIECE_REFRACTOR: return NORTH;
+    case PIECE_FLIPPED_PRISM: return NORTH;
     case PIECE_PRISM: return NORTH;
     case PIECE_DOUBLE_MIRROR: return SOUTH;
     case PIECE_TUNNEL: return NORTH;
     case PIECE_POLARIZER: return NORTH;
-    case PIECE_SELECTOR: return EAST; // check
+    case PIECE_SELECTOR: return EAST;
+    case PIECE_SPLICER: return EAST;
+
       
     default: return DIRECTION_IGNORE;
   }
@@ -102,10 +110,13 @@ bool canHaveRotation(PieceType type)
     case PIECE_COLOR_SHIFTER:
     case PIECE_REFRACTOR:
     case PIECE_PRISM:
+    case PIECE_FLIPPED_PRISM:
     case PIECE_DOUBLE_MIRROR:
     case PIECE_TUNNEL:
     case PIECE_POLARIZER:
     case PIECE_SELECTOR:
+    case PIECE_SPLICER:
+    case PIECE_THREE_WAY_SPLITTER:
       return true;
       
     case PIECE_STRICT_GOAL:
@@ -117,6 +128,7 @@ bool canHaveRotation(PieceType type)
     case PIECE_CRYSTAL:
     case PIECE_VOID_HOLE:
     case PIECE_WALL:
+    case PIECE_BENDER:
       return false;
       
     default: return false;
@@ -157,6 +169,9 @@ bool canHaveColor(PieceType type)
     case PIECE_CRYSTAL:
     case PIECE_VOID_HOLE:
     case PIECE_WALL:
+    case PIECE_THREE_WAY_SPLITTER:
+    case PIECE_BENDER:
+    case PIECE_FLIPPED_PRISM:
       return false;
       
     case PIECE_STRICT_GOAL:
@@ -164,6 +179,7 @@ bool canHaveColor(PieceType type)
     case PIECE_SOURCE:
     case PIECE_POLARIZER:
     case PIECE_SELECTOR:
+    case PIECE_SPLICER:
       return true;
       
     default: return false;
@@ -196,17 +212,21 @@ LevelSpec Aargon::parseLevel(string filename)
   
   for (int i = 0; i < tmpName.length(); ++i)
   {
-    if (i == 0 || tmpName[i-1] == ' ' || tmpName[i] == ' ')
-      nameBuffer << tmpName[i];
-    else if (tmpName[i] >= 'A' && tmpName[i] <= 'Z')
+    if (tmpName[i] >= 'A' && tmpName[i] <= 'Z' && i > 0 && tmpName[i-1] != ' ')
       nameBuffer << static_cast<char>(tmpName[i] - 'A' + 'a');
+    else
+      nameBuffer << tmpName[i];
   }
   
   LevelSpec spec(nameBuffer.str());
   
-  int INVENTORY_ROWS = 1;
+  int INVENTORY_ROWS;
   if (lines[1][12] == '=')
     INVENTORY_ROWS = 2;
+  else if (lines[1][8] == '=')
+    INVENTORY_ROWS = 1;
+  else
+    INVENTORY_ROWS = 0;
   
   for (int i = 1; i < 12; ++i)
   {
@@ -238,11 +258,11 @@ LevelSpec Aargon::parseLevel(string filename)
         
         ASSERT(info.spec, "spec mapping is null for " << data[0]);
         
-        info.inventory = j <= INVENTORY_ROWS;
+        info.inventory = INVENTORY_ROWS > 0 && j <= INVENTORY_ROWS;
         
         if (!info.inventory)
         {
-          info.x = j - (INVENTORY_ROWS + 2);
+          info.x = INVENTORY_ROWS == 0 ? (j - (INVENTORY_ROWS + 3)) : (j - (INVENTORY_ROWS + 2));
           info.y = i - 1;
         }
         
@@ -253,8 +273,8 @@ LevelSpec Aargon::parseLevel(string filename)
         else
           info.direction = NORTH;
         
-        ASSERT(!canHaveColor(pieceType) || color != COLOR_NONE || pieceType == PIECE_STRICT_GOAL, "X color specifier found for not a goal");
-        ASSERT(canHaveColor(pieceType) || data[2] == ' ' || pieceType == PIECE_WALL, "color is specified for piece " << data[0]);
+        ASSERT(!canHaveColor(pieceType) || color != COLOR_NONE || pieceType == PIECE_STRICT_GOAL || pieceType == PIECE_FILTER, "X color specifier found for not a goal");
+        //ASSERT(canHaveColor(pieceType) || data[2] == ' ' || pieceType == PIECE_WALL, "color is specified for piece " << data[0]);
         
         if (canHaveColor(pieceType))
           info.color = color;
@@ -307,11 +327,26 @@ void Aargon::parseLevels()
     }
   }*/
   
+  // Classic 4 - DONE
+  // Creepy 3 - DONE
+  // Deluxe 4 - DONE
+  // Demo Level Set - SKIP?
+  // Hospital 4 -
+  // Level Pack 1 4 - DONE
+  // Smooth Sailing - DONE
+  // Tutorial - SKIP?
+  
+  string pack = "Hospital";
+  int skill = 3;
+  
+  for (int j = 1; j <= 4; ++j)
   for (int i = 1; i <= 30; ++i)
   {
-    string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/SKILL1/";
+    string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/levels/";
     stringstream ss;
     ss << base;
+    ss << pack << "/" << "Levels/SKILL";
+    ss << j << "/";
     ss << "Level_0";
     if (i < 10) ss << '0';
     ss << i << ".map";

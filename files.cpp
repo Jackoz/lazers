@@ -132,6 +132,9 @@ PieceInfoSpec specs[PIECES_COUNT] =
   {PIECE_DSPLITTER, 'U', false, true},
   {PIECE_REFRACTOR, 'r', false, true},
   {PIECE_PRISM, 'p', false, true},
+  {PIECE_FLIPPED_PRISM, 'p', false, true},
+  {PIECE_SELECTOR, 's', true, true},
+  {PIECE_SPLICER, ' ', true, true},
   {PIECE_BENDER, 'B', false, false},
   {PIECE_TWISTER, 'b', false, false},
   {PIECE_FILTER, 'F', true, false},
@@ -152,8 +155,18 @@ PieceInfoSpec specs[PIECES_COUNT] =
   {PIECE_SLIME, 'm', false, false},
   {PIECE_MINE, 'e', false, false},
   {PIECE_STRICT_GOAL, 'V', true, false},
-  {PIECE_LOOSE_GOAL, 'v', true, false}
+  {PIECE_LOOSE_GOAL, 'v', true, false},
+  
+  {PIECE_UFO, 'f', false, false},
+  {PIECE_CRYSTAL, 'Y', false, false},
+  {PIECE_VOID_HOLE, 'a', false, false}
 };
+
+/*
+ case 'p': return PIECE_UFO;
+ case 'c': return PIECE_CRYSTAL;
+ case 'h': return PIECE_VOID_HOLE;
+ */
 
 u8 Files::charForPiece(PieceType type)
 {
