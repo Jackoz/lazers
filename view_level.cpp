@@ -11,6 +11,11 @@
 #include "gfx.h"
 #include <SDL/SDL.h>
 
+void LevelView::activate()
+{
+
+}
+
 void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < FIELD_WIDTH; ++x)

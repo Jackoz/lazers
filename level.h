@@ -73,11 +73,12 @@ class Field
     std::list<Laser> lasers;
     std::list<Goal*> goals;
     std::unordered_set<Laser> beams;
+    bool failed;
   
     void resetLasers();
   
   public:
-    Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT])
+    Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false)
     {
       for (int i = 0; i < FIELD_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)
@@ -162,6 +163,7 @@ class Field
     {
       goals.clear();
       beams.clear();
+      failed = false;
       
       for (int i = 0; i < FIELD_WIDTH+INVENTORY_WIDTH; ++i)
         for (int j = 0; j < FIELD_HEIGHT; ++j)
@@ -183,6 +185,8 @@ class Field
   
     Piece* generatePiece(const PieceInfo *info);
     void load(LevelSpec* level);
+  
+    void fail() { failed = true; }
   
     void place(u8 x, u8 y, Piece *piece)
     {

@@ -689,7 +689,7 @@ public:
   
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
+  void receiveLaser(Laser &laser); // TODO
   
   bool canBeMoved() { return movable; }
   bool canBeRotated() { return false; }

@@ -27,6 +27,7 @@ public:
   u32 minOffset() { return offset; }
   u32 maxOffset() { return offset + LIST_SIZE - 1; }
   bool isSelected(u32 i) { return i + offset == current(); }
+  void reset() { offset = 0; }
   
   virtual u32 current() = 0;
   virtual u32 count() = 0;

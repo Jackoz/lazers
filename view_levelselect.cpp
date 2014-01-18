@@ -33,6 +33,7 @@ void LevelSelectView::activate()
   if (!scaledPreview) scaledPreview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*7+5, FIELD_HEIGHT*7);
   
   levelList.set(0);
+  levelList.reset();
   
   rebuildPreview();
 }

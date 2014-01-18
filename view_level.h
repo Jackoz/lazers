@@ -33,6 +33,7 @@ public:
   LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), field(game->field) { }
   void handleEvent(SDL_Event &event);
   void draw();
+  void activate();
   
   static void drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by);
   static void drawGrid(Field *field, int x, int y, int w, int h, SDL_Surface *screen);

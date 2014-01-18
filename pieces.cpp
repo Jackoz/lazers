@@ -210,6 +210,7 @@ void Teleporter::receiveLaser(Laser &laser)
   laser.invalidate();
 }
 
+void TNT::receiveLaser(Laser &laser) { field->fail(); UNUSED(laser); }
 
 
 
