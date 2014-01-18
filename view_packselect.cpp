@@ -38,9 +38,9 @@ void PackSelectList::draw()
   
   Gfx::drawString(20, 10, false, "CHOOSE A LEVEL PACK");
 
-  Gfx::drawString(20, 220, false, "B: select pack    \x1F\x1E: choose pack    A: back", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name.c_str(), game->pack->author.c_str());
 
-  for (int i = 0; i < levelList.hasNext(i); ++i)
+  for (int i = 0; levelList.hasNext(i); ++i)
   {
     LevelPack *spec = levelList.get(i);
     
@@ -69,11 +69,10 @@ void PackSelectList::handleEvent(SDL_Event &event)
       {
         case KEY_START:
         {
-          Files::saveSolvedStatus();
           game->quit();
           break;
         }
-
+          
         case KEY_DOWN:
         {
           if (levelList.down())
@@ -103,7 +102,8 @@ void PackSelectList::handleEvent(SDL_Event &event)
           
         case KEY_B:
         {
-          game->switchView(VIEW_LEVEL);
+          game->pack = Files::packAt(Files::selectedPack);
+          game->switchView(VIEW_LEVEL_SELECT);
         }
           
         default: break;

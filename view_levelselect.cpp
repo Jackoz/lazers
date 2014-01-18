@@ -31,6 +31,9 @@ void LevelSelectView::activate()
 {
   if (!preview) preview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*TILE_SIZE+10, FIELD_HEIGHT*TILE_SIZE);
   if (!scaledPreview) scaledPreview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*7+5, FIELD_HEIGHT*7);
+  
+  levelList.set(0);
+  
   rebuildPreview();
 }
 
@@ -42,7 +45,7 @@ void LevelSelectView::draw()
 
   Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
 
-  for (int i = 0; i < levelList.hasNext(i); ++i)
+  for (int i = 0; levelList.hasNext(i); ++i)
   {
     LevelSpec *spec = levelList.get(i);
     
@@ -75,8 +78,14 @@ void LevelSelectView::handleEvent(SDL_Event &event)
       {
         case KEY_START:
         {
-          Files::saveSolvedStatus();
           game->quit();
+          break;
+        }
+          
+        case KEY_SELECT:
+        {
+          //game->pack = Files::packAt(0);
+          game->switchView(VIEW_PACK_SELECT);
           break;
         }
 

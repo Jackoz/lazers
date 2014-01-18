@@ -38,7 +38,9 @@ void Game::init()
   Files::loadSolvedStatus();
   
   pack = Files::packAt(0);
-  //Files::savePack(Files::packAt(0));
+  
+  //for (int i = 0; i < Files::packCount(); ++i)
+  //  Files::savePack(Files::packAt(i));
   
   view->activate();
 }
@@ -65,6 +67,7 @@ void Game::switchView(ViewType type)
 {
   view->deactivate();
   view = views[type];
+  view->activate();
 }
 
 

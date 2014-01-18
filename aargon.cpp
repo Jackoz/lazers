@@ -303,6 +303,16 @@ LevelSpec Aargon::parseLevel(string filename)
   return spec;
 }
 
+struct AargonPack
+{
+  string name;
+  string author;
+  string filename;
+  
+  string folderName;
+  int skillNumber;
+};
+
 void Aargon::parseLevels()
 {
   /*string base = "/Users/jack/Desktop/Twilight/Aargon Deluxe/Level Packs/";
@@ -336,7 +346,38 @@ void Aargon::parseLevels()
   // Smooth Sailing - DONE
   // Tutorial - SKIP?
   
-  LevelPack npack = LevelPack("Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy");
+  vector<AargonPack> apacks;
+  apacks.push_back({"Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy", "Deluxe", 1});
+  apacks.push_back({"Aargon Deluxe (Medium)", "Twilight Games", "aargon-deluxe-medium", "Deluxe", 2});
+  apacks.push_back({"Aargon Deluxe (Hard)", "Twilight Games", "aargon-deluxe-hard", "Deluxe", 3});
+  apacks.push_back({"Aargon Deluxe (Extreme)", "Twilight Games", "aargon-deluxe-extreme", "Deluxe", 4});
+  
+  
+  
+  for (const AargonPack &apack : apacks)
+  {
+    LevelPack npack = LevelPack(apack.name, apack.author, apack.filename);
+
+    for (int i = 1; i <= 30; ++i)
+    {
+      string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/levels/";
+      stringstream ss;
+      ss << base << apack.folderName << "/" << "Levels/SKILL";
+      ss << apack.skillNumber << "/";
+      ss << "Level_0";
+      if (i < 10) ss << '0';
+      ss << i << ".map";
+      
+      npack.addLevel(parseLevel(ss.str()));
+    }
+    
+    Files::addPack(npack);
+
+
+  }
+  
+  
+  /*LevelPack npack = LevelPack("Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy");
   
   string pack = "Deluxe";
   int skill = 3;
@@ -355,5 +396,5 @@ void Aargon::parseLevels()
     npack.addLevel(parseLevel(ss.str()));
   }
   
-  Files::addPack(npack);
+  Files::addPack(npack);*/
 }

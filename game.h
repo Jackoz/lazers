@@ -33,7 +33,7 @@ public:
   virtual void set(u32 i) = 0;
   virtual T get(u32 i) = 0;
   
-  bool hasNext(u32 i) { return i + offset < count(); }  
+  bool hasNext(u32 i) { return i < LIST_SIZE && i + offset < count(); }
   
   bool down() {
     if (current() < count() - 1)
@@ -153,7 +153,7 @@ class Game
     Game();
     void init();
     void loop();
-    void quit() { running = false; }
+    void quit() { Files::saveSolvedStatus(); running = false; }
   
     void switchView(ViewType type);
   
