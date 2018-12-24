@@ -15,10 +15,10 @@
 #define OSX
 #define SCALE (2)
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #ifdef SCALE
-#include <SDL_image/SDL_image.h>
+#include <SDL_image.h>
 #else
 #include <SDL_image.h>
 #endif

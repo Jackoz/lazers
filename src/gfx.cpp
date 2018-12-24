@@ -10,6 +10,7 @@
 
 #include "game.h"
 #include <cmath>
+#include <cassert>
 
 #define PIXEL(s, w, x, y) s[(y)*(w) + x]
 SDL_PixelFormat *Gfx::format = nullptr;
@@ -51,10 +52,11 @@ void Gfx::init()
   Gfx::setFormat(screen->format);
   
   #ifdef SCALE
-    //"/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers""/Users/jack/Desktop/lazers/cpp-lazers/data/
-    tiles = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/tiles.png");
-    font = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/font.png");
-    ui = IMG_Load("/Users/jack/Documents/Dev/xcode/Lazers/Lazers/lazers/data/ui.png");
+    tiles = IMG_Load("data/tiles.png");
+    font = IMG_Load("data/font.png");
+    ui = IMG_Load("data/ui.png");
+  
+  assert(tiles && font && ui);
 
 
   #else

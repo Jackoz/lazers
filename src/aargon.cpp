@@ -360,7 +360,7 @@ void Aargon::parseLevels()
 
     for (int i = 1; i <= 30; ++i)
     {
-      string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/levels/";
+      string base = "/Users/jack/Documents/dev/c++/lazers/data/packs/aargon/";
       stringstream ss;
       ss << base << apack.folderName << "/" << "Levels/SKILL";
       ss << apack.skillNumber << "/";
@@ -368,7 +368,9 @@ void Aargon::parseLevels()
       if (i < 10) ss << '0';
       ss << i << ".map";
       
-      npack.addLevel(parseLevel(ss.str()));
+      const std::string path = ss.str();
+      
+      npack.addLevel(parseLevel(path));
     }
     
     Files::addPack(npack);

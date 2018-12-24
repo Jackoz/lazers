@@ -11,7 +11,7 @@
 
 #include "common.h"
 
-#include <SDL/SDL.h>
+#include "SDL.h"
 #include <list>
 
 #define UNUSED(x) (void)(x)
