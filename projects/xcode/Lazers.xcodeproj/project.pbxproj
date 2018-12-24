@@ -42,24 +42,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0401E18C187F885F00678A0F /* pieces.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pieces.cpp; sourceTree = SOURCE_ROOT; };
-		0401E18D187F885F00678A0F /* pieces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pieces.h; sourceTree = SOURCE_ROOT; };
-		0401E18E187F889200678A0F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = SOURCE_ROOT; };
-		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = SOURCE_ROOT; };
-		042BE7EC18860D8100EB0DF0 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = font.png; path = data/font.png; sourceTree = SOURCE_ROOT; };
-		042BE7EE188636D900EB0DF0 /* view_level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_level.cpp; sourceTree = SOURCE_ROOT; };
-		042BE7EF188636D900EB0DF0 /* view_level.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_level.h; sourceTree = SOURCE_ROOT; };
-		042BE7F11886378000EB0DF0 /* view_levelselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_levelselect.cpp; sourceTree = SOURCE_ROOT; };
-		042BE7F21886378000EB0DF0 /* view_levelselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_levelselect.h; sourceTree = SOURCE_ROOT; };
-		042BE7F418864A5E00EB0DF0 /* ui.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ui.png; path = data/ui.png; sourceTree = SOURCE_ROOT; };
-		047785CD18844B7F004EB2ED /* files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = files.cpp; sourceTree = SOURCE_ROOT; };
-		047785CE18844B7F004EB2ED /* files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = files.h; sourceTree = SOURCE_ROOT; };
-		047785D01884CEB0004EB2ED /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = SOURCE_ROOT; };
-		047785D11884CEB0004EB2ED /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = SOURCE_ROOT; };
-		047785D31884D4E5004EB2ED /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = SOURCE_ROOT; };
-		047785D41884D4E5004EB2ED /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = SOURCE_ROOT; };
-		04D75359188993DE00595933 /* view_packselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_packselect.cpp; sourceTree = SOURCE_ROOT; };
-		04D7535A188993DE00595933 /* view_packselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_packselect.h; sourceTree = SOURCE_ROOT; };
+		0401E18C187F885F00678A0F /* pieces.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pieces.cpp; sourceTree = "<group>"; };
+		0401E18D187F885F00678A0F /* pieces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pieces.h; sourceTree = "<group>"; };
+		0401E18E187F889200678A0F /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
+		0401E18F187F89B800678A0F /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = common.cpp; sourceTree = "<group>"; };
+		042BE7EC18860D8100EB0DF0 /* font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = font.png; sourceTree = "<group>"; };
+		042BE7EE188636D900EB0DF0 /* view_level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_level.cpp; sourceTree = "<group>"; };
+		042BE7EF188636D900EB0DF0 /* view_level.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_level.h; sourceTree = "<group>"; };
+		042BE7F11886378000EB0DF0 /* view_levelselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_levelselect.cpp; sourceTree = "<group>"; };
+		042BE7F21886378000EB0DF0 /* view_levelselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_levelselect.h; sourceTree = "<group>"; };
+		042BE7F418864A5E00EB0DF0 /* ui.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ui.png; sourceTree = "<group>"; };
+		047785CD18844B7F004EB2ED /* files.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = files.cpp; sourceTree = "<group>"; };
+		047785CE18844B7F004EB2ED /* files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = files.h; sourceTree = "<group>"; };
+		047785D01884CEB0004EB2ED /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = "<group>"; };
+		047785D11884CEB0004EB2ED /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = "<group>"; };
+		047785D31884D4E5004EB2ED /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
+		047785D41884D4E5004EB2ED /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		04D75359188993DE00595933 /* view_packselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_packselect.cpp; sourceTree = "<group>"; };
+		04D7535A188993DE00595933 /* view_packselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_packselect.h; sourceTree = "<group>"; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04EEB485187E705800CA4BFB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		04EEB488187E705800CA4BFB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -67,15 +67,15 @@
 		04EEB48D187E705800CA4BFB /* Lazers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Lazers-Info.plist"; sourceTree = SOURCE_ROOT; };
 		04EEB48F187E705800CA4BFB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		04EEB4A3187E706E00CA4BFB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		04EEB4AD187E70EE00CA4BFB /* level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = SOURCE_ROOT; };
-		04EEB4AE187E70EE00CA4BFB /* level.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = SOURCE_ROOT; };
-		04EEB4AF187E70EE00CA4BFB /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = SOURCE_ROOT; };
-		04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLMain.mm; sourceTree = SOURCE_ROOT; };
-		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tiles.png; path = data/tiles.png; sourceTree = SOURCE_ROOT; };
+		04EEB4AD187E70EE00CA4BFB /* level.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = level.cpp; sourceTree = "<group>"; };
+		04EEB4AE187E70EE00CA4BFB /* level.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = level.h; sourceTree = "<group>"; };
+		04EEB4AF187E70EE00CA4BFB /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLMain.mm; sourceTree = "<group>"; };
+		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles.png; sourceTree = "<group>"; };
 		04FA39CA18805A1B000E8E4E /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = /Users/jack/Documents/Dev/xcode/lazers/Lazers/Lazers/../../../../../../../../Library/Frameworks/SDL_image.framework; sourceTree = "<absolute>"; };
 		04FA39CB18805A1B000E8E4E /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
-		04FC03B118876D780088949A /* aargon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aargon.cpp; sourceTree = SOURCE_ROOT; };
-		04FC03B218876D780088949A /* aargon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aargon.h; sourceTree = SOURCE_ROOT; };
+		04FC03B118876D780088949A /* aargon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aargon.cpp; sourceTree = "<group>"; };
+		04FC03B218876D780088949A /* aargon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aargon.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				04EEB4B3187E72E200CA4BFB /* data */,
-				04EEB48B187E705800CA4BFB /* Lazers */,
+				04EEB48B187E705800CA4BFB /* src */,
 				04EEB484187E705800CA4BFB /* Frameworks */,
 				04EEB483187E705800CA4BFB /* Products */,
 			);
@@ -132,7 +132,7 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		04EEB48B187E705800CA4BFB /* Lazers */ = {
+		04EEB48B187E705800CA4BFB /* src */ = {
 			isa = PBXGroup;
 			children = (
 				0401E18E187F889200678A0F /* common.h */,
@@ -159,8 +159,9 @@
 				04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */,
 				04EEB48C187E705800CA4BFB /* Supporting Files */,
 			);
-			path = Lazers;
-			sourceTree = "<group>";
+			name = src;
+			path = ../../src;
+			sourceTree = SOURCE_ROOT;
 		};
 		04EEB48C187E705800CA4BFB /* Supporting Files */ = {
 			isa = PBXGroup;
@@ -179,8 +180,8 @@
 				04EEB4BD187E72E200CA4BFB /* tiles.png */,
 			);
 			name = data;
-			path = Lazers/data;
-			sourceTree = "<group>";
+			path = ../../data;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -339,7 +340,9 @@
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
+				HEADER_SEARCH_PATHS = (
+					"/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers",
+				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
@@ -356,7 +359,9 @@
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
-				HEADER_SEARCH_PATHS = "/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers";
+				HEADER_SEARCH_PATHS = (
+					"/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers\n\n/Library/Frameworks/SDL.framework/Headers",
+				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
