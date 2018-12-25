@@ -29,6 +29,8 @@ private:
   }
   static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
   
+  static SDL_Rect rectForPiece(Piece* piece);
+  
 public:
   LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), field(game->field) { }
   void handleEvent(SDL_Event &event);

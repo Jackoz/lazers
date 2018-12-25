@@ -15,6 +15,10 @@
 #define PIXEL(s, w, x, y) s[(y)*(w) + x]
 SDL_PixelFormat *Gfx::format = nullptr;
 
+SDL_Window* Gfx::window = nullptr;
+SDL_Renderer* Gfx::renderer = nullptr;
+SDL_Texture* Gfx::texture = nullptr;
+
 SDL_Surface *Gfx::screen = nullptr;
 #ifdef SCALE
 SDL_Surface *Gfx::realScreen = nullptr;
@@ -26,28 +30,16 @@ SDL_Surface *Gfx::ui = nullptr;
 
 void Gfx::init()
 {
-  SDL_Init(SDL_INIT_VIDEO);
+  SDL_Init(SDL_INIT_EVERYTHING);
 	atexit(SDL_Quit);
   
-	//SDL_ShowCursor(SDL_DISABLE);
-  #ifdef SCALE
-    realScreen = SDL_SetVideoMode(WIDTH*SCALE, HEIGHT*SCALE, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-    screen = SDL_CreateRGBSurface(SDL_HWSURFACE, WIDTH, HEIGHT, 32, realScreen->format->Rmask, realScreen->format->Gmask, realScreen->format->Bmask, realScreen->format->Amask);
-  #else
-    screen = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
-  #endif
   
-	if (screen->format->BitsPerPixel != 32) {
-    fprintf(stderr, "ERROR: Did not get 32 bpp, got %u bpp instead.\n",
-            screen->format->BitsPerPixel);
-    exit(1);
-	}
-	if (!(screen->flags & SDL_HWSURFACE)) {
-		fprintf(stderr, "WARNING: Did not get a hardware surface.\n");
-	}
-	if (!(screen->flags & SDL_DOUBLEBUF)) {
-		fprintf(stderr, "WARNING: Did not get double buffering.\n");
-	}
+  window = SDL_CreateWindow("Lazers",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH*SCALE, HEIGHT*SCALE, SDL_WINDOW_OPENGL);
+  renderer = SDL_CreateRenderer(window, -1, 0);
+  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
+  screen = generateSurface(WIDTH, HEIGHT);
+  
+  realScreen = generateSurface(WIDTH*SCALE, HEIGHT*SCALE);
   
   Gfx::setFormat(screen->format);
   
@@ -70,7 +62,7 @@ void Gfx::init()
 
 SDL_Surface *Gfx::generateSurface(u16 w, u16 h)
 {
-  return SDL_CreateRGBSurface(SDL_HWSURFACE, w, h, 32, realScreen->format->Rmask, realScreen->format->Gmask, realScreen->format->Bmask, realScreen->format->Amask);
+  return SDL_CreateRGBSurface(0, w, h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
 }
 
 void Gfx::scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
@@ -347,11 +339,15 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
 
 void Gfx::postDraw()
 {
-  #ifdef SCALE
-    scaleNN(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
-    SDL_Flip(realScreen);
-  #else
-    SDL_Flip(screen);
-  #endif
+#ifdef SCALE
+  scaleNN(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
+
+  SDL_UpdateTexture(texture, nullptr, screen->pixels, screen->pitch);
+  SDL_RenderClear(renderer);
+  SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+  SDL_RenderPresent(renderer);
+#else
+  SDL_Flip(screen);
+#endif
 }
 

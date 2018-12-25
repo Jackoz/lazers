@@ -52,6 +52,15 @@ struct Laser
   }
   
   bool operator==(const Laser &o) const { return (position.x == o.position.x && position.y == o.position.y && color == o.color && direction == o.direction); }
+  
+  struct hash
+  {
+  public:
+    size_t operator()(const Laser& k) const
+    {
+      return (k.position.x << 24) | (k.position.y << 16) | (k.color << 8) | k.direction;
+    }
+  };
 };
 
 class Field;

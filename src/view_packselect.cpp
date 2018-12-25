@@ -10,7 +10,7 @@
 
 #include "view_level.h"
 #include "gfx.h"
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 const u16 LIST_X = 20;
 const u16 LIST_Y = 30;

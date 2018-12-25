@@ -9,11 +9,16 @@
 #include "view_level.h"
 
 #include "gfx.h"
-#include <SDL/SDL.h>
+#include "SDL.h"
 
 void LevelView::activate()
 {
 
+}
+
+SDL_Rect LevelView::rectForPiece(Piece* piece)
+{
+  return piece->gfxRect();
 }
 
 void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
@@ -28,7 +33,7 @@ void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
       
       if (tile->piece())
       {
-        SDL_Rect src = tile->piece()->gfxRect();
+        SDL_Rect src = rectForPiece(tile->piece());
         SDL_Rect dst = Gfx::ccr(cx+1,cy+1,0,0);
         SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
@@ -109,7 +114,7 @@ void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
       
       if (tile->piece())
       {
-        SDL_Rect src = tile->piece()->gfxRect();
+        SDL_Rect src = rectForPiece(tile->piece());;
         SDL_Rect dst = Gfx::ccr(bx+TILE_SIZE*x + 1, by + TILE_SIZE*y + 1, 0, 0);
         SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }

@@ -16,10 +16,10 @@
 		047785CF18844BF7004EB2ED /* files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785CD18844B7F004EB2ED /* files.cpp */; };
 		047785D21884CED9004EB2ED /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D01884CEB0004EB2ED /* gfx.cpp */; };
 		047785D51884D50C004EB2ED /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 047785D31884D4E5004EB2ED /* game.cpp */; };
-		0482833A21D197B9008D800E /* SDL_image.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04FA39CA18805A1B000E8E4E /* SDL_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		0482833B21D197BB008D800E /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04FA39CB18805A1B000E8E4E /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0482833C21D19D1B008D800E /* ui.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 042BE7F418864A5E00EB0DF0 /* ui.png */; };
 		0482833D21D19D1B008D800E /* font.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 042BE7EC18860D8100EB0DF0 /* font.png */; };
+		0482834121D2A990008D800E /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0482834021D2A990008D800E /* SDL2_image.framework */; };
+		0482834321D2A99D008D800E /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0482834221D2A99D008D800E /* SDL2.framework */; };
 		04D7535B1889941D00595933 /* view_packselect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D75359188993DE00595933 /* view_packselect.cpp */; };
 		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
 		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
@@ -27,8 +27,6 @@
 		04EEB4B1187E710200CA4BFB /* SDLMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */; };
 		04EEB4B2187E710400CA4BFB /* level.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EEB4AD187E70EE00CA4BFB /* level.cpp */; };
 		04EEB4D7187E76F600CA4BFB /* tiles.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 04EEB4BD187E72E200CA4BFB /* tiles.png */; };
-		04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CA18805A1B000E8E4E /* SDL_image.framework */; };
-		04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FA39CB18805A1B000E8E4E /* SDL.framework */; };
 		04FC03B318876D940088949A /* aargon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04FC03B118876D780088949A /* aargon.cpp */; };
 /* End PBXBuildFile section */
 
@@ -39,8 +37,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0482833A21D197B9008D800E /* SDL_image.framework in CopyFiles */,
-				0482833B21D197BB008D800E /* SDL.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +71,8 @@
 		047785D11884CEB0004EB2ED /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = "<group>"; };
 		047785D31884D4E5004EB2ED /* game.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		047785D41884D4E5004EB2ED /* game.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = game.h; sourceTree = "<group>"; };
+		0482834021D2A990008D800E /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2_image.framework; sourceTree = "<group>"; };
+		0482834221D2A99D008D800E /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		04D75359188993DE00595933 /* view_packselect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = view_packselect.cpp; sourceTree = "<group>"; };
 		04D7535A188993DE00595933 /* view_packselect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = view_packselect.h; sourceTree = "<group>"; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,8 +87,6 @@
 		04EEB4AF187E70EE00CA4BFB /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		04EEB4B0187E70EE00CA4BFB /* SDLMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SDLMain.mm; sourceTree = "<group>"; };
 		04EEB4BD187E72E200CA4BFB /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tiles.png; sourceTree = "<group>"; };
-		04FA39CA18805A1B000E8E4E /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = SOURCE_ROOT; };
-		04FA39CB18805A1B000E8E4E /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = SOURCE_ROOT; };
 		04FC03B118876D780088949A /* aargon.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aargon.cpp; sourceTree = "<group>"; };
 		04FC03B218876D780088949A /* aargon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aargon.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,8 +98,8 @@
 			files = (
 				04EEB4A2187E706E00CA4BFB /* AppKit.framework in Frameworks */,
 				04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */,
-				04FA39CC18805A1B000E8E4E /* SDL_image.framework in Frameworks */,
-				04FA39CD18805A1B000E8E4E /* SDL.framework in Frameworks */,
+				0482834121D2A990008D800E /* SDL2_image.framework in Frameworks */,
+				0482834321D2A99D008D800E /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,8 +127,8 @@
 		04EEB484187E705800CA4BFB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				04FA39CA18805A1B000E8E4E /* SDL_image.framework */,
-				04FA39CB18805A1B000E8E4E /* SDL.framework */,
+				0482834221D2A99D008D800E /* SDL2.framework */,
+				0482834021D2A990008D800E /* SDL2_image.framework */,
 				04EEB4A3187E706E00CA4BFB /* CoreFoundation.framework */,
 				04EEB485187E705800CA4BFB /* Cocoa.framework */,
 				04EEB487187E705800CA4BFB /* Other Frameworks */,
@@ -362,10 +358,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/SDL2.framework/Headers",
+					"${SRCROOT}/SDL2_image.framework/Headers",
+				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
-				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pixbits.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -378,10 +381,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"${SRCROOT}/SDL2.framework/Headers",
+					"${SRCROOT}/SDL2_image.framework/Headers",
+				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
-				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pixbits.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
