@@ -19,7 +19,6 @@ private:
   Tile *selectedTile;
   Position fposition, iposition;
   Position *position;
-  Field *field;
   
   static u16 coordX(u16 x, bool isInventory);
   static u16 coordY(u16 y);
@@ -28,8 +27,10 @@ private:
   
   static SDL_Rect rectForPiece(Piece* piece);
   
+  Field* field() { return game->field; }
+  
 public:
-  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), field(game->field) { }
+  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition) { }
   void handleEvent(SDL_Event &event);
   void draw();
   void activate();

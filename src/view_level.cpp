@@ -149,6 +149,8 @@ void LevelView::drawGrid(Field *field, int x, int y, int w, int h, SDL_Surface *
 
 void LevelView::draw()
 {
+  auto field = this->field();
+  
   Gfx::clear(BACKGROUND_COLOR);
   
   // draw field
@@ -169,8 +171,8 @@ void LevelView::draw()
   drawField(field, Gfx::screen, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
   drawInventory(field, Gfx::screen, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y);
   
-  
-  Gfx::drawString(GFX_FIELD_POS_X + FIELD_WIDTH*TILE_SIZE/2, 5, true, "%s%s", field->level->name.c_str(), field->level->solved ? " \x1D" : "");
+  if (field->level())
+    Gfx::drawString(GFX_FIELD_POS_X + FIELD_WIDTH*TILE_SIZE/2, 5, true, "%s%s", field->level()->name.c_str(), field->level()->solved ? " \x1D" : "");
 
   // 245, 110
   
@@ -213,6 +215,8 @@ void LevelView::draw()
 
 void LevelView::handleEvent(SDL_Event &event)
 {
+  auto field = this->field();
+  
   switch(event.type)
   {
     case SDL_MOUSEMOTION:
@@ -233,6 +237,8 @@ void LevelView::handleEvent(SDL_Event &event)
         position->x = FIELD_WIDTH + tx;
         position->y = ty;
       }
+      
+      break;
     }
     
     case SDL_KEYDOWN:			// Button press

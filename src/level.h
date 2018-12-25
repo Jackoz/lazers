@@ -49,6 +49,8 @@ public:
 class Field
 {  
 private:
+  LevelSpec* _level;
+  
   Tile *tiles;
   Tile *inventory;
   std::list<Laser> lasers;
@@ -59,7 +61,7 @@ private:
   void resetLasers();
 
 public:
-  Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false)
+  Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false), _level(nullptr)
   {
     for (int i = 0; i < FIELD_WIDTH; ++i)
       for (int j = 0; j < FIELD_HEIGHT; ++j)
@@ -139,6 +141,8 @@ public:
     
     updateLasers();
   }
+  
+  LevelSpec* const level() { return _level; }
 
   void reset()
   {
@@ -190,8 +194,6 @@ public:
   void generateBeam(Position position, Direction direction, LaserColor color);
   void updateLasers();
   bool checkForWin();
-
-  LevelSpec *level;
 };
   
 

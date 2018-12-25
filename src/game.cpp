@@ -44,6 +44,8 @@ void Game::init()
   //for (int i = 0; i < Files::packCount(); ++i)
   //  Files::savePack(Files::packAt(i));
   
+  
+  
   view->activate();
 }
 

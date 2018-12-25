@@ -52,7 +52,7 @@ Piece* Field::generatePiece(const PieceInfo *info)
 
 void Field::load(LevelSpec* level)
 {
-  this->level = level;
+  this->_level = level;
   
   u8 curInvSlot = 0;
   
@@ -160,9 +160,9 @@ void Field::updateLasers()
     it = lasers.erase(it);
   }
   
-  if (checkForWin() && !level->solved)
+  if (checkForWin() && !_level->solved)
   {
-    level->solved = true;
+    _level->solved = true;
     ++Files::packAt(Files::selectedPack)->solvedCount;
   }
 }
