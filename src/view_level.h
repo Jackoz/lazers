@@ -30,6 +30,8 @@ private:
   
   Field* field() { return game->field; }
   
+  Position coordToPosition(int x, int y);
+  
 public:
   LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), heldPiece(nullptr) { }
   void handleEvent(SDL_Event &event);

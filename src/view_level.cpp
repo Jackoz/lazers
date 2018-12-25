@@ -15,6 +15,23 @@ static const u16 GFX_FIELD_POS_X = 0;
 static const u16 GFX_FIELD_POS_Y = 15;
 static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 10;
 
+Position LevelView::coordToPosition(int x, int y)
+{
+  if (x >= GFX_FIELD_POS_X && x <= GFX_FIELD_POS_X + TILE_SIZE*FIELD_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*FIELD_HEIGHT)
+  {
+    auto tx = (x - GFX_FIELD_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
+    return Position(Position::Type::FIELD, tx, ty);
+  }
+  else if (x >= GFX_INVENTORY_POS_X && x < GFX_INVENTORY_POS_X + TILE_SIZE*INVENTORY_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*INVENTORY_HEIGHT)
+  {
+    auto tx = (x - GFX_INVENTORY_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
+    return Position(Position::Type::INVENTORY, tx, ty);
+  }
+  else
+    return Position(Position::Type::INVALID);
+
+}
+
 u16 LevelView::coordX(u16 x, bool isInventory)
 {
   if (!isInventory || x < FIELD_WIDTH)
@@ -210,6 +227,7 @@ void LevelView::draw()
   {
     int x, y;
     SDL_GetMouseState(&x, &y);
+    x /= SCALE; y /= SCALE;
     
     SDL_Rect src = rectForPiece(heldPiece);
     SDL_Rect dst = Gfx::ccr(x - PIECE_SIZE/2, y - PIECE_SIZE/2,0,0);
@@ -233,27 +251,53 @@ void LevelView::handleEvent(SDL_Event &event)
     case SDL_MOUSEMOTION:
     {
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-
-      if (x >= GFX_FIELD_POS_X && x <= GFX_FIELD_POS_X + TILE_SIZE*FIELD_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*FIELD_HEIGHT)
-      {
-        auto tx = (x - GFX_FIELD_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
-        
-        position->x = tx;
-        position->y = ty;
-      }
-      else if (x >= GFX_INVENTORY_POS_X && x < GFX_INVENTORY_POS_X + TILE_SIZE*INVENTORY_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*INVENTORY_HEIGHT)
-      {
-        auto tx = (x - GFX_INVENTORY_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
-
-        position->x = FIELD_WIDTH + tx;
-        position->y = ty;
-      }
+      Position hover = coordToPosition(x, y);
+      
+      if (hover.isValid())
+        *position = hover;
       
       break;
     }
       
     case SDL_MOUSEBUTTONDOWN:
     {
+      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
+      Position hover = coordToPosition(x, y);
+      
+      Tile* tile = field->tileAt(hover);
+      Piece* piece = tile->piece();
+      
+      if (event.button.button == SDL_BUTTON_LEFT)
+      {
+        if (piece && !heldPiece && piece->canBeMoved())
+        {
+          heldPiece = tile->piece();
+          tile->place(nullptr);
+          field->updateLasers();
+        }
+        else if (heldPiece && !piece && tile->empty())
+        {
+          tile->place(heldPiece);
+          heldPiece = nullptr;
+          field->updateLasers();
+        }
+        else if (heldPiece && piece && piece->canBeMoved())
+        {
+          Piece* temp = heldPiece;
+          heldPiece = piece;
+          tile->place(temp);
+        }
+      }
+      else if (event.button.button == SDL_BUTTON_RIGHT)
+      {
+        if (piece && piece->canBeRotated())
+        {
+          piece->rotateRight();
+          field->updateLasers();
+        }
+      }
+      
+
       
       break;
     }

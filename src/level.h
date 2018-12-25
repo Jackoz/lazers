@@ -42,6 +42,8 @@ public:
       colors[i] = COLOR_NONE;
   }
 
+  bool empty() const { return piece_ == nullptr; }
+  
   Piece *piece() { return piece_; }
   void place(Piece* piece) { this->piece_ = piece; if (piece) piece->place(this); }
 };
@@ -61,7 +63,7 @@ private:
   void resetLasers();
 
 public:
-  Field() : tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false), _level(nullptr)
+  Field() : _level(nullptr), tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false)
   {
     for (int i = 0; i < FIELD_WIDTH; ++i)
       for (int j = 0; j < FIELD_HEIGHT; ++j)
@@ -181,13 +183,20 @@ public:
 
   Tile* tileAt(int x, int y)
   {
+    // TODO: remove this management for inventory */
     if (x >= FIELD_WIDTH)
       return &inventory[y*INVENTORY_WIDTH + (x-FIELD_WIDTH)];
     else
       return &tiles[y*FIELD_WIDTH + x];
   }
 
-  Tile* tileAt(Position p) { return tileAt(p.x, p.y); }
+  Tile* tileAt(Position p)
+  {
+    if (p.type == Position::Type::INVENTORY)
+      return &inventory[p.y * INVENTORY_WIDTH + p.x];
+    else
+      return &tiles[p.y * FIELD_WIDTH + p.x];
+  }
 
   void addGoal(Goal *goal) { goals.push_back(goal); }
 

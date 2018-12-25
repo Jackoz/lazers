@@ -118,13 +118,19 @@ enum Direction : u8
 
 struct Position
 {
+  enum class Type : u8 { FIELD, INVENTORY, INVALID };
+  
+  Type type;
   s8 x, y;
   
-  Position(s8 x, s8 y) : x(x), y(y) { }
+  Position(Type type, s8 x, s8 y) : type(type), x(x), y(y) { }
+  Position(s8 x, s8 y) : Position(Type::FIELD, x, y) { }
+  Position(Type type) : Position(Type::INVALID, -1, -1) { }
   
-  bool isValid() { return x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
-  void shift(Direction direction) { x += directions[direction][0]; y += directions[direction][1]; }
-  Position derived(Direction direction) { return Position(x+directions[direction][0], y+directions[direction][1]); }
+  bool isValid() const { return type != Type::INVALID && x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
+
+  Position& operator+=(Direction dir) { x += directions[dir][0]; y += directions[dir][1]; return *this; }
+  Position operator+(Direction dir) const { return Position(x + directions[dir][0], y + directions[dir][1]); }
   
   static const s8 directions[8][2];
 };

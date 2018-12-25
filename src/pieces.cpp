@@ -192,7 +192,7 @@ void Teleporter::receiveLaser(Laser &laser)
   Direction dir = laser.direction;
   Position p = laser.position;
 
-  p.shift(dir);
+  p += dir;
   
   while (p.isValid())
   {
@@ -204,7 +204,7 @@ void Teleporter::receiveLaser(Laser &laser)
       break;
     }
     
-    p.shift(dir);
+    p += dir;
   }
   
   laser.invalidate();

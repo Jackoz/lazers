@@ -24,8 +24,10 @@ struct Laser
   
   Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
   
-  bool isValid() { return position.isValid(); }
+  bool isValid() const { return position.isValid(); }
   void invalidate() { position.x = -1; position.y = -1; }
+  
+  void advance() { position += direction; }
   
   void rotateLeft(u8 steps)
   {

@@ -87,7 +87,7 @@ void Field::load(LevelSpec* level)
 
 void Field::generateBeam(Position position, Direction direction, LaserColor color)
 {
-  Laser beam = Laser(position.derived(direction), direction, color);
+  Laser beam = Laser(position + direction, direction, color);
   
   if (beam.isValid())
   {
@@ -153,7 +153,7 @@ void Field::updateLasers()
       if (laser.isValid())
       {
         tile->colors[laser.direction] |= laser.color;
-        laser.position.shift(laser.direction);
+        laser.advance();
       }
     }
     
