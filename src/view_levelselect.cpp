@@ -158,7 +158,6 @@ void LevelSelectView::rebuildPreview()
   field->reset();
   field->load(game->pack->at(game->pack->selected));
   
-  
   Gfx::clear(preview, BACKGROUND_COLOR);
   LevelView::drawGrid(field, 0, 0, FIELD_WIDTH, FIELD_HEIGHT, preview);
   LevelView::drawGrid(field, FIELD_WIDTH*TILE_SIZE + 10, 0, INVENTORY_WIDTH, INVENTORY_HEIGHT, preview);

@@ -16,6 +16,7 @@ class View;
 class LevelView : public View
 {
 private:
+  Piece* heldPiece; //TODO: convert to std::unique_ptr
   Tile *selectedTile;
   Position fposition, iposition;
   Position *position;
@@ -30,7 +31,7 @@ private:
   Field* field() { return game->field; }
   
 public:
-  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition) { }
+  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), heldPiece(nullptr) { }
   void handleEvent(SDL_Event &event);
   void draw();
   void activate();

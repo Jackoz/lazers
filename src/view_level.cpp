@@ -206,6 +206,17 @@ void LevelView::draw()
     Gfx::drawString(BASE_X + 40, BASE_Y + STEP, true, "A: rotate right");
   }
   
+  if (heldPiece)
+  {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    
+    SDL_Rect src = rectForPiece(heldPiece);
+    SDL_Rect dst = Gfx::ccr(x - PIECE_SIZE/2, y - PIECE_SIZE/2,0,0);
+    SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+
+  }
+  
   //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
   
   Gfx::postDraw();
@@ -237,6 +248,12 @@ void LevelView::handleEvent(SDL_Event &event)
         position->x = FIELD_WIDTH + tx;
         position->y = ty;
       }
+      
+      break;
+    }
+      
+    case SDL_MOUSEBUTTONDOWN:
+    {
       
       break;
     }
