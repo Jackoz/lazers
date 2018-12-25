@@ -11,6 +11,20 @@
 #include "gfx.h"
 #include "SDL.h"
 
+static const u16 GFX_FIELD_POS_X = 0;
+static const u16 GFX_FIELD_POS_Y = 15;
+static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 10;
+
+u16 LevelView::coordX(u16 x, bool isInventory)
+{
+  if (!isInventory || x < FIELD_WIDTH)
+    return TILE_SIZE*x + GFX_FIELD_POS_X;
+  else
+    return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
+}
+
+u16 LevelView::coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
+
 void LevelView::activate()
 {
 
@@ -201,6 +215,26 @@ void LevelView::handleEvent(SDL_Event &event)
 {
   switch(event.type)
   {
+    case SDL_MOUSEMOTION:
+    {
+      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
+
+      if (x >= GFX_FIELD_POS_X && x <= GFX_FIELD_POS_X + TILE_SIZE*FIELD_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*FIELD_HEIGHT)
+      {
+        auto tx = (x - GFX_FIELD_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
+        
+        position->x = tx;
+        position->y = ty;
+      }
+      else if (x >= GFX_INVENTORY_POS_X && x < GFX_INVENTORY_POS_X + TILE_SIZE*INVENTORY_WIDTH && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + TILE_SIZE*INVENTORY_HEIGHT)
+      {
+        auto tx = (x - GFX_INVENTORY_POS_X) / TILE_SIZE, ty = (y - GFX_FIELD_POS_Y) / TILE_SIZE;
+
+        position->x = FIELD_WIDTH + tx;
+        position->y = ty;
+      }
+    }
+    
     case SDL_KEYDOWN:			// Button press
     {
       switch(event.key.keysym.sym)

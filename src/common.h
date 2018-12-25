@@ -25,10 +25,6 @@ static const u16 INVENTORY_HEIGHT = 6;
 static const u16 TILE_SIZE = 15;
 static const u16 PIECE_SIZE = 14;
 
-static const u16 GFX_FIELD_POS_X = 0;
-static const u16 GFX_FIELD_POS_Y = 15;
-static const u16 GFX_INVENTORY_POS_X = TILE_SIZE*FIELD_WIDTH + 10;
-
 #define KEY_LEFT (SDLK_LEFT)
 #define KEY_RIGHT (SDLK_RIGHT)
 #define KEY_UP (SDLK_UP)

@@ -24,7 +24,7 @@ class LevelList : public OffsettableList<LevelSpec*>
     u32 current() { return game->pack->selected; }
     u32 count() { return game->pack->count(); }
     void set(u32 i) { game->pack->selected = i; }
-    LevelSpec*get(u32 i) { return game->pack->at(offset+i); }
+    LevelSpec* get(u32 i) { return game->pack->at(offset+i); }
 };
 
 class LevelSelectView : public View

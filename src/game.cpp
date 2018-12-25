@@ -15,7 +15,7 @@
 
 #include "aargon.h"
 
-Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[2]), overView(nullptr)
+Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[0]), overView(nullptr)
 {
 
 }
@@ -32,8 +32,10 @@ void Game::init()
   printf("  INPUT: %s (%d)\n",input, (u32)strlen(input));
   printf("ENCODED: %.*s (%d)\n",(u32)encodedLength, encoded, (u32)encodedLength);
   printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
-  Aargon::parseLevels();
-  Files::loadPacks();
+  
+  
+  //Aargon::parseLevels();
+  //Files::loadPacks();
   
   Files::loadSolvedStatus();
   

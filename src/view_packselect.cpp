@@ -16,6 +16,7 @@ const u16 LIST_X = 20;
 const u16 LIST_Y = 30;
 const u16 LIST_DY = 10;
 const u16 LIST_SIZE = 14;
+const u32 LIST_WIDTH = 150;
 
 
 
@@ -63,6 +64,39 @@ void PackSelectList::handleEvent(SDL_Event &event)
 {
   switch(event.type)
   {
+    case SDL_MOUSEMOTION:
+    {
+      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
+      
+      if (x >= LIST_X && x < LIST_X + LIST_WIDTH && y >= LIST_Y && y < LIST_Y + LIST_DY*LIST_SIZE)
+      {
+        auto i = (y - LIST_Y) / LIST_DY;
+        
+        if (levelList.get(i))
+          levelList.set(i);
+      }
+      
+      break;
+    }
+      
+    case SDL_MOUSEBUTTONDOWN:
+    {
+      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
+
+      if (x >= LIST_X && x < LIST_X + LIST_WIDTH && y >= LIST_Y && y < LIST_Y + LIST_DY*LIST_SIZE)
+      {
+        auto i = (y - LIST_Y) / LIST_DY;
+       
+        if (levelList.get(i))
+        {
+          game->pack = Files::packAt(Files::selectedPack);
+          game->switchView(VIEW_LEVEL_SELECT);
+        }
+      }
+      
+      break;
+    }
+      
     case SDL_KEYDOWN:			// Button press
     {
       switch(event.key.keysym.sym)

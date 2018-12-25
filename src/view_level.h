@@ -21,13 +21,10 @@ private:
   Position *position;
   Field *field;
   
-  static u16 coordX(u16 x, bool isInventory) {
-    if (!isInventory || x < FIELD_WIDTH)
-      return TILE_SIZE*x + GFX_FIELD_POS_X;
-    else
-      return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
-  }
-  static u16 coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
+  static u16 coordX(u16 x, bool isInventory);
+  static u16 coordY(u16 y);
+  
+  
   
   static SDL_Rect rectForPiece(Piece* piece);
   
