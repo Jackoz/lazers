@@ -368,16 +368,20 @@ void Aargon::parseLevels()
   // Tutorial - SKIP?
   
   vector<AargonPack> apacks;
-  apacks.push_back({"Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy", "Deluxe", 1});
-  apacks.push_back({"Aargon Deluxe (Medium)", "Twilight Games", "aargon-deluxe-medium", "Deluxe", 2});
-  apacks.push_back({"Aargon Deluxe (Hard)", "Twilight Games", "aargon-deluxe-hard", "Deluxe", 3});
-  apacks.push_back({"Aargon Deluxe (Extreme)", "Twilight Games", "aargon-deluxe-extreme", "Deluxe", 4});
+  apacks.push_back({"Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-00", "Deluxe", 1});
+  apacks.push_back({"Aargon Deluxe (Medium)", "Twilight Games", "aargon-deluxe-01", "Deluxe", 2});
+  apacks.push_back({"Aargon Deluxe (Hard)", "Twilight Games", "aargon-deluxe-02", "Deluxe", 3});
+  apacks.push_back({"Aargon Deluxe (Extreme)", "Twilight Games", "aargon-deluxe-03", "Deluxe", 4});
 
-  apacks.push_back({ "Aargon Classic (Beginner)", "Twilight Games", "aargon-classic-easy", "Classic", 1 });
-  apacks.push_back({ "Aargon Classic (Easy)", "Twilight Games", "aargon-classic-medium", "Classic", 2 });
-  apacks.push_back({ "Aargon Classic (Hard)", "Twilight Games", "aargon-classic-hard", "Classic", 3 });
-  apacks.push_back({ "Aargon Classic (Expert)", "Twilight Games", "aargon-classic-extreme", "Classic", 4 });
+  apacks.push_back({ "Aargon Classic (Beginner)", "Twilight Games", "aargon-classic-00", "Classic", 1 });
+  apacks.push_back({ "Aargon Classic (Easy)", "Twilight Games", "aargon-classic-01", "Classic", 2 });
+  apacks.push_back({ "Aargon Classic (Hard)", "Twilight Games", "aargon-classic-02", "Classic", 3 });
+  apacks.push_back({ "Aargon Classic (Expert)", "Twilight Games", "aargon-classic-03", "Classic", 4 });
   
+  apacks.push_back({ "Aargon Space Station (Training)", "Twilight Games", "aargon-space-station-00", "Level Pack 1", 1 });
+  apacks.push_back({ "Aargon Space Station (Recreation)", "Twilight Games", "aargon-space-station-01", "Level Pack 1", 2 });
+  apacks.push_back({ "Aargon Space Station (Engineering)", "Twilight Games", "aargon-space-station-02", "Level Pack 1", 3 });
+  apacks.push_back({ "Aargon Space Station (Intelligence)", "Twilight Games", "aargon-space-station-03", "Level Pack 1", 4 });
   
   for (const AargonPack &apack : apacks)
   {
@@ -402,26 +406,4 @@ void Aargon::parseLevels()
 
 
   }
-  
-  
-  /*LevelPack npack = LevelPack("Aargon Deluxe (Easy)", "Twilight Games", "aargon-deluxe-easy");
-  
-  string pack = "Deluxe";
-  int skill = 3;
-  
-  for (int j = 1; j <= 4; ++j)
-  for (int i = 1; i <= 30; ++i)
-  {
-    string base = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/levels/";
-    stringstream ss;
-    ss << base;
-    ss << pack << "/" << "Levels/SKILL";
-    ss << j << "/";
-    ss << "Level_0";
-    if (i < 10) ss << '0';
-    ss << i << ".map";
-    npack.addLevel(parseLevel(ss.str()));
-  }
-  
-  Files::addPack(npack);*/
 }

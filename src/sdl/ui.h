@@ -1,0 +1,42 @@
+#pragma once
+
+#include "common/common.h"
+
+class ui
+{
+public:
+  static constexpr u32 LIST_X = 20;
+  static constexpr u32 LIST_Y = 30;
+  static constexpr u32 LIST_DY = 10;
+  static constexpr u32 LIST_SIZE = 14;
+  static constexpr u32 LIST_WIDTH = 150;
+
+  static int coordToListEntry(int x, int y)
+  {
+    if (x >= LIST_X && x < LIST_X + LIST_WIDTH && y >= LIST_Y && y < LIST_Y + LIST_DY * LIST_SIZE)
+      return (y - LIST_Y) / LIST_DY;
+    else
+      return -1;
+
+  }
+
+  template<typename T> static bool handleMouseWheelOnList(T& list, int wd)
+  {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    x /= SCALE; y /= SCALE;
+    int i = ui::coordToListEntry(x, y);
+
+    if (i >= 0)
+    {
+      if (wd < 0 && list.getOffset() < list.count() - LIST_SIZE)
+        list.changeOffset(+1);
+      else if (wd > 0 && list.getOffset() > 0)
+        list.changeOffset(-1);
+
+      return true;
+    }
+    else
+      return false;
+  }
+};

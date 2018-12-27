@@ -10,18 +10,9 @@
 
 #include "view_level.h"
 #include "gfx.h"
+#include "ui.h"
+
 #include "SDL.h"
-
-const u16 LIST_X = 20;
-const u16 LIST_Y = 30;
-const u16 LIST_DY = 10;
-const u16 LIST_SIZE = 14;
-const u32 LIST_WIDTH = 150;
-
-
-
-
-
 
 PackSelectList::PackSelectList(Game *game) : View(game), levelList(PackList(game))
 {
@@ -45,13 +36,13 @@ void PackSelectList::draw()
   {
     LevelPack *spec = levelList.get(i);
     
-    Gfx::drawString(LIST_X, LIST_Y+LIST_DY*i, false, "%s - %d of %d", spec->name.c_str(), spec->solvedCount, spec->count());
+    Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s - %d of %d", spec->name.c_str(), spec->solvedCount, spec->count());
     
     if (levelList.isSelected(i))
-      Gfx::blit(Gfx::ui, 0, 0, 4, 7, LIST_X-8, LIST_Y+LIST_DY*i);
+      Gfx::blit(Gfx::ui, 0, 0, 4, 7, ui::LIST_X-8, ui::LIST_Y+ ui::LIST_DY*i);
   }
   
-  Gfx::drawString(LIST_X+30, LIST_Y+LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
+  Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
 
   /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
@@ -67,33 +58,31 @@ void PackSelectList::handleEvent(SDL_Event &event)
     case SDL_MOUSEMOTION:
     {
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      
-      if (x >= LIST_X && x < LIST_X + LIST_WIDTH && y >= LIST_Y && y < LIST_Y + LIST_DY*LIST_SIZE)
-      {
-        auto i = (y - LIST_Y) / LIST_DY;
-        
-        if (levelList.get(i))
-          levelList.set(i);
-      }
-      
+      auto i = ui::coordToListEntry(x, y);
+
+      if (i >= 0 && levelList.get(i))
+        levelList.set(i);
+
       break;
     }
       
     case SDL_MOUSEBUTTONDOWN:
     {
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
+      auto i = ui::coordToListEntry(x, y);
 
-      if (x >= LIST_X && x < LIST_X + LIST_WIDTH && y >= LIST_Y && y < LIST_Y + LIST_DY*LIST_SIZE)
+      if (i >= 0 && levelList.get(i))
       {
-        auto i = (y - LIST_Y) / LIST_DY;
-       
-        if (levelList.get(i))
-        {
-          game->pack = Files::packAt(Files::selectedPack);
-          game->switchView(VIEW_LEVEL_SELECT);
-        }
+        game->pack = Files::packAt(Files::selectedPack);
+        game->switchView(VIEW_LEVEL_SELECT);
       }
-      
+
+      break;
+    }
+
+    case SDL_MOUSEWHEEL:
+    {
+      ui::handleMouseWheelOnList(levelList, event.wheel.y);
       break;
     }
       
