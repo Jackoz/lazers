@@ -120,6 +120,8 @@ enum ViewType
   VIEWS_COUNT
 };
 
+union SDL_Event;
+
 class View
 {
   protected:
@@ -127,7 +129,7 @@ class View
   
   public:
     View(Game *game) : game(game) { }
-    virtual void handleEvent(SDL_Event &event) = 0;
+    virtual void handleEvent(SDL_Event& event) = 0;
     virtual void draw() = 0;
   
     virtual void activate() { };

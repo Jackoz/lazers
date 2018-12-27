@@ -11,6 +11,8 @@
 
 #include "game.h"
 
+struct SDL_Surface;
+
 class View;
 
 class LevelList : public OffsettableList<LevelSpec*>

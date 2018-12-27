@@ -261,9 +261,6 @@ u32 Files::selectedPack = 0;
 
 PieceInfo Files::loadPiece(const u8 *ptr)
 {
-  //char buffer[PIECE_INFO_SIZE];
-  //is.read(buffer, PIECE_INFO_SIZE);
-  
   PieceType type = pieceForChar(ptr[0] & 0x7F);
   PieceInfo info(type);
   

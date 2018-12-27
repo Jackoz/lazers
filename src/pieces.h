@@ -11,7 +11,6 @@
 
 #include "common.h"
 
-#include "SDL.h"
 #include <list>
 
 #define UNUSED(x) (void)(x)
@@ -79,8 +78,6 @@ class Piece
     Tile *tile;
     Field *field;
   
-    virtual Position gfxTile() = 0;
-  
   public:
     Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), tile(nullptr), field(field) { }
     virtual ~Piece() { }
@@ -103,12 +100,6 @@ class Piece
     void setCanBeRotated(bool value) { roteable = value; }
     virtual bool canBeMoved() const { return movable; }
     virtual bool canBeRotated() const { return roteable; }
-    
-    SDL_Rect gfxRect()
-    {
-      Position tile = gfxTile();
-      return {static_cast<s16>(tile.x*PIECE_SIZE), static_cast<s16>(tile.y*PIECE_SIZE), PIECE_SIZE, PIECE_SIZE};
-    }
   
     s8 deltaDirection(Laser& laser)
     {
@@ -120,6 +111,8 @@ class Piece
       
       return delta;
     }
+  
+    virtual Position gfxTile() = 0;
 };
 
 class Wall : public Piece
@@ -412,7 +405,7 @@ public:
     laser.rotateRight(1);
   }
   
-  bool canBeMoved() const override { return movable; }
+  bool canBeRotated() const override { return false; }
 
   Position gfxTile() { return Position(14, 7); }
 };

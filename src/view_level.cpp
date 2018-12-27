@@ -49,7 +49,9 @@ void LevelView::activate()
 
 SDL_Rect LevelView::rectForPiece(Piece* piece)
 {
-  return piece->gfxRect();
+  Position gfx = piece->gfxTile();
+  
+  return { gfx.x*PIECE_SIZE, gfx.y*PIECE_SIZE, PIECE_SIZE, PIECE_SIZE };
 }
 
 void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)

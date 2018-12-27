@@ -13,6 +13,9 @@
 
 class View;
 
+struct SDL_Rect;
+struct SDL_Surface;
+
 class LevelView : public View
 {
 private:
