@@ -131,6 +131,7 @@ struct Position
 
   Position& operator+=(Direction dir) { x += directions[dir][0]; y += directions[dir][1]; return *this; }
   Position operator+(Direction dir) const { return Position(x + directions[dir][0], y + directions[dir][1]); }
+  Position operator+(const Position& o) const { return Position(type, x + o.x, y + o.y); }
   
   static const s8 directions[8][2];
 };

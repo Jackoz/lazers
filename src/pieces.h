@@ -95,7 +95,7 @@ class Piece
     void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
     void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
   
-    virtual bool produceLaser() = 0;
+    virtual Laser produceLaser() { return Laser(Position(-1, -1), Direction::NORTH, COLOR_NONE); }
     virtual bool blocksLaser(Laser &laser) = 0;
     virtual void receiveLaser(Laser &laser) = 0;
   
@@ -127,7 +127,6 @@ class Wall : public Piece
   public:
     Wall(Field *field) : Piece(PIECE_WALL, NORTH, COLOR_NONE, field) { }
 
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); }
   
@@ -141,7 +140,6 @@ class Glass : public Piece
 public:
   Glass(Field *field) : Piece(PIECE_GLASS, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }
   
@@ -155,7 +153,7 @@ class LaserSource : public Piece
   public:
     LaserSource(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SOURCE, rotation, color, field) { }
     
-    bool produceLaser() { return true; }
+    Laser produceLaser() { return Laser(Position(0,0), rotation_, color_); }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); /*laser.invalidate();*/ }
   
@@ -167,7 +165,6 @@ class Mirror : public Piece
   public:
     Mirror(Direction rotation, Field *field) : Piece(PIECE_MIRROR, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser)
     {
@@ -191,7 +188,6 @@ class SkewMirror : public Piece
 public:
   SkewMirror(Direction rotation, Field *field) : Piece(PIECE_SKEW_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -217,7 +213,6 @@ class DoubleMirror : public Piece
   public:
     DoubleMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_MIRROR, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser)
     {
@@ -241,7 +236,6 @@ class DoubleSplitterMirror : public Piece
 public:
   DoubleSplitterMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
 
@@ -253,7 +247,6 @@ class DoubleSkewMirror : public Piece
 public:
   DoubleSkewMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_SKEW_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -280,7 +273,6 @@ class DoublePassMirror : public Piece
 public:
   DoublePassMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -302,7 +294,6 @@ class Refractor : public Piece
 public:
   Refractor(Direction rotation, Field *field) : Piece(PIECE_REFRACTOR, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -325,7 +316,6 @@ class Splitter : public Piece
   public:
     Splitter(Direction rotation, Field *field) : Piece(PIECE_SPLITTER, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
 
@@ -337,7 +327,6 @@ class ThreeWaySplitter : public Piece
 public:
   ThreeWaySplitter(Direction rotation, Field *field) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
 
@@ -349,7 +338,6 @@ class StarSplitter : public Piece
 public:
   StarSplitter(Field *field) : Piece(PIECE_STAR_SPLITTER, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
   
@@ -363,7 +351,6 @@ class DSplitter : public Piece
   public:
     DSplitter(Direction rotation, Field *field) : Piece(PIECE_DSPLITTER, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
 
@@ -375,7 +362,6 @@ class Prism : public Piece
 public:
   Prism(Direction rotation, Field *field) : Piece(PIECE_PRISM, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
 
@@ -387,7 +373,6 @@ class FlippedPrism : public Piece
 public:
   FlippedPrism(Direction rotation, Field *field) : Piece(PIECE_FLIPPED_PRISM, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
 
@@ -399,7 +384,6 @@ class Selector : public Piece
 public:
   Selector(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_PRISM, rotation, color, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
   void receiveLaser(Laser &laser);
 
@@ -411,7 +395,6 @@ class Splicer : public Piece
 public:
   Splicer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SPLICER, rotation, color, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
   void receiveLaser(Laser &laser);
 
@@ -423,7 +406,6 @@ class Bender : public Piece
 public:
   Bender(Field *field) : Piece(PIECE_BENDER, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -440,7 +422,6 @@ class Twister : public Piece
 public:
   Twister(Field *field) : Piece(PIECE_TWISTER, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -456,7 +437,6 @@ class Filter : public Piece
   public:
     Filter(LaserColor color, Field *field) : Piece(PIECE_FILTER, NORTH, color, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { return (color_ & laser.color) == 0; }
     void receiveLaser(Laser &laser)
     {
@@ -473,7 +453,6 @@ class RoundFilter : public Piece
 public:
   RoundFilter(Field *field) : Piece(PIECE_FILTER, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser)
   {
     s8 delta = deltaDirection(laser) % 4;
@@ -511,7 +490,6 @@ class Polarizer : public Piece
   public:
     Polarizer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_POLARIZER, rotation, color, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == 0; }
     void receiveLaser(Laser &laser)
     {
@@ -526,7 +504,6 @@ class Tunnel : public Piece
   public:
     Tunnel(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser)
     {
@@ -542,7 +519,6 @@ class ColorShifter : public Piece
   public:
     ColorShifter(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
     
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser)
     {
@@ -567,7 +543,6 @@ class ColorInverter : public Piece
 public:
   ColorInverter(Direction rotation, Field *field) : Piece(PIECE_COLOR_INVERTER, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -589,7 +564,6 @@ class CrossColorInverter : public Piece
 public:
   CrossColorInverter(Direction rotation, Field *field) : Piece(PIECE_CROSS_COLOR_INVERTER, rotation, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser)
   {
@@ -612,7 +586,6 @@ class Teleporter : public Piece
 public:
   Teleporter(Field *field) : Piece(PIECE_TELEPORTER, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
   
@@ -626,7 +599,6 @@ class TNT : public Piece
 public:
   TNT(Field *field) : Piece(PIECE_TNT, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser); // TODO
 
@@ -640,7 +612,6 @@ class Slime : public Piece
 public:
   Slime(Field *field) : Piece(PIECE_SLIME, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
 
@@ -652,7 +623,6 @@ class Mine : public Piece
 public:
   Mine(Field *field) : Piece(PIECE_MINE, NORTH, COLOR_NONE, field) { }
   
-  bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
 
@@ -673,7 +643,6 @@ class Goal : public Piece
   public:
     Goal(PieceType type, LaserColor color, Field *field);
   
-    bool produceLaser() = 0;
     bool blocksLaser(Laser &laser) = 0;
     void receiveLaser(Laser &laser) = 0;
 
@@ -694,7 +663,6 @@ class StrictGoal : public Goal
   public:
     StrictGoal(LaserColor color, Field *field) : Goal(PIECE_STRICT_GOAL, color, field) { }
 
-    bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser)
     {

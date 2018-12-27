@@ -114,11 +114,13 @@ void Field::updateLasers()
       tile->resetLasers();
       Piece *piece = tile->piece();
       
-      if (piece && piece->produceLaser())
+      if (piece)
       {
-        generateBeam(Position(i,j), piece->rotation(), piece->color());
-        //Laser laser = Laser(Position(i+Position::directions[piece->rotation()][0],j+Position::directions[piece->rotation()][1]), piece->rotation(), piece->color());
-        //lasers.push_back(laser);
+        Laser laser = piece->produceLaser();
+        
+        if (laser.color != COLOR_NONE)
+          generateBeam(laser.position + Position(i, j), laser.direction, laser.color);
+
       }
     }
   
