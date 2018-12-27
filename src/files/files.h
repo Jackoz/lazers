@@ -102,7 +102,7 @@ class Files
     static PieceInfoSpec *specForPiece(PieceType type);
   
     static PieceInfo loadPiece(const u8 *ptr);
-    static PieceSaveInfo savePiece(Piece *piece);
+    //static PieceSaveInfo savePiece(Piece *piece);
     static PieceSaveInfo savePiece(const PieceInfo* piece);
   
     static LevelSpec loadLevel(const u8 *ptr);

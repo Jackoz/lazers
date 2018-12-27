@@ -73,21 +73,17 @@ class Piece
     Direction rotation_;
     LaserColor color_;
     bool movable, roteable;
-  
-    Tile *tile;
+
     Field *field;
   
   public:
-    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), tile(nullptr), field(field) { }
+    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), field(field) { }
     virtual ~Piece() { }
   
     Direction rotation() { return rotation_; }
     PieceType type() { return type_; }
     LaserColor color() { return color_; }
-  
-    void place(Tile *tile) { this->tile = tile; }
-    Tile *getTile() { return tile; }
-  
+
     void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
     void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
   

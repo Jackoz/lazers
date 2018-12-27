@@ -25,7 +25,7 @@ class Game;
 class Tile
 {
 private:
-  Piece *piece_;
+  Piece* _piece;
 
 public:
   u8 colors[8];
@@ -33,7 +33,7 @@ public:
   u8 x, y;
   u8 variant;
   
-  Tile() : piece_{nullptr}, colors{COLOR_NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
+  Tile() : _piece{nullptr}, colors{COLOR_NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
   
   void resetLasers()
   {
@@ -41,10 +41,10 @@ public:
       colors[i] = COLOR_NONE;
   }
 
-  bool empty() const { return piece_ == nullptr; }
+  bool empty() const { return _piece == nullptr; }
   
-  Piece *piece() { return piece_; }
-  void place(Piece* piece) { this->piece_ = piece; if (piece) piece->place(this); }
+  Piece *piece() { return _piece; }
+  void place(Piece* piece) { this->_piece = piece; }
 };
 
 class Field

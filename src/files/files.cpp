@@ -287,24 +287,6 @@ PieceInfo Files::loadPiece(const u8 *ptr)
   return info;
 }
 
-PieceSaveInfo Files::savePiece(Piece *piece)
-{
-  PieceSaveInfo info;
-  
-  info.data[0] = charForPiece(piece->type());
-  // TODO: inventory
-  Tile *tile = piece->getTile();
-  info.data[1] = (tile->x << 4) | tile->y;
-  info.data[2] = 0;
-  info.data[2] |= piece->rotation();
-  info.data[2] |= (piece->color() << 3);
-  if (piece->canBeRotated())
-    info.data[2] |= 0x80;
-  if (piece->canBeMoved())
-    info.data[2] |= 0x40;
-  return info;
-}
-
 PieceSaveInfo Files::savePiece(const PieceInfo* piece)
 {
   PieceSaveInfo info;
