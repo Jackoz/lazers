@@ -18,8 +18,7 @@
 #include <string>
 
 #include "pieces.h"
-#include "files.h"
-
+#include "files/files.h"
 
 class Game;
 

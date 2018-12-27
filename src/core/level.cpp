@@ -8,7 +8,7 @@
 
 #include "level.h"
 
-#include "gfx.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -165,7 +165,8 @@ void Field::updateLasers()
   if (checkForWin() && !_level->solved)
   {
     _level->solved = true;
-    ++Files::packAt(Files::selectedPack)->solvedCount;
+    //TODO: non-sense here, need to be managed somewhere else
+    //++Files::packAt(Files::selectedPack)->solvedCount;
   }
 }
 

@@ -9,8 +9,8 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
-#include "common.h"
-#include "level.h"
+#include "common/common.h"
+#include "core/level.h"
 
 template<class T>
 class OffsettableList

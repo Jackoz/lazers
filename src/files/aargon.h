@@ -9,7 +9,7 @@
 #ifndef _AARGON_H_
 #define _AARGON_H_
 
-#include "common.h"
+#include "common/common.h"
 
 #include <string>
 

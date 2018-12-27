@@ -9,8 +9,7 @@
 #ifndef _PIECES_H_
 #define _PIECES_H_
 
-#include "common.h"
-
+#include "common/common.h"
 #include <list>
 
 #define UNUSED(x) (void)(x)

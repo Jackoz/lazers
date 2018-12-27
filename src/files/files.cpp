@@ -8,8 +8,15 @@
 
 #include "files.h"
 
-#include "level.h"
+#include "core/level.h"
+
+#ifdef _WIN32
+#include "platforms/windows/dirent.h"
+#else
 #include <dirent.h>
+#endif
+
+#include <algorithm>
 
 using namespace std;
 
@@ -345,7 +352,7 @@ void Files::saveLevel(const LevelSpec* level, u8 **ptr, size_t *length)
   
   optr[0] = static_cast<u8>(level->name.length());
   optr[1] = static_cast<u8>(level->count());
-  strncpy(reinterpret_cast<char*>(optr+2), level->name.c_str(), level->name.length());
+  strncpy_s(reinterpret_cast<char*>(optr+2), level->name.length(), level->name.c_str(), level->name.length());
   
   optr += 1 + 1 + level->name.length();
   

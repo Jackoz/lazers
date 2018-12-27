@@ -13,7 +13,7 @@
 #include "view_levelselect.h"
 #include "view_packselect.h"
 
-#include "aargon.h"
+#include "files/aargon.h"
 
 Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[0]), overView(nullptr)
 {
@@ -39,7 +39,8 @@ void Game::init()
   
   Files::loadSolvedStatus();
   
-  pack = Files::packAt(0);
+  if (Files::packCount() > 0)
+    pack = Files::packAt(0);
   
   //for (int i = 0; i < Files::packCount(); ++i)
   //  Files::savePack(Files::packAt(i));

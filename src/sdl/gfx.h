@@ -9,8 +9,8 @@
 #ifndef _GFX_H_
 #define _GFX_H_
 
-#include "common.h"
-#include "level.h"
+#include "common/common.h"
+#include "core/level.h"
 
 #define OSX
 #define SCALE (3)

@@ -9,8 +9,8 @@
 #ifndef _FILES_H_
 #define _FILES_H_
 
-#include "common.h"
-#include "pieces.h"
+#include "common/common.h"
+#include "core/pieces.h"
 
 #include <fstream>
 #include <vector>
