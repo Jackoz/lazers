@@ -34,7 +34,7 @@ void Game::init()
   printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
   
   
-  //Aargon::parseLevels();
+  Aargon::parseLevels();
   //Files::loadPacks();
   
   Files::loadSolvedStatus();
@@ -45,7 +45,7 @@ void Game::init()
   //for (int i = 0; i < Files::packCount(); ++i)
   //  Files::savePack(Files::packAt(i));
   
-  
+  view = views[2];
   
   view->activate();
 }

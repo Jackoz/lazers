@@ -76,8 +76,11 @@ void LevelSelectView::handleEvent(SDL_Event &event)
       {
         auto i = (y - LIST_Y) / LIST_DY;
         
-        if (levelList.get(i))
+        if (i != levelList.current() && levelList.get(i))
+        {
           levelList.set(i);
+          rebuildPreview();
+        }
       }
       
       break;

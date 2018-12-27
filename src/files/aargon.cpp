@@ -94,7 +94,6 @@ s8 baseDirection(PieceType type)
     case PIECE_SELECTOR: return EAST;
     case PIECE_SPLICER: return EAST;
 
-      
     default: return DIRECTION_IGNORE;
   }
 }
@@ -186,18 +185,40 @@ bool canHaveColor(PieceType type)
   }
 }
 
-LevelSpec Aargon::parseLevel(string filename)
+LevelSpec Aargon::parseLevel(const string& filename)
 {
   ifstream in = ifstream(filename);
   
   cout << "parsing " << filename << endl;
+
+  assert(!in.fail());
   
   string line;
   vector<string> lines;
   
-  while (getline(in, line))
-    lines.push_back(line.substr(0, line.length()-1));
-  
+  const std::string content = std::string(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+  const size_t length = content.length();
+
+  for (size_t i = 0; i < length; ++i)
+  {
+    const char c = content[i];
+
+    if (c == '\r' || c == '\n')
+    {
+      if (c == '\r')
+      {
+        assert(i < length - 1 && content[i + 1] == '\n');
+        ++i;
+      }
+
+      if (!line.empty())
+        lines.push_back(line);
+      line.clear();
+    }
+    else
+      line += c;
+  }
+
   assert(lines.size() == 16);
   
   for (int i = 0; i < 13; ++i)
@@ -351,7 +372,11 @@ void Aargon::parseLevels()
   apacks.push_back({"Aargon Deluxe (Medium)", "Twilight Games", "aargon-deluxe-medium", "Deluxe", 2});
   apacks.push_back({"Aargon Deluxe (Hard)", "Twilight Games", "aargon-deluxe-hard", "Deluxe", 3});
   apacks.push_back({"Aargon Deluxe (Extreme)", "Twilight Games", "aargon-deluxe-extreme", "Deluxe", 4});
-  
+
+  apacks.push_back({ "Aargon Classic (Beginner)", "Twilight Games", "aargon-classic-easy", "Classic", 1 });
+  apacks.push_back({ "Aargon Classic (Easy)", "Twilight Games", "aargon-classic-medium", "Classic", 2 });
+  apacks.push_back({ "Aargon Classic (Hard)", "Twilight Games", "aargon-classic-hard", "Classic", 3 });
+  apacks.push_back({ "Aargon Classic (Expert)", "Twilight Games", "aargon-classic-extreme", "Classic", 4 });
   
   
   for (const AargonPack &apack : apacks)
@@ -360,7 +385,7 @@ void Aargon::parseLevels()
 
     for (int i = 1; i <= 30; ++i)
     {
-      string base = "/Users/jack/Documents/dev/c++/lazers/data/packs/aargon/";
+      string base = "aargon/";// "/Users/jack/Documents/dev/c++/lazers/data/packs/aargon/";
       stringstream ss;
       ss << base << apack.folderName << "/" << "Levels/SKILL";
       ss << apack.skillNumber << "/";

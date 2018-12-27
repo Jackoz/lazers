@@ -18,7 +18,7 @@ struct LevelSpec;
 class Aargon
 {
   public:
-    static LevelSpec parseLevel(std::string name);
+    static LevelSpec parseLevel(const std::string& name);
     static void parseLevels();
 };
 
