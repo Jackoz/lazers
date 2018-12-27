@@ -66,7 +66,7 @@ void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
       
       if (tile->piece())
       {
-        SDL_Rect src = rectForPiece(tile->piece());
+        SDL_Rect src = rectForPiece(tile->piece().get());
         SDL_Rect dst = Gfx::ccr(cx+1,cy+1,0,0);
         SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
@@ -147,7 +147,7 @@ void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
       
       if (tile->piece())
       {
-        SDL_Rect src = rectForPiece(tile->piece());;
+        SDL_Rect src = rectForPiece(tile->piece().get());
         SDL_Rect dst = Gfx::ccr(bx+TILE_SIZE*x + 1, by + TILE_SIZE*y + 1, 0, 0);
         SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
@@ -231,7 +231,7 @@ void LevelView::draw()
     SDL_GetMouseState(&x, &y);
     x /= SCALE; y /= SCALE;
     
-    SDL_Rect src = rectForPiece(heldPiece);
+    SDL_Rect src = rectForPiece(heldPiece.get());
     SDL_Rect dst = Gfx::ccr(x - PIECE_SIZE/2, y - PIECE_SIZE/2,0,0);
     SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
 
@@ -267,27 +267,19 @@ void LevelView::handleEvent(SDL_Event &event)
       Position hover = coordToPosition(x, y);
       
       Tile* tile = field->tileAt(hover);
-      Piece* piece = tile->piece();
+      const auto& piece = tile->piece();
       
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        if (piece && !heldPiece && piece->canBeMoved())
+        if (!heldPiece && piece && piece->canBeMoved())
         {
-          heldPiece = tile->piece();
-          tile->place(nullptr);
+          tile->swap(heldPiece);
           field->updateLasers();
         }
-        else if (heldPiece && !piece && tile->empty())
+        else if (heldPiece && (!piece || piece->canBeMoved()))
         {
-          tile->place(heldPiece);
-          heldPiece = nullptr;
+          tile->swap(heldPiece);
           field->updateLasers();
-        }
-        else if (heldPiece && piece && piece->canBeMoved())
-        {
-          Piece* temp = heldPiece;
-          heldPiece = piece;
-          tile->place(temp);
         }
       }
       else if (event.button.button == SDL_BUTTON_RIGHT)
@@ -341,7 +333,7 @@ void LevelView::handleEvent(SDL_Event &event)
           //   B
         case SDLK_LCTRL: // A
         {
-          Piece *piece = field->tileAt(position->x, position->y)->piece();
+          const auto& piece = field->tileAt(position->x, position->y)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateRight();
@@ -362,17 +354,13 @@ void LevelView::handleEvent(SDL_Event &event)
             selectedTile = nullptr;
           else if (selectedTile)
           {
-            Piece *oldPiece = selectedTile->piece();
-            Piece *newPiece = curTile->piece();
+            const auto& oldPiece = selectedTile->piece();
+            const auto& newPiece = curTile->piece();
             
             if (!newPiece || newPiece->canBeMoved())
             {
-              selectedTile->place(newPiece);
-              curTile->place(oldPiece);
-              //std::swap(selectedTile_->piece, curTile->piece);
-              
-              selectedTile = nullptr;
-              
+              selectedTile->swap(curTile);
+              selectedTile = nullptr;              
               field->updateLasers();
             }
           }
@@ -381,7 +369,7 @@ void LevelView::handleEvent(SDL_Event &event)
         }
         case SDLK_LSHIFT: // X
         {
-          Piece *piece = field->tileAt(position->x, position->y)->piece();
+          const auto& piece = field->tileAt(position->x, position->y)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateLeft();

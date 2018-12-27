@@ -19,7 +19,7 @@ struct SDL_Surface;
 class LevelView : public View
 {
 private:
-  Piece* heldPiece; //TODO: convert to std::unique_ptr
+  std::unique_ptr<Piece> heldPiece;
   Tile *selectedTile;
   Position fposition, iposition;
   Position *position;

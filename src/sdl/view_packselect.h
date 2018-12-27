@@ -21,10 +21,10 @@ class PackList : public OffsettableList<LevelPack*>
   public:
     PackList(Game *game) : OffsettableList(14), game(game) { }
     
-    u32 current() { return Files::selectedPack; }
-    u32 count() { return Files::packCount(); }
+    u32 current() const { return Files::selectedPack; }
+    u32 count() const { return Files::packCount(); }
     void set(u32 i) { Files::selectedPack = i; }
-    LevelPack* get(u32 i) { return Files::packAt(i); }
+    LevelPack* get(u32 i) const { return Files::packAt(i); }
 };
 
 class PackSelectList : public View

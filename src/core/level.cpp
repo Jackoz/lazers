@@ -112,7 +112,7 @@ void Field::updateLasers()
     {
       Tile *tile = tileAt(i,j);
       tile->resetLasers();
-      Piece *piece = tile->piece();
+      const auto& piece = tile->piece();
       
       if (piece)
       {
@@ -139,7 +139,7 @@ void Field::updateLasers()
       
       Tile *tile = tileAt(laser.position);
       
-      Piece *piece = tile->piece();
+      const auto& piece = tile->piece();
       
       if (piece && piece->blocksLaser(laser))
         break;

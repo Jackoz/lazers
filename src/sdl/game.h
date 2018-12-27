@@ -28,11 +28,13 @@ public:
   u32 maxOffset() { return offset + LIST_SIZE - 1; }
   bool isSelected(u32 i) { return i + offset == current(); }
   void reset() { offset = 0; }
+
+  bool isValidIndex(u32 i) const { return offset + i < count(); }
   
-  virtual u32 current() = 0;
-  virtual u32 count() = 0;
+  virtual u32 current() const = 0;
+  virtual u32 count() const = 0;
   virtual void set(u32 i) = 0;
-  virtual T get(u32 i) = 0;
+  virtual T get(u32 i) const  = 0;
   
   bool hasNext(u32 i) { return i < LIST_SIZE && i + offset < count(); }
   

@@ -17,6 +17,8 @@
 #include <sstream>
 #include <string>
 
+#include <cassert>
+
 #include "pieces.h"
 #include "files/files.h"
 
@@ -25,7 +27,7 @@ class Game;
 class Tile
 {
 private:
-  Piece* _piece;
+  std::unique_ptr<Piece> _piece;
 
 public:
   u8 colors[8];
@@ -35,16 +37,23 @@ public:
   
   Tile() : _piece{nullptr}, colors{COLOR_NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
   
-  void resetLasers()
-  {
-    for (int i = 0; i < 8; ++i)
-      colors[i] = COLOR_NONE;
-  }
+  void resetLasers() { std::fill(colors, colors + 8, COLOR_NONE); }
+  void clear() { _piece.reset(); }
 
   bool empty() const { return _piece == nullptr; }
   
-  Piece *piece() { return _piece; }
-  void place(Piece* piece) { this->_piece = piece; }
+  const std::unique_ptr<Piece>& piece() const { return _piece; }
+
+  void place(Piece* piece)
+  {
+    if (piece)
+      assert(!_piece);
+
+    _piece.reset(piece);
+  }
+
+  void swap(std::unique_ptr<Piece>& other) { std::swap(_piece, other); }
+  void swap(Tile* other) { std::swap(_piece, other->_piece); }
 };
 
 class Field
@@ -159,13 +168,7 @@ public:
         
         Tile *tile = tileAt(i,j);
         tile->resetLasers();
-
-        Piece *piece = tile->piece();
-        if (piece)
-        {
-          delete piece;
-          tile->place(nullptr);
-        }
+        tile->clear();
       }
   }
 

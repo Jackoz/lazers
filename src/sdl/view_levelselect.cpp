@@ -68,7 +68,7 @@ void LevelSelectView::handleEvent(SDL_Event &event)
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       int i = ui::coordToListEntry(x, y);
 
-      if (i >= 0 && (i + levelList.getOffset()) != levelList.current() && levelList.get(i))
+      if (i >= 0 && (i + levelList.getOffset()) != levelList.current() && levelList.isValidIndex(i))
       {
         levelList.set(levelList.getOffset() + i);
         rebuildPreview();

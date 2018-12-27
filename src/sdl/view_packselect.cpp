@@ -60,7 +60,7 @@ void PackSelectList::handleEvent(SDL_Event &event)
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       auto i = ui::coordToListEntry(x, y);
 
-      if (i >= 0 && levelList.get(i))
+      if (i >= 0 && levelList.isValidIndex(i))
         levelList.set(i);
 
       break;
@@ -71,7 +71,7 @@ void PackSelectList::handleEvent(SDL_Event &event)
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       auto i = ui::coordToListEntry(x, y);
 
-      if (i >= 0 && levelList.get(i))
+      if (i >= 0 && levelList.isValidIndex(i))
       {
         game->pack = Files::packAt(Files::selectedPack);
         game->switchView(VIEW_LEVEL_SELECT);
