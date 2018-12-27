@@ -101,8 +101,8 @@ class Piece
   
     void setCanBeMoved(bool value) { movable = value; };
     void setCanBeRotated(bool value) { roteable = value; }
-    virtual bool canBeMoved() = 0;
-    virtual bool canBeRotated() = 0;
+    virtual bool canBeMoved() const { return movable; }
+    virtual bool canBeRotated() const { return roteable; }
     
     SDL_Rect gfxRect()
     {
@@ -131,8 +131,7 @@ class Wall : public Piece
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); }
   
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return false; }
+    bool canBeRotated() const override { return false; }
   
     Position gfxTile() { return Position(13,7); }
 };
@@ -146,8 +145,7 @@ public:
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }
   
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
+  bool canBeRotated() const override { return false; }
   
   Position gfxTile() { return Position(11,7); }
 };
@@ -160,9 +158,6 @@ class LaserSource : public Piece
     bool produceLaser() { return true; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
     void receiveLaser(Laser &laser) { UNUSED(laser); /*laser.invalidate();*/ }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
   
     Position gfxTile() { return Position(rotation_, 1); }
 };
@@ -187,10 +182,7 @@ class Mirror : public Piece
       else
         laser.invalidate();
     }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(rotation_, 0); }
 };
 
@@ -216,10 +208,7 @@ public:
     else
       laser.invalidate();
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_, 10); }
 };
 
@@ -243,10 +232,7 @@ class DoubleMirror : public Piece
       else
         laser.invalidate();
     }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(rotation_%4 + 4, 5); }
 };
 
@@ -258,10 +244,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_%4 + 4, 11); }
 };
 
@@ -288,10 +271,7 @@ public:
     else
       laser.invalidate();
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_%4, 11); }
 };
 
@@ -313,10 +293,7 @@ public:
     else if (delta == 1 || delta == -3)
       laser.rotateRight(2);
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_%4, 12); }
 };
 
@@ -339,10 +316,7 @@ public:
     else
       laser.invalidate();
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_%4, 5); }
 };
 
@@ -354,10 +328,7 @@ class Splitter : public Piece
     bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(rotation_, 2); }
 };
 
@@ -369,10 +340,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_ + 8, 17); }
 };
 
@@ -385,9 +353,8 @@ public:
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
   
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+  bool canBeRotated() const override { return false; }
+
   Position gfxTile() { return Position(10, 7); }
 };
 
@@ -399,10 +366,7 @@ class DSplitter : public Piece
     bool produceLaser() { return false; }
     bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
     void receiveLaser(Laser &laser);
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(rotation_, 3); }
 };
 
@@ -414,10 +378,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_, 4); }
 };
   
@@ -429,10 +390,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_ + 8, 17); }
 };
   
@@ -444,10 +402,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_, 12 + color_); }
 };
 
@@ -459,10 +414,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
   void receiveLaser(Laser &laser);
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_, 12 + 7 + color_); }
 };
   
@@ -478,9 +430,8 @@ public:
     laser.rotateRight(1);
   }
   
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+  bool canBeMoved() const override { return movable; }
+
   Position gfxTile() { return Position(14, 7); }
 };
 
@@ -495,10 +446,7 @@ public:
   {
     laser.rotateLeft(2);
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+
   Position gfxTile() { return Position(12, 7); }
 };
 
@@ -515,9 +463,8 @@ class Filter : public Piece
       laser.color = static_cast<LaserColor>(laser.color & color_);
     }
   
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return false; }
-  
+    bool canBeRotated() const override { return false; }
+
     Position gfxTile() { return Position(color_+8, 8); }
 };
 
@@ -555,10 +502,7 @@ public:
     else if (delta == 2)
       laser.color = static_cast<LaserColor>(laser.color & COLOR_BLUE);
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_%4, 9); }
 };
 
@@ -573,10 +517,7 @@ class Polarizer : public Piece
     {
       laser.color = static_cast<LaserColor>(laser.color & color_);
     }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(color_ + 8, 9 + rotation_%4); }
 };
 
@@ -592,10 +533,7 @@ class Tunnel : public Piece
       if (deltaDirection(laser) != 0)
         laser.invalidate();
     }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     Position gfxTile() { return Position(rotation_, 6); }
 };
 
@@ -620,10 +558,7 @@ class ColorShifter : public Piece
           laser.color = static_cast<LaserColor>(((laser.color << 1) & COLOR_WHITE) | ((laser.color & COLOR_BLUE) >> 2));
       }
     }
-    
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-    
+  
     Position gfxTile() { return Position(rotation_, 8); }
 };
 
@@ -645,10 +580,7 @@ public:
       laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
     }
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(rotation_, 7); }
 };
 
@@ -670,10 +602,7 @@ public:
       laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
     }
   }
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return roteable; }
-  
+
   Position gfxTile() { return Position(4 + rotation_%2, 9); }
 };
 
@@ -687,9 +616,8 @@ public:
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
   
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+  bool canBeRotated() const override { return false; }
+
   Position gfxTile() { return Position(9, 7); }
 };
 
@@ -701,10 +629,9 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser); // TODO
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+
+  bool canBeRotated() const override { return false; }
+ 
   Position gfxTile() { return Position(15, 7); }
 };
 
@@ -716,10 +643,7 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
-  
+
   Position gfxTile() { return Position(8, 7); }
 };
 
@@ -731,9 +655,8 @@ public:
   bool produceLaser() { return false; }
   bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
-  
-  bool canBeMoved() { return movable; }
-  bool canBeRotated() { return false; }
+
+  bool canBeRotated() const override { return false; }
   
   Position gfxTile() { return Position(8, 8); }
 };
@@ -753,10 +676,7 @@ class Goal : public Piece
     bool produceLaser() = 0;
     bool blocksLaser(Laser &laser) = 0;
     void receiveLaser(Laser &laser) = 0;
-    
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-  
+
     bool isSatisfied() const { return satisfied; }
     void reset() {
       satisfied = color_ == COLOR_NONE;
@@ -791,10 +711,7 @@ class StrictGoal : public Goal
       else
         satisfied = satisfyColor == color_ && foundDirections == 1;
     }
-  
-    bool canBeMoved() { return movable; }
-    bool canBeRotated() { return roteable; }
-    
+
     Position gfxTile() { return Position(color_+8, isSatisfied() ? 14 : 13); }
 };
 
