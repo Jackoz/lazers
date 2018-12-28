@@ -12,17 +12,8 @@
 #include "common/common.h"
 #include "core/level.h"
 
-#define OSX
-#define SCALE (3)
-
 #include <SDL.h>
-
-#ifdef SCALE
 #include <SDL_image.h>
-#else
-#include <SDL_image.h>
-#endif
-
 
 #define BACKGROUND_COLOR (Gfx::ccc(20, 20, 40))
 
@@ -89,11 +80,7 @@ public:
   static SDL_Renderer* renderer;
   static SDL_Texture* texture;
   static SDL_Surface* screen;
-
-  
-#ifdef SCALE
   static SDL_Surface *realScreen;
-#endif
 };
 
 

@@ -9,9 +9,11 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-typedef unsigned char u8;
-typedef unsigned int u32;
-typedef unsigned short u16;
+#include <cstdint>
+
+using u32 = uint32_t;
+using u16 = uint16_t;
+using u8 = uint8_t;
 
 typedef signed char s8;
 typedef signed short s16;
@@ -24,20 +26,6 @@ static const u16 INVENTORY_HEIGHT = 6;
 
 static const u16 TILE_SIZE = 15;
 static const u16 PIECE_SIZE = 14;
-
-#define KEY_LEFT (SDLK_LEFT)
-#define KEY_RIGHT (SDLK_RIGHT)
-#define KEY_UP (SDLK_UP)
-#define KEY_DOWN (SDLK_DOWN)
-#define KEY_X (SDLK_LSHIFT)
-#define KEY_Y (SDLK_SPACE)
-#define KEY_A (SDLK_LCTRL)
-#define KEY_B (SDLK_LALT)
-#define KEY_L (SDLK_TAB)
-#define KEY_R (SDLK_BACKSPACE)
-#define KEY_SELECT (SDLK_ESCAPE)
-#define KEY_START (SDLK_RETURN)
-
 
 enum LaserColor : u8
 {

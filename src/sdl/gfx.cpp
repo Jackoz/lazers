@@ -8,6 +8,7 @@
 
 #include "gfx.h"
 
+#include "ui.h"
 #include "game.h"
 #include <cmath>
 #include <cassert>
@@ -20,9 +21,7 @@ SDL_Renderer* Gfx::renderer = nullptr;
 SDL_Texture* Gfx::texture = nullptr;
 
 SDL_Surface *Gfx::screen = nullptr;
-#ifdef SCALE
 SDL_Surface *Gfx::realScreen = nullptr;
-#endif
 
 SDL_Surface *Gfx::tiles = nullptr;
 SDL_Surface *Gfx::font = nullptr;

@@ -1,0 +1,3 @@
+[submodule "projects/gba"]
+	path = projects/gba
+	url = git@github.com:Jakz/gba-cpp-lib.git

@@ -2,6 +2,24 @@
 
 #include "common/common.h"
 
+#include "SDL.h"
+
+#define SCALE (3)
+
+
+#define KEY_LEFT (SDLK_LEFT)
+#define KEY_RIGHT (SDLK_RIGHT)
+#define KEY_UP (SDLK_UP)
+#define KEY_DOWN (SDLK_DOWN)
+#define KEY_X (SDLK_LSHIFT)
+#define KEY_Y (SDLK_SPACE)
+#define KEY_A (SDLK_LCTRL)
+#define KEY_B (SDLK_LALT)
+#define KEY_L (SDLK_TAB)
+#define KEY_R (SDLK_BACKSPACE)
+#define KEY_SELECT (SDLK_ESCAPE)
+#define KEY_START (SDLK_RETURN)
+
 class ui
 {
 public:

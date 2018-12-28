@@ -8,8 +8,10 @@
 
 #include "view_level.h"
 
+#include "ui.h"
 #include "gfx.h"
 #include "SDL.h"
+
 
 static const u16 GFX_FIELD_POS_X = 0;
 static const u16 GFX_FIELD_POS_Y = 15;
