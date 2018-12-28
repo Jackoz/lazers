@@ -137,8 +137,8 @@ public:
 
     
     /*std::stringstream ss;
-    for (int i = 0; i < FIELD_WIDTH; ++i)
-      for (int j = 0; j < FIELD_HEIGHT; ++j)
+    for (int i = 0; i < width(); ++i)
+      for (int j = 0; j < height(); ++j)
         if (tileAt(i, j)->piece())
         {
           PieceSaveInfo info = Files::savePiece(tileAt(i, j)->piece());

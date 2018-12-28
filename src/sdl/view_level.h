@@ -24,11 +24,8 @@ private:
   Position fposition, iposition;
   Position *position;
   
-  static u16 coordX(u16 x, bool isInventory);
-  static u16 coordY(u16 y);
-  
-  
-  
+  static u16 coordX(const Position& p);
+  static u16 coordY(const Position& p);
   static SDL_Rect rectForPiece(const Piece* piece);
   
   Field* field() { return game->field; }
@@ -36,13 +33,13 @@ private:
   Position coordToPosition(int x, int y);
   
 public:
-  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(FIELD_WIDTH,0)), position(&fposition), heldPiece(nullptr) { }
+  LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(Position::Type::INVENTORY,0,0)), position(&fposition), heldPiece(nullptr) { }
   void handleEvent(SDL_Event &event);
   void draw();
   void activate();
   
   static void drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
-  static void drawGrid(const Field *field, int x, int y, int w, int h, SDL_Surface *screen);
+  static void drawGrid(int x, int y, int w, int h, SDL_Surface *screen);
   static void drawInventory(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
 };
 

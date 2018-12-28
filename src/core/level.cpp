@@ -75,7 +75,7 @@ void Field::load(LevelSpec* level)
       
       if (info->inventory)
       {
-        place(Position(Position::Type::INVENTORY, curInvSlot%INVENTORY_WIDTH, curInvSlot/INVENTORY_WIDTH), piece);
+        place(Position(Position::Type::INVENTORY, curInvSlot%_invWidth, curInvSlot/_invWidth), piece);
         ++curInvSlot;
       }
       else

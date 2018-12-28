@@ -115,6 +115,7 @@ struct Position
   Position(s8 x, s8 y) : Position(Type::FIELD, x, y) { }
   Position(Type type) : Position(Type::INVALID, -1, -1) { }
   
+  bool isInventory() const { return type == Position::Type::INVENTORY; }
   bool isValid() const { return type != Type::INVALID && x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
 
   Position& operator+=(Direction dir) { x += directions[dir][0]; y += directions[dir][1]; return *this; }

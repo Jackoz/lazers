@@ -34,15 +34,15 @@ Position LevelView::coordToPosition(int x, int y)
 
 }
 
-u16 LevelView::coordX(u16 x, bool isInventory)
+u16 LevelView::coordX(const Position& p)
 {
-  if (!isInventory || x < FIELD_WIDTH)
-    return TILE_SIZE*x + GFX_FIELD_POS_X;
+  if (p.type != Position::Type::INVENTORY)
+    return TILE_SIZE*p.x + GFX_FIELD_POS_X;
   else
-    return TILE_SIZE*(x-FIELD_WIDTH) + GFX_INVENTORY_POS_X;
+    return TILE_SIZE*p.x + GFX_INVENTORY_POS_X;
 }
 
-u16 LevelView::coordY(u16 y) { return TILE_SIZE*y + GFX_FIELD_POS_Y; }
+u16 LevelView::coordY(const Position& p) { return TILE_SIZE*p.y + GFX_FIELD_POS_Y; }
 
 void LevelView::activate()
 {
@@ -137,13 +137,11 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
         SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
         SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
       }
-      
-      
-      
+
       const Tile* upper = y > 0 ? field->tileAt(Position(x, y-1)) : nullptr;
       const Tile* left = x > 0 ? field->tileAt(Position(x-1, y)) : nullptr;
       const Tile* upperLeft = upper && left ? field->tileAt(Position(x-1, y-1)) : nullptr;
-      const Tile* upperRight = upper && x < FIELD_WIDTH ? field->tileAt(Position(x+1, y-1)) : nullptr;
+      const Tile* upperRight = upper && x < field->width() ? field->tileAt(Position(x+1, y-1)) : nullptr;
       
       // place horizontal fillers
       if (tile->colors[NORTH] && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
@@ -182,8 +180,8 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
 
 void LevelView::drawInventory(const Field* field, SDL_Surface *screen, u16 bx, u16 by)
 {
-  for (int x = 0; x < INVENTORY_WIDTH; ++x)
-    for (int y = 0; y < INVENTORY_HEIGHT; ++y)
+  for (int x = 0; x < field->invWidth(); ++x)
+    for (int y = 0; y < field->invHeight(); ++y)
     {
       const Tile* tile = field->tileAt(Position(Position::Type::INVENTORY, x, y));
       
@@ -196,7 +194,7 @@ void LevelView::drawInventory(const Field* field, SDL_Surface *screen, u16 bx, u
     }
 }
 
-void LevelView::drawGrid(const Field* field, int x, int y, int w, int h, SDL_Surface *screen)
+void LevelView::drawGrid(int x, int y, int w, int h, SDL_Surface *screen)
 {
   for (int i = 0; i < w; ++i)
     for (int j = 0; j < h; ++j)
@@ -216,16 +214,16 @@ void LevelView::draw()
   
   // draw field
   
-  drawGrid(field, GFX_FIELD_POS_X, GFX_FIELD_POS_Y, FIELD_WIDTH, FIELD_HEIGHT, Gfx::screen);
-  drawGrid(field, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y, INVENTORY_WIDTH, INVENTORY_HEIGHT, Gfx::screen);
+  drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width(), field->height(), Gfx::screen);
+  drawGrid(GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y, field->invWidth(), field->invHeight(), Gfx::screen);
 
   Gfx::lock();
   
-  Gfx::rect(coordX(position->x, true), coordY(position->y), TILE_SIZE, TILE_SIZE, Gfx::ccc(180, 0, 0));
-  Gfx::rect(coordX(position->x, true)+1, coordY(position->y)+1, TILE_SIZE-2, TILE_SIZE-2, Gfx::ccc(180, 0, 0));
+  Gfx::rect(coordX(*position), coordY(*position), TILE_SIZE, TILE_SIZE, Gfx::ccc(180, 0, 0));
+  Gfx::rect(coordX(*position)+1, coordY(*position)+1, TILE_SIZE-2, TILE_SIZE-2, Gfx::ccc(180, 0, 0));
   
   if (selectedTile)
-    Gfx::rect(coordX(selectedTile->x, true), coordY(selectedTile->y), TILE_SIZE, TILE_SIZE, Gfx::ccc(240, 240, 0));
+    Gfx::rect(coordX(Position(selectedTile->x, selectedTile->y)), coordY(Position(selectedTile->x, selectedTile->y)), TILE_SIZE, TILE_SIZE, Gfx::ccc(240, 240, 0));
   
   Gfx::unlock();
   
@@ -233,12 +231,12 @@ void LevelView::draw()
   drawInventory(field, Gfx::screen, GFX_INVENTORY_POS_X, GFX_FIELD_POS_Y);
   
   if (field->level())
-    Gfx::drawString(GFX_FIELD_POS_X + FIELD_WIDTH*TILE_SIZE/2, 5, true, "%s%s", field->level()->name.c_str(), field->level()->solved ? " \x1D" : "");
+    Gfx::drawString(GFX_FIELD_POS_X + field->width()*TILE_SIZE/2, 5, true, "%s%s", field->level()->name.c_str(), field->level()->solved ? " \x1D" : "");
 
   // 245, 110
   
   const int BASE_X = 80;
-  const int BASE_Y = GFX_FIELD_POS_X + FIELD_HEIGHT*TILE_SIZE + 20;
+  const int BASE_Y = GFX_FIELD_POS_X + field->height()*TILE_SIZE + 20;
   const int STEP = 14;
   
   if (position == &iposition)
@@ -347,13 +345,15 @@ void LevelView::handleEvent(SDL_Event &event)
           
         case SDLK_LEFT:
         {
-          if ((position == &fposition && position->x > 0) || (position == &iposition && position->x > FIELD_WIDTH))
+          //TODO: adjust for different management of field/inventory positions
+          if ((position == &fposition && position->x > 0) || (position == &iposition && position->x > field->width()))
             --position->x;
           
           break;
         }
         case SDLK_RIGHT:
         {
+          //TODO: adjust for different management of field/inventory positions
           if ((position == &fposition && position->x < FIELD_WIDTH-1) || (position == &iposition && position->x < FIELD_WIDTH+INVENTORY_WIDTH-1))
             ++position->x;
           break;

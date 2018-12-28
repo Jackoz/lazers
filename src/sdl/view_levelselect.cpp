@@ -155,8 +155,8 @@ void LevelSelectView::rebuildPreview()
   field->load(game->pack->at(game->pack->selected));
   
   Gfx::clear(preview, BACKGROUND_COLOR);
-  LevelView::drawGrid(field, 0, 0, field->width(), field->height(), preview);
-  LevelView::drawGrid(field, field->width()*TILE_SIZE + 10, 0, field->invWidth(), field->invHeight(), preview);
+  LevelView::drawGrid(0, 0, field->width(), field->height(), preview);
+  LevelView::drawGrid(field->width()*TILE_SIZE + 10, 0, field->invWidth(), field->invHeight(), preview);
   LevelView::drawField(field, preview, 0, 0);
   LevelView::drawInventory(field, preview, field->width()*TILE_SIZE + 10, 0);
   Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, scaledPreview->w, scaledPreview->h);
