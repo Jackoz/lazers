@@ -18,31 +18,36 @@ Piece* Field::generatePiece(const PieceInfo *info)
   {
   switch (info->spec->type)
   {
-    case PIECE_MIRROR: return new Mirror(info->direction, this);
-    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info->direction, this);
-    case PIECE_STRICT_GOAL: return new StrictGoal(info->color, this);
-    case PIECE_SOURCE: return new LaserSource(info->direction, info->color, this);
-    case PIECE_SPLITTER: return new Splitter(info->direction, this);
-    case PIECE_DSPLITTER: return new DSplitter(info->direction, this);
-    case PIECE_REFRACTOR: return new Refractor(info->direction, this);
-    case PIECE_FILTER: return new Filter(info->color, this);
-    case PIECE_WALL: return new Wall(this);
-    case PIECE_GLASS: return new Glass(this);
-    case PIECE_COLOR_SHIFTER: return new ColorShifter(info->direction, this);
-    case PIECE_PRISM: return new Prism(info->direction, this);
-    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info->direction, this);
-    case PIECE_TUNNEL: return new Tunnel(info->direction, this);
-    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info->direction, this);
-    case PIECE_POLARIZER: return new Polarizer(info->direction, info->color, this);
-    case PIECE_SELECTOR: return new Selector(info->direction, info->color, this);
-    case PIECE_SPLICER: return new Splicer(info->direction, info->color, this);
-    case PIECE_BENDER: return new Bender(this);
-    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info->direction, this);
+    case PIECE_MIRROR: return new Mirror(info->direction);
+    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info->direction);
+    case PIECE_STRICT_GOAL:
+    {
+      Goal* goal = new StrictGoal(info->color);
+      addGoal(goal);
+      return goal;
+    }
+    case PIECE_SOURCE: return new LaserSource(info->direction, info->color);
+    case PIECE_SPLITTER: return new Splitter(info->direction);
+    case PIECE_DSPLITTER: return new DSplitter(info->direction);
+    case PIECE_REFRACTOR: return new Refractor(info->direction);
+    case PIECE_FILTER: return new Filter(info->color);
+    case PIECE_WALL: return new Wall();
+    case PIECE_GLASS: return new Glass();
+    case PIECE_COLOR_SHIFTER: return new ColorShifter(info->direction);
+    case PIECE_PRISM: return new Prism(info->direction);
+    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info->direction);
+    case PIECE_TUNNEL: return new Tunnel(info->direction);
+    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info->direction);
+    case PIECE_POLARIZER: return new Polarizer(info->direction, info->color);
+    case PIECE_SELECTOR: return new Selector(info->direction, info->color);
+    case PIECE_SPLICER: return new Splicer(info->direction, info->color);
+    case PIECE_BENDER: return new Bender();
+    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info->direction);
 
       
-    case PIECE_MINE: return new Mine(this);
-    case PIECE_TNT: return new TNT(this);
-    case PIECE_SLIME: return new Slime(this);
+    case PIECE_MINE: return new Mine();
+    case PIECE_TNT: return new TNT();
+    case PIECE_SLIME: return new Slime();
     // TODO: finire
     default: return nullptr;
   }
@@ -149,7 +154,7 @@ void Field::updateLasers()
 
       // update existing laser or add new lasers according to piece behavior
       if (piece)
-        piece->receiveLaser(laser);
+        piece->receiveLaser(this, laser);
       
       // keep drawing the other laser if receiveLaser didn't invalidate it
       if (laser.isValid())
@@ -162,7 +167,7 @@ void Field::updateLasers()
     it = lasers.erase(it);
   }
   
-  if (checkForWin() && !_level->solved)
+  if (checkForWin() && _level && !_level->solved)
   {
     _level->solved = true;
     //TODO: non-sense here, need to be managed somewhere else

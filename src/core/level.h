@@ -93,43 +93,43 @@ public:
     
     for (int i = 0; i < 7; ++i)
     {
-      place(i+3,8, new LaserSource(NORTH, static_cast<LaserColor>(i+1), this));
+      place(i+3,8, new LaserSource(NORTH, static_cast<LaserColor>(i+1)));
       
       if (i < 6)
-        place(i+3,9, new Filter(static_cast<LaserColor>(i+1), this));
+        place(i+3,9, new Filter(static_cast<LaserColor>(i+1)));
     }
     
-    place(2,10, new Polarizer(NORTH, COLOR_MAGENTA, this));
-    place(1, 10, new Polarizer(NORTH, COLOR_WHITE, this));
-    place(3, 10, new Tunnel(NORTH, this));
-    place(4, 10, new ColorShifter(NORTH, this));
-    place(5, 10, new ColorInverter(NORTH, this));
-    place(6, 10, new StrictGoal(COLOR_NONE, this));
-    place(7, 10, new StrictGoal(COLOR_YELLOW, this));
-    place(8, 10, new Teleporter(this));
-    place(9, 10, new Teleporter(this));
-    place(10, 10, new Refractor(NORTH,this));
+    place(2,10, new Polarizer(NORTH, COLOR_MAGENTA));
+    place(1, 10, new Polarizer(NORTH, COLOR_WHITE));
+    place(3, 10, new Tunnel(NORTH));
+    place(4, 10, new ColorShifter(NORTH));
+    place(5, 10, new ColorInverter(NORTH));
+    place(6, 10, new StrictGoal(COLOR_NONE));
+    place(7, 10, new StrictGoal(COLOR_YELLOW));
+    place(8, 10, new Teleporter());
+    place(9, 10, new Teleporter());
+    place(10, 10, new Refractor(NORTH));
 
     //tileAt(8,14)->place(new Gate(COLOR_NONE, this));
     //tileAt(9,14)->place(new PrimaryGate(COLOR_YELLOW, this));
 
 
-    place(3, 3, new Mirror(NORTH, this));
-    place(4, 3, new DoubleMirror(NORTH, this));
+    place(3, 3, new Mirror(NORTH));
+    place(4, 3, new DoubleMirror(NORTH));
 
 
-    place(2, 2, new Splitter(NORTH, this));
-    place(3, 2, new DSplitter(NORTH, this));
-    place(4, 2, new Wall(this));
-    place(5, 2, new Glass(this));
-    place(6, 2, new Prism(NORTH, this));
-    place(7, 2, new Bender(this));
-    place(8, 2, new Twister(this));
-    place(9, 2, new RoundFilter(this));
-    place(10, 2, new CrossColorInverter(NORTH, this));
-    place(11, 2, new SkewMirror(NORTH, this));
-    place(12, 2, new DoubleSkewMirror(NORTH, this));
-    place(13, 2, new DoubleSplitterMirror(NORTH, this));
+    place(2, 2, new Splitter(NORTH));
+    place(3, 2, new DSplitter(NORTH));
+    place(4, 2, new Wall());
+    place(5, 2, new Glass());
+    place(6, 2, new Prism(NORTH));
+    place(7, 2, new Bender());
+    place(8, 2, new Twister());
+    place(9, 2, new RoundFilter());
+    place(10, 2, new CrossColorInverter(NORTH));
+    place(11, 2, new SkewMirror(NORTH));
+    place(12, 2, new DoubleSkewMirror(NORTH));
+    place(13, 2, new DoubleSplitterMirror(NORTH));
     place(14, 2, new StarSplitter(this));
 
     
@@ -201,7 +201,7 @@ public:
       return &tiles[p.y * FIELD_WIDTH + p.x];
   }
 
-  void addGoal(Goal *goal) { goals.push_back(goal); }
+  void addGoal(Goal* goal) { goals.push_back(goal); }
 
   void generateBeam(Position position, Direction direction, LaserColor color);
   void updateLasers();

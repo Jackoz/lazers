@@ -10,7 +10,7 @@
 
 #include "level.h"
 
-void DoubleSplitterMirror::receiveLaser(Laser &laser)
+void DoubleSplitterMirror::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -22,7 +22,7 @@ void DoubleSplitterMirror::receiveLaser(Laser &laser)
     laser.invalidate();
 }
 
-void Splitter::receiveLaser(Laser &laser)
+void Splitter::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -36,7 +36,7 @@ void Splitter::receiveLaser(Laser &laser)
     laser.invalidate();
 }
 
-void ThreeWaySplitter::receiveLaser(Laser &laser)
+void ThreeWaySplitter::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -50,7 +50,7 @@ void ThreeWaySplitter::receiveLaser(Laser &laser)
     laser.invalidate();
 }
 
-void StarSplitter::receiveLaser(Laser &laser)
+void StarSplitter::receiveLaser(Field* field, Laser &laser)
 {
   for (int i = 0; i < 4; ++i)
     field->generateBeam(laser.position, laser.rotatedDirection(1+i*2), laser.color);
@@ -58,7 +58,7 @@ void StarSplitter::receiveLaser(Laser &laser)
   laser.invalidate();
 }
 
-void DSplitter::receiveLaser(Laser &laser)
+void DSplitter::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -80,7 +80,7 @@ void DSplitter::receiveLaser(Laser &laser)
     laser.invalidate();
 }
 
-void Prism::receiveLaser(Laser &laser)
+void Prism::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -113,7 +113,7 @@ void Prism::receiveLaser(Laser &laser)
   laser.invalidate();
 }
 
-void FlippedPrism::receiveLaser(Laser &laser)
+void FlippedPrism::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -146,7 +146,7 @@ void FlippedPrism::receiveLaser(Laser &laser)
   laser.invalidate();
 }
 
-void Selector::receiveLaser(Laser &laser)
+void Selector::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -166,7 +166,7 @@ void Selector::receiveLaser(Laser &laser)
   }
 }
 
-void Splicer::receiveLaser(Laser &laser)
+void Splicer::receiveLaser(Field* field, Laser &laser)
 {
   s8 delta = deltaDirection(laser);
   
@@ -187,7 +187,7 @@ void Splicer::receiveLaser(Laser &laser)
 }
 
 
-void Teleporter::receiveLaser(Laser &laser)
+void Teleporter::receiveLaser(Field* field, Laser &laser)
 {
   Direction dir = laser.direction;
   Position p = laser.position;
@@ -211,11 +211,8 @@ void Teleporter::receiveLaser(Laser &laser)
 }
 
 //TODO: check?
-void TNT::receiveLaser(Laser &laser) { field->fail(); UNUSED(laser); }
+void TNT::receiveLaser(Field* field, Laser &laser) { field->fail(); UNUSED(laser); }
 
 
 
-Goal::Goal(PieceType type, LaserColor color, Field *field) : Piece(type, NORTH, color, field), satisfied(false), satisfyDirection(0), satisfyColor(COLOR_NONE)
-{
-  field->addGoal(this);
-}
+Goal::Goal(PieceType type, LaserColor color) : Piece(type, NORTH, color), satisfied(false), satisfyDirection(0), satisfyColor(COLOR_NONE) { }
