@@ -338,6 +338,8 @@ void LevelView::handleEvent(SDL_Event &event)
     
     case SDL_KEYDOWN:			// Button press
     {
+      auto*& p = position;
+      
       switch(event.key.keysym.sym)
       {
         case KEY_START: game->quit(); break;
@@ -345,29 +347,46 @@ void LevelView::handleEvent(SDL_Event &event)
           
         case SDLK_LEFT:
         {
-          //TODO: adjust for different management of field/inventory positions
-          if ((position == &fposition && position->x > 0) || (position == &iposition && position->x > field->width()))
-            --position->x;
-          
+          if (p->x > 0)
+            --p->x;
+          else if (p->x == 0 && p->isInventory())
+          {
+            fposition.x = field->width()-1;
+            fposition.y = p->y;
+            p = &fposition;
+          }
+
           break;
         }
         case SDLK_RIGHT:
         {
-          //TODO: adjust for different management of field/inventory positions
-          if ((position == &fposition && position->x < FIELD_WIDTH-1) || (position == &iposition && position->x < FIELD_WIDTH+INVENTORY_WIDTH-1))
-            ++position->x;
+          if (p->isInventory() && p->x < field->invWidth() - 1)
+            ++p->x;
+          else if (!p->isInventory())
+          {
+            if (p->x < field->width() - 1)
+              ++p->x;
+            else
+            {
+              iposition.x = 0;
+              iposition.y = std::min((u32)p->y, field->invHeight()-1);
+              p = &iposition;
+            }
+          }
+
           break;
         }
         case SDLK_UP:
         {
-          if (position->y > 0)
-            --position->y;
+          if (p->y > 0)
+            --p->y;
           break;
         }
         case SDLK_DOWN:
         {
-          if ((position == &fposition && position->y < FIELD_HEIGHT-1) || (position == &iposition && position->y < INVENTORY_HEIGHT-1))
-            ++position->y;
+          auto max = (p->isInventory() ? field->invHeight() : field->height()) - 1;
+          if (p->y < max)
+            ++p->y;
           break;
         }
           //   Y
