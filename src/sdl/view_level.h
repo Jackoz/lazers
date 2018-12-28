@@ -41,9 +41,9 @@ public:
   void draw();
   void activate();
   
-  static void drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by);
-  static void drawGrid(Field *field, int x, int y, int w, int h, SDL_Surface *screen);
-  static void drawInventory(Field *field, SDL_Surface *screen, u16 bx, u16 by);
+  static void drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
+  static void drawGrid(const Field *field, int x, int y, int w, int h, SDL_Surface *screen);
+  static void drawInventory(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
 };
 
 #endif

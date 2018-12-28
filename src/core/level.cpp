@@ -75,11 +75,11 @@ void Field::load(LevelSpec* level)
       
       if (info->inventory)
       {
-        place(FIELD_WIDTH + curInvSlot%INVENTORY_WIDTH, curInvSlot/INVENTORY_WIDTH, piece);
+        place(Position(Position::Type::INVENTORY, curInvSlot%INVENTORY_WIDTH, curInvSlot/INVENTORY_WIDTH), piece);
         ++curInvSlot;
       }
       else
-        place(info->x, info->y, piece);
+        place(Position(info->x, info->y), piece);
     }
     else
     {
@@ -98,10 +98,10 @@ void Field::generateBeam(Position position, Direction direction, LaserColor colo
   {
     lasers.push_back(beam);
     
-    Tile *tile = tileAt(position.x, position.y);
+    Tile *tile = tileAt(position);
     
     if (!tile->piece() || tile->piece()->type() != PIECE_SOURCE)
-      tileAt(position.x, position.y)->colors[direction] |= color;
+      tileAt(position)->colors[direction] |= color;
   }
 }
 
@@ -112,10 +112,10 @@ void Field::updateLasers()
   for (auto g : goals)
     g->reset();
   
-  for (int i = 0; i < FIELD_WIDTH; ++i)
-    for (int j = 0; j < FIELD_HEIGHT; ++j)
+  for (int i = 0; i < _width; ++i)
+    for (int j = 0; j < _height; ++j)
     {
-      Tile *tile = tileAt(i,j);
+      Tile *tile = tileAt(Position(i, j));
       tile->resetLasers();
       const auto& piece = tile->piece();
       

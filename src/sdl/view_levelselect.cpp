@@ -21,8 +21,8 @@ LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), sca
 
 void LevelSelectView::activate()
 {
-  if (!preview) preview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*TILE_SIZE+10, FIELD_HEIGHT*TILE_SIZE);
-  if (!scaledPreview) scaledPreview = Gfx::generateSurface((FIELD_WIDTH+INVENTORY_WIDTH)*7+5, FIELD_HEIGHT*7);
+  if (!preview) preview = Gfx::generateSurface((field->width()+field->invWidth())*TILE_SIZE+10, field->height()*TILE_SIZE); //TODO: height is max between field and inv
+  if (!scaledPreview) scaledPreview = Gfx::generateSurface((field->width()+field->invWidth())*7+5, field->height()*7);
   
   levelList.set(0);
   levelList.reset();
@@ -155,10 +155,10 @@ void LevelSelectView::rebuildPreview()
   field->load(game->pack->at(game->pack->selected));
   
   Gfx::clear(preview, BACKGROUND_COLOR);
-  LevelView::drawGrid(field, 0, 0, FIELD_WIDTH, FIELD_HEIGHT, preview);
-  LevelView::drawGrid(field, FIELD_WIDTH*TILE_SIZE + 10, 0, INVENTORY_WIDTH, INVENTORY_HEIGHT, preview);
+  LevelView::drawGrid(field, 0, 0, field->width(), field->height(), preview);
+  LevelView::drawGrid(field, field->width()*TILE_SIZE + 10, 0, field->invWidth(), field->invHeight(), preview);
   LevelView::drawField(field, preview, 0, 0);
-  LevelView::drawInventory(field, preview, FIELD_WIDTH*TILE_SIZE + 10, 0);
+  LevelView::drawInventory(field, preview, field->width()*TILE_SIZE + 10, 0);
   Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, scaledPreview->w, scaledPreview->h);
   //Gfx::blit(preview, scaledPreview, 0, 0, 160, 150, 0, 0);
 }

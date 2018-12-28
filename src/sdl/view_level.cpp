@@ -96,12 +96,12 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
   return { gfx.x*PIECE_SIZE, gfx.y*PIECE_SIZE, PIECE_SIZE, PIECE_SIZE };
 }
 
-void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
+void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 by)
 {
-  for (int x = 0; x < FIELD_WIDTH; ++x)
-    for (int y = 0; y < FIELD_HEIGHT; ++y)
+  for (int x = 0; x < field->width(); ++x)
+    for (int y = 0; y < field->height(); ++y)
     {
-      Tile *tile = field->tileAt(x,y);
+      const Tile *tile = field->tileAt(Position(x, y));
       
       u16 cx = bx + x*TILE_SIZE;
       u16 cy = by + y*TILE_SIZE;
@@ -140,10 +140,10 @@ void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
       
       
       
-      Tile *upper = y > 0 ? field->tileAt(x, y-1) : nullptr;
-      Tile *left = x > 0 ? field->tileAt(x-1, y) : nullptr;
-      Tile *upperLeft = upper && left ? field->tileAt(x-1, y-1) : nullptr;
-      Tile *upperRight = upper && x < FIELD_WIDTH ? field->tileAt(x+1, y-1) : nullptr;
+      const Tile* upper = y > 0 ? field->tileAt(Position(x, y-1)) : nullptr;
+      const Tile* left = x > 0 ? field->tileAt(Position(x-1, y)) : nullptr;
+      const Tile* upperLeft = upper && left ? field->tileAt(Position(x-1, y-1)) : nullptr;
+      const Tile* upperRight = upper && x < FIELD_WIDTH ? field->tileAt(Position(x+1, y-1)) : nullptr;
       
       // place horizontal fillers
       if (tile->colors[NORTH] && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
@@ -180,12 +180,12 @@ void LevelView::drawField(Field *field, SDL_Surface *screen, u16 bx, u16 by)
 
 }
 
-void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
+void LevelView::drawInventory(const Field* field, SDL_Surface *screen, u16 bx, u16 by)
 {
   for (int x = 0; x < INVENTORY_WIDTH; ++x)
     for (int y = 0; y < INVENTORY_HEIGHT; ++y)
     {
-      Tile *tile = field->tileAt(x+FIELD_WIDTH,y);
+      const Tile* tile = field->tileAt(Position(Position::Type::INVENTORY, x, y));
       
       if (tile->piece())
       {
@@ -196,7 +196,7 @@ void LevelView::drawInventory(Field* field, SDL_Surface *screen, u16 bx, u16 by)
     }
 }
 
-void LevelView::drawGrid(Field *field, int x, int y, int w, int h, SDL_Surface *screen)
+void LevelView::drawGrid(const Field* field, int x, int y, int w, int h, SDL_Surface *screen)
 {
   for (int i = 0; i < w; ++i)
     for (int j = 0; j < h; ++j)
@@ -375,7 +375,7 @@ void LevelView::handleEvent(SDL_Event &event)
           //   B
         case SDLK_LCTRL: // A
         {
-          const auto& piece = field->tileAt(position->x, position->y)->piece();
+          const auto& piece = field->tileAt(*position)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateRight();
@@ -411,7 +411,7 @@ void LevelView::handleEvent(SDL_Event &event)
         }
         case SDLK_LSHIFT: // X
         {
-          const auto& piece = field->tileAt(position->x, position->y)->piece();
+          const auto& piece = field->tileAt(*position)->piece();
           if (piece && piece->canBeRotated())
           {
             piece->rotateLeft();

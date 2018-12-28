@@ -15,7 +15,7 @@
 
 #include "files/aargon.h"
 
-Game::Game() : field(new Field()), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[0]), overView(nullptr)
+Game::Game() : field(new Field(16, 11, 4, 6)), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[0]), overView(nullptr)
 {
 
 }

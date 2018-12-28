@@ -16,6 +16,7 @@
 
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include <memory>
 
 #include <cassert>
@@ -60,6 +61,8 @@ public:
 class Field
 {  
 private:
+  u32 _width, _height, _invWidth, _invHeight;
+  
   LevelSpec* _level;
   
   Tile *tiles;
@@ -72,65 +75,65 @@ private:
   void resetLasers();
 
 public:
-  Field() : _level(nullptr), tiles(new Tile[FIELD_WIDTH*FIELD_HEIGHT]), inventory(new Tile[INVENTORY_WIDTH*INVENTORY_HEIGHT]), failed(false)
+  Field(u32 width, u32 height, u32 invWidth, u32 invHeight) :
+  _width(width), _height(height),
+  _invWidth(invWidth), _invHeight(invHeight),
+  _level(nullptr),
+  tiles(new Tile[width*height]), inventory(new Tile[invWidth*invHeight]),
+  failed(false)
   {
-    for (int i = 0; i < FIELD_WIDTH; ++i)
-      for (int j = 0; j < FIELD_HEIGHT; ++j)
+    for (u32 i = 0; i < _width; ++i)
+      for (u32 j = 0; j < _height; ++j)
       {
-        Tile *tile = tileAt(i,j);
-        tile->x = i;
-        tile->y = j;
+        Tile& tile = tiles[j*_width + i];
+        tile.x = i;
+        tile.y = j;
       }
     
-    for (int i = 0; i < INVENTORY_WIDTH; ++i)
-      for (int j = 0; j < INVENTORY_HEIGHT; ++j)
+    for (u32 i = 0; i < _invWidth; ++i)
+      for (u32 j = 0; j < _invHeight; ++j)
       {
-        Tile *tile = tileAt(FIELD_WIDTH+i,j);
-        tile->x = FIELD_WIDTH+i;
-        tile->y = j;
+        Tile& tile = inventory[j*_invWidth + i];
+        tile.x = i;
+        tile.y = j;
       }
     
     
     for (int i = 0; i < 7; ++i)
     {
-      place(i+3,8, new LaserSource(NORTH, static_cast<LaserColor>(i+1)));
+      place({(s8)(i+3),8}, new LaserSource(NORTH, static_cast<LaserColor>(i+1)));
       
       if (i < 6)
-        place(i+3,9, new Filter(static_cast<LaserColor>(i+1)));
+        place({(s8)(i+3),9}, new Filter(static_cast<LaserColor>(i+1)));
     }
     
-    place(2,10, new Polarizer(NORTH, COLOR_MAGENTA));
-    place(1, 10, new Polarizer(NORTH, COLOR_WHITE));
-    place(3, 10, new Tunnel(NORTH));
-    place(4, 10, new ColorShifter(NORTH));
-    place(5, 10, new ColorInverter(NORTH));
-    place(6, 10, new StrictGoal(COLOR_NONE));
-    place(7, 10, new StrictGoal(COLOR_YELLOW));
-    place(8, 10, new Teleporter());
-    place(9, 10, new Teleporter());
-    place(10, 10, new Refractor(NORTH));
-
-    //tileAt(8,14)->place(new Gate(COLOR_NONE, this));
-    //tileAt(9,14)->place(new PrimaryGate(COLOR_YELLOW, this));
-
-
-    place(3, 3, new Mirror(NORTH));
-    place(4, 3, new DoubleMirror(NORTH));
-
-
-    place(2, 2, new Splitter(NORTH));
-    place(3, 2, new DSplitter(NORTH));
-    place(4, 2, new Wall());
-    place(5, 2, new Glass());
-    place(6, 2, new Prism(NORTH));
-    place(7, 2, new Bender());
-    place(8, 2, new Twister());
-    place(9, 2, new RoundFilter());
-    place(10, 2, new CrossColorInverter(NORTH));
-    place(11, 2, new SkewMirror(NORTH));
-    place(12, 2, new DoubleSkewMirror(NORTH));
-    place(13, 2, new DoubleSplitterMirror(NORTH));
-    place(14, 2, new StarSplitter(this));
+    place({2, 10}, new Polarizer(NORTH, COLOR_MAGENTA));
+    place({1, 10}, new Polarizer(NORTH, COLOR_WHITE));
+    place({3, 10}, new Tunnel(NORTH));
+    place({4, 10}, new ColorShifter(NORTH));
+    place({5, 10}, new ColorInverter(NORTH));
+    place({6, 10}, new StrictGoal(COLOR_NONE));
+    place({7, 10}, new StrictGoal(COLOR_YELLOW));
+    place({8, 10}, new Teleporter());
+    place({9, 10}, new Teleporter());
+    place({10, 10}, new Refractor(NORTH));
+    
+    place({3, 3}, new Mirror(NORTH));
+    place({4, 3}, new DoubleMirror(NORTH));
+    
+    place({2, 2}, new Splitter(NORTH));
+    place({3, 2}, new DSplitter(NORTH));
+    place({4, 2}, new Wall());
+    place({5, 2}, new Glass());
+    place({6, 2}, new Prism(NORTH));
+    place({7, 2}, new Bender());
+    place({8, 2}, new Twister());
+    place({9, 2}, new RoundFilter());
+    place({10, 2}, new CrossColorInverter(NORTH));
+    place({11, 2}, new SkewMirror(NORTH));
+    place({12, 2}, new DoubleSkewMirror(NORTH));
+    place({13, 2}, new DoubleSplitterMirror(NORTH));
+    place({14, 2}, new StarSplitter(this));
 
     
     /*std::stringstream ss;
@@ -154,6 +157,10 @@ public:
   }
   
   LevelSpec* const level() { return _level; }
+  u32 width() const { return _width; }
+  u32 height() const { return _height; }
+  u32 invWidth() const { return _invWidth; }
+  u32 invHeight() const { return _invHeight; }
 
   void reset()
   {
@@ -161,44 +168,31 @@ public:
     beams.clear();
     failed = false;
     
-    for (int i = 0; i < FIELD_WIDTH+INVENTORY_WIDTH; ++i)
-      for (int j = 0; j < FIELD_HEIGHT; ++j)
-      {
-        if (i >= FIELD_WIDTH && j >= INVENTORY_HEIGHT)
-          continue;
-        
-        Tile *tile = tileAt(i,j);
-        tile->resetLasers();
-        tile->clear();
-      }
+    std::for_each(tiles, tiles + _width*_height, [] (Tile& tile) { tile.resetLasers(); tile.clear(); });
+    std::for_each(inventory, inventory + _invWidth*_invHeight, [] (Tile& tile) { tile.clear(); });    
   }
 
   Piece* generatePiece(const PieceInfo *info);
   void load(LevelSpec* level);
 
   void fail() { failed = true; }
-
-  void place(u8 x, u8 y, Piece *piece)
+  
+  void place(Position p, Piece* piece)
   {
-    Tile *tile = tileAt(x,y);
+    Tile* tile = tileAt(p);
     tile->place(piece);
   }
-
-  Tile* tileAt(int x, int y)
-  {
-    // TODO: remove this management for inventory */
-    if (x >= FIELD_WIDTH)
-      return &inventory[y*INVENTORY_WIDTH + (x-FIELD_WIDTH)];
-    else
-      return &tiles[y*FIELD_WIDTH + x];
+  
+  const Tile* tileAt(Position p) const {
+    return p.type == Position::Type::INVENTORY ?
+      &inventory[p.y * _invWidth + p.x] :
+      &tiles[p.y * _width + p.x];
   }
 
-  Tile* tileAt(Position p)
-  {
-    if (p.type == Position::Type::INVENTORY)
-      return &inventory[p.y * INVENTORY_WIDTH + p.x];
-    else
-      return &tiles[p.y * FIELD_WIDTH + p.x];
+  Tile* tileAt(Position p) {
+    return p.type == Position::Type::INVENTORY ?
+    &inventory[p.y * _invWidth + p.x] :
+    &tiles[p.y * _width + p.x];
   }
 
   void addGoal(Goal* goal) { goals.push_back(goal); }
