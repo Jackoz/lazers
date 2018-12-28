@@ -29,7 +29,7 @@ private:
   
   
   
-  static SDL_Rect rectForPiece(Piece* piece);
+  static SDL_Rect rectForPiece(const Piece* piece);
   
   Field* field() { return game->field; }
   

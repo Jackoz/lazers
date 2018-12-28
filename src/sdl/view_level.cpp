@@ -49,9 +49,49 @@ void LevelView::activate()
 
 }
 
-SDL_Rect LevelView::rectForPiece(Piece* piece)
+SDL_Rect LevelView::rectForPiece(const Piece* piece)
 {
-  Position gfx = piece->gfxTile();
+  Position gfx = Position(0,0);
+  
+  switch (piece->type())
+  {
+    case PIECE_WALL: gfx = Position(13,7); break;
+    case PIECE_GLASS: gfx = Position(11,7); break;
+    
+    case PIECE_SOURCE: gfx = Position(piece->rotation(), 1); break;
+    case PIECE_MIRROR: gfx = Position(piece->rotation(), 0); break;
+    case PIECE_SKEW_MIRROR: gfx = Position(piece->rotation(), 10); break;
+    case PIECE_DOUBLE_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 5); break;
+    case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 11); break;
+    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 12); break;
+    case PIECE_REFRACTOR: gfx = Position(piece->rotation() % 4, 5); break;
+    case PIECE_SPLITTER: gfx = Position(piece->rotation(), 2); break;
+    case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 17); break;
+    case PIECE_STAR_SPLITTER: gfx = Position(10, 7); break;
+    case PIECE_DSPLITTER: gfx = Position(piece->rotation(), 3); break;
+    case PIECE_PRISM: gfx = Position(piece->rotation(), 4); break;
+    case PIECE_FLIPPED_PRISM: gfx = Position(piece->rotation() + 8, 17); break;
+    case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + piece->color()); break;
+    case PIECE_SPLICER: gfx = Position(piece->rotation(), 12 + 7 + piece->color()); break;
+    case PIECE_BENDER: gfx = Position(14, 7); break;
+    case PIECE_TWISTER: gfx = Position(12, 7); break;
+      
+    case PIECE_FILTER: gfx = Position(piece->color() + 8, 8); break;
+    case PIECE_ROUND_FILTER: gfx = Position(piece->rotation() % 4, 9); break;
+    case PIECE_POLARIZER: gfx = Position(piece->color() + 8, piece->rotation() % 4 + 9); break;
+    case PIECE_TUNNEL: gfx = Position(piece->rotation(), 6); break;
+    case PIECE_COLOR_SHIFTER: gfx = Position(piece->rotation(), 8); break;
+    case PIECE_COLOR_INVERTER: gfx = Position(piece->rotation(), 7); break;
+    case PIECE_CROSS_COLOR_INVERTER: gfx = Position(piece->rotation() % 2 + 4, 9); break;
+    case PIECE_TELEPORTER: gfx = Position(9, 7); break;
+    case PIECE_TNT: gfx = Position(15, 7); break;
+    case PIECE_SLIME: gfx = Position(8, 7); break;
+    case PIECE_MINE: gfx = Position(8, 8); break;
+    case PIECE_STRICT_GOAL: gfx = Position(piece->color() + 8, static_cast<const Goal*>(piece)->isSatisfied() ? 14 : 13); break;
+      
+    default:
+      assert(false);
+  }
   
   return { gfx.x*PIECE_SIZE, gfx.y*PIECE_SIZE, PIECE_SIZE, PIECE_SIZE };
 }

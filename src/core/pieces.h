@@ -13,7 +13,7 @@
 #include <list>
 
 #define UNUSED(x) (void)(x)
-  
+
 struct Laser
 {
   Position position;
@@ -68,59 +68,54 @@ class Tile;
 
 class Piece
 {
-  protected:
-    PieceType type_;
-    Direction rotation_;
-    LaserColor color_;
-    bool movable, roteable;
-
-    Field *field;
+protected:
+  PieceType type_;
+  Direction rotation_;
+  LaserColor color_;
+  bool movable, roteable;
   
-  public:
-    Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), field(field) { }
-    virtual ~Piece() { }
+  Field *field;
   
-    Direction rotation() { return rotation_; }
-    PieceType type() { return type_; }
-    LaserColor color() { return color_; }
-
-    void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
-    void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
+public:
+  Piece(PieceType type, Direction rotation, LaserColor color, Field *field) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), field(field) { }
+  virtual ~Piece() { }
   
-    virtual Laser produceLaser() { return Laser(Position(-1, -1), Direction::NORTH, COLOR_NONE); }
-    virtual bool blocksLaser(Laser &laser) = 0;
-    virtual void receiveLaser(Laser &laser) = 0;
+  Direction rotation() const { return rotation_; }
+  PieceType type() const { return type_; }
+  LaserColor color() const { return color_; }
   
-    void setCanBeMoved(bool value) { movable = value; };
-    void setCanBeRotated(bool value) { roteable = value; }
-    virtual bool canBeMoved() const { return movable; }
-    virtual bool canBeRotated() const { return roteable; }
+  void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
+  void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
   
-    s8 deltaDirection(Laser& laser)
-    {
-      s8 delta = laser.direction - rotation_;
-      
-      if (delta > 4) delta -= 8;
-      else if (delta < -4) delta += 8;
-      else if (delta == -4) delta = 4;
-      
-      return delta;
-    }
+  virtual Laser produceLaser() const { return Laser(Position(-1, -1), Direction::NORTH, COLOR_NONE); }
+  virtual bool blocksLaser(Laser &laser) { return false; }
+  virtual void receiveLaser(Laser &laser) { };
   
-    virtual Position gfxTile() = 0;
+  void setCanBeMoved(bool value) { movable = value; };
+  void setCanBeRotated(bool value) { roteable = value; }
+  virtual bool canBeMoved() const { return movable; }
+  virtual bool canBeRotated() const { return roteable; }
+  
+  int deltaDirection(Laser& laser)
+  {
+    int delta = laser.direction - rotation_;
+    
+    if (delta > 4) delta -= 8;
+    else if (delta < -4) delta += 8;
+    else if (delta == -4) delta = 4;
+    
+    return delta;
+  }
 };
 
 class Wall : public Piece
 {
-  public:
-    Wall(Field *field) : Piece(PIECE_WALL, NORTH, COLOR_NONE, field) { }
-
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
-    void receiveLaser(Laser &laser) { UNUSED(laser); }
+public:
+  Wall(Field *field) : Piece(PIECE_WALL, NORTH, COLOR_NONE, field) { }
   
-    bool canBeRotated() const override { return false; }
+  bool blocksLaser(Laser &laser) override { UNUSED(laser); return true; }
   
-    Position gfxTile() { return Position(13,7); }
+  bool canBeRotated() const override { return false; }
 };
 
 class Glass : public Piece
@@ -128,47 +123,37 @@ class Glass : public Piece
 public:
   Glass(Field *field) : Piece(PIECE_GLASS, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser) { UNUSED(laser); }
   
   bool canBeRotated() const override { return false; }
-  
-  Position gfxTile() { return Position(11,7); }
 };
 
 class LaserSource : public Piece
 {
-  public:
-    LaserSource(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SOURCE, rotation, color, field) { }
-    
-    Laser produceLaser() { return Laser(Position(0,0), rotation_, color_); }
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return true; }
-    void receiveLaser(Laser &laser) { UNUSED(laser); /*laser.invalidate();*/ }
-  
-    Position gfxTile() { return Position(rotation_, 1); }
+public:
+  LaserSource(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SOURCE, rotation, color, field) { }
+
+  Laser produceLaser() const override { return Laser(Position(0,0), rotation_, color_); }
+  bool blocksLaser(Laser &laser) override { UNUSED(laser); return true; }
 };
 
 class Mirror : public Piece
 {
-  public:
-    Mirror(Direction rotation, Field *field) : Piece(PIECE_MIRROR, rotation, COLOR_NONE, field) { }
+public:
+  Mirror(Direction rotation, Field *field) : Piece(PIECE_MIRROR, rotation, COLOR_NONE, field) { }
+  
+  void receiveLaser(Laser &laser) override
+  {
+    s8 delta = deltaDirection(laser);
     
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser)
-    {
-      s8 delta = deltaDirection(laser);
-      
-      if (delta == 0)
-        laser.flip();
-      else if (delta == -1)
-        laser.rotateLeft(2);
-      else if (delta == 1)
-        laser.rotateRight(2);
-      else
-        laser.invalidate();
-    }
-
-    Position gfxTile() { return Position(rotation_, 0); }
+    if (delta == 0)
+      laser.flip();
+    else if (delta == -1)
+      laser.rotateLeft(2);
+    else if (delta == 1)
+      laser.rotateRight(2);
+    else
+      laser.invalidate();
+  }
 };
 
 class SkewMirror : public Piece
@@ -176,8 +161,7 @@ class SkewMirror : public Piece
 public:
   SkewMirror(Direction rotation, Field *field) : Piece(PIECE_SKEW_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser);
     
@@ -192,31 +176,26 @@ public:
     else
       laser.invalidate();
   }
-
-  Position gfxTile() { return Position(rotation_, 10); }
 };
 
 class DoubleMirror : public Piece
 {
-  public:
-    DoubleMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_MIRROR, rotation, COLOR_NONE, field) { }
+public:
+  DoubleMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_MIRROR, rotation, COLOR_NONE, field) { }
+  
+  void receiveLaser(Laser &laser) override
+  {
+    s8 delta = deltaDirection(laser);
     
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser)
-    {
-      s8 delta = deltaDirection(laser);
-      
-      if (delta == 0 || delta == 4)
-        laser.flip();
-      else if (delta == -1 || delta == 3)
-        laser.rotateLeft(2);
-      else if (delta == 1 || delta == -3)
-        laser.rotateRight(2);
-      else
-        laser.invalidate();
-    }
-
-    Position gfxTile() { return Position(rotation_%4 + 4, 5); }
+    if (delta == 0 || delta == 4)
+      laser.flip();
+    else if (delta == -1 || delta == 3)
+      laser.rotateLeft(2);
+    else if (delta == 1 || delta == -3)
+      laser.rotateRight(2);
+    else
+      laser.invalidate();
+  }
 };
 
 class DoubleSplitterMirror : public Piece
@@ -224,10 +203,7 @@ class DoubleSplitterMirror : public Piece
 public:
   DoubleSplitterMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_%4 + 4, 11); }
+  void receiveLaser(Laser &laser) override;
 };
 
 class DoubleSkewMirror : public Piece
@@ -235,8 +211,7 @@ class DoubleSkewMirror : public Piece
 public:
   DoubleSkewMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_SKEW_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser)%4;
     if (delta < 0) delta += 4;
@@ -252,8 +227,7 @@ public:
     else
       laser.invalidate();
   }
-
-  Position gfxTile() { return Position(rotation_%4, 11); }
+  
 };
 
 class DoublePassMirror : public Piece
@@ -261,8 +235,7 @@ class DoublePassMirror : public Piece
 public:
   DoublePassMirror(Direction rotation, Field *field) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser);
     
@@ -273,8 +246,6 @@ public:
     else if (delta == 1 || delta == -3)
       laser.rotateRight(2);
   }
-
-  Position gfxTile() { return Position(rotation_%4, 12); }
 };
 
 class Refractor : public Piece
@@ -282,8 +253,7 @@ class Refractor : public Piece
 public:
   Refractor(Direction rotation, Field *field) : Piece(PIECE_REFRACTOR, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser)%4;
     if (delta < 0) delta += 4;
@@ -295,30 +265,21 @@ public:
     else
       laser.invalidate();
   }
-
-  Position gfxTile() { return Position(rotation_%4, 5); }
 };
 
 class Splitter : public Piece
 {
-  public:
-    Splitter(Direction rotation, Field *field) : Piece(PIECE_SPLITTER, rotation, COLOR_NONE, field) { }
-    
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser);
-
-    Position gfxTile() { return Position(rotation_, 2); }
+public:
+  Splitter(Direction rotation, Field *field) : Piece(PIECE_SPLITTER, rotation, COLOR_NONE, field) { }
+  void receiveLaser(Laser &laser) override;
 };
 
 class ThreeWaySplitter : public Piece
 {
 public:
   ThreeWaySplitter(Direction rotation, Field *field) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, COLOR_NONE, field) { }
+  void receiveLaser(Laser &laser) override;
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_ + 8, 17); }
 };
 
 class StarSplitter : public Piece
@@ -326,23 +287,17 @@ class StarSplitter : public Piece
 public:
   StarSplitter(Field *field) : Piece(PIECE_STAR_SPLITTER, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser);
+  void receiveLaser(Laser &laser) override;
   
   bool canBeRotated() const override { return false; }
-
-  Position gfxTile() { return Position(10, 7); }
 };
 
 class DSplitter : public Piece
 {
-  public:
-    DSplitter(Direction rotation, Field *field) : Piece(PIECE_DSPLITTER, rotation, COLOR_NONE, field) { }
-    
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser);
-
-    Position gfxTile() { return Position(rotation_, 3); }
+public:
+  DSplitter(Direction rotation, Field *field) : Piece(PIECE_DSPLITTER, rotation, COLOR_NONE, field) { }
+  
+  void receiveLaser(Laser &laser) override;
 };
 
 class Prism : public Piece
@@ -350,32 +305,24 @@ class Prism : public Piece
 public:
   Prism(Direction rotation, Field *field) : Piece(PIECE_PRISM, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_, 4); }
+  void receiveLaser(Laser &laser) override;
 };
-  
+
 class FlippedPrism : public Piece
 {
 public:
   FlippedPrism(Direction rotation, Field *field) : Piece(PIECE_FLIPPED_PRISM, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_ + 8, 17); }
+  void receiveLaser(Laser &laser) override;
 };
-  
+
 class Selector : public Piece
 {
 public:
-  Selector(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_PRISM, rotation, color, field) { }
+  Selector(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SELECTOR, rotation, color, field) { }
   
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_, 12 + color_); }
+  void receiveLaser(Laser &laser) override;
 };
 
 class Splicer : public Piece
@@ -384,25 +331,20 @@ public:
   Splicer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_SPLICER, rotation, color, field) { }
   
   bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0; }
-  void receiveLaser(Laser &laser);
-
-  Position gfxTile() { return Position(rotation_, 12 + 7 + color_); }
+  void receiveLaser(Laser &laser) override;
 };
-  
+
 class Bender : public Piece
 {
 public:
   Bender(Field *field) : Piece(PIECE_BENDER, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     laser.rotateRight(1);
   }
   
   bool canBeRotated() const override { return false; }
-
-  Position gfxTile() { return Position(14, 7); }
 };
 
 class Twister : public Piece
@@ -410,30 +352,25 @@ class Twister : public Piece
 public:
   Twister(Field *field) : Piece(PIECE_TWISTER, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     laser.rotateLeft(2);
   }
-
-  Position gfxTile() { return Position(12, 7); }
 };
 
 
 class Filter : public Piece
 {
-  public:
-    Filter(LaserColor color, Field *field) : Piece(PIECE_FILTER, NORTH, color, field) { }
-    
-    bool blocksLaser(Laser &laser) { return (color_ & laser.color) == 0; }
-    void receiveLaser(Laser &laser)
-    {
-      laser.color = static_cast<LaserColor>(laser.color & color_);
-    }
+public:
+  Filter(LaserColor color, Field *field) : Piece(PIECE_FILTER, NORTH, color, field) { }
   
-    bool canBeRotated() const override { return false; }
-
-    Position gfxTile() { return Position(color_+8, 8); }
+  bool blocksLaser(Laser &laser) override { return (color_ & laser.color) == 0; }
+  void receiveLaser(Laser &laser) override
+  {
+    laser.color = static_cast<LaserColor>(laser.color & color_);
+  }
+  
+  bool canBeRotated() const override { return false; }
 };
 
 class RoundFilter : public Piece
@@ -441,7 +378,7 @@ class RoundFilter : public Piece
 public:
   RoundFilter(Field *field) : Piece(PIECE_FILTER, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser)
+  bool blocksLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
@@ -457,7 +394,7 @@ public:
     else return true;
   }
   
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
@@ -469,61 +406,53 @@ public:
     else if (delta == 2)
       laser.color = static_cast<LaserColor>(laser.color & COLOR_BLUE);
   }
-
-  Position gfxTile() { return Position(rotation_%4, 9); }
 };
 
 class Polarizer : public Piece
 {
-  public:
-    Polarizer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_POLARIZER, rotation, color, field) { }
-    
-    bool blocksLaser(Laser &laser) { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == 0; }
-    void receiveLaser(Laser &laser)
-    {
-      laser.color = static_cast<LaserColor>(laser.color & color_);
-    }
-
-    Position gfxTile() { return Position(color_ + 8, 9 + rotation_%4); }
+public:
+  Polarizer(Direction rotation, LaserColor color, Field *field) : Piece(PIECE_POLARIZER, rotation, color, field) { }
+  
+  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == 0; }
+  void receiveLaser(Laser &laser) override
+  {
+    laser.color = static_cast<LaserColor>(laser.color & color_);
+  }
 };
 
 class Tunnel : public Piece
 {
-  public:
-    Tunnel(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
-    
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser)
-    {
-      if (deltaDirection(laser) != 0)
-        laser.invalidate();
-    }
-
-    Position gfxTile() { return Position(rotation_, 6); }
+public:
+  Tunnel(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
+  
+  void receiveLaser(Laser &laser) override
+  {
+    if (deltaDirection(laser) != 0)
+      laser.invalidate();
+  }
 };
 
 class ColorShifter : public Piece
 {
-  public:
-    ColorShifter(Direction rotation, Field *field) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE, field) { }
-    
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser)
-    {
-      s8 delta = deltaDirection(laser);
-      
-      if (delta%4 != 0)
-        laser.invalidate();
-      else
-      {
-        if (delta == 0)
-          laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & COLOR_RED) << 2));
-        else if (delta == 4)
-          laser.color = static_cast<LaserColor>(((laser.color << 1) & COLOR_WHITE) | ((laser.color & COLOR_BLUE) >> 2));
-      }
-    }
+public:
+  ColorShifter(Direction rotation, Field *field) : Piece(PIECE_COLOR_SHIFTER, rotation, COLOR_NONE, field) { }
   
-    Position gfxTile() { return Position(rotation_, 8); }
+  void receiveLaser(Laser &laser) override
+  {
+    s8 delta = deltaDirection(laser);
+    
+    if (delta%4 != 0)
+      laser.invalidate();
+    else
+    {
+      if (delta == 0)
+        laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & COLOR_RED) << 2));
+      else if (delta == 4)
+        laser.color = static_cast<LaserColor>(((laser.color << 1) & COLOR_WHITE) | ((laser.color & COLOR_BLUE) >> 2));
+    }
+  }
+  
+  Position gfxTile() { return Position(rotation_, 8); }
 };
 
 class ColorInverter : public Piece
@@ -531,8 +460,7 @@ class ColorInverter : public Piece
 public:
   ColorInverter(Direction rotation, Field *field) : Piece(PIECE_COLOR_INVERTER, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser);
     
@@ -543,8 +471,6 @@ public:
       laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
     }
   }
-
-  Position gfxTile() { return Position(rotation_, 7); }
 };
 
 class CrossColorInverter : public Piece
@@ -552,8 +478,7 @@ class CrossColorInverter : public Piece
 public:
   CrossColorInverter(Direction rotation, Field *field) : Piece(PIECE_CROSS_COLOR_INVERTER, rotation, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser)
+  void receiveLaser(Laser &laser) override
   {
     s8 delta = deltaDirection(laser);
     
@@ -564,8 +489,6 @@ public:
       laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
     }
   }
-
-  Position gfxTile() { return Position(4 + rotation_%2, 9); }
 };
 
 
@@ -574,12 +497,9 @@ class Teleporter : public Piece
 public:
   Teleporter(Field *field) : Piece(PIECE_TELEPORTER, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
   void receiveLaser(Laser &laser);
   
   bool canBeRotated() const override { return false; }
-
-  Position gfxTile() { return Position(9, 7); }
 };
 
 class TNT : public Piece
@@ -587,12 +507,9 @@ class TNT : public Piece
 public:
   TNT(Field *field) : Piece(PIECE_TNT, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser); // TODO
-
+  void receiveLaser(Laser &laser) override;
+  
   bool canBeRotated() const override { return false; }
- 
-  Position gfxTile() { return Position(15, 7); }
 };
 
 class Slime : public Piece
@@ -600,10 +517,7 @@ class Slime : public Piece
 public:
   Slime(Field *field) : Piece(PIECE_SLIME, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
-
-  Position gfxTile() { return Position(8, 7); }
+  void receiveLaser(Laser &laser) override { UNUSED(laser); }; // TODO
 };
 
 class Mine : public Piece
@@ -611,64 +525,53 @@ class Mine : public Piece
 public:
   Mine(Field *field) : Piece(PIECE_MINE, NORTH, COLOR_NONE, field) { }
   
-  bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-  void receiveLaser(Laser &laser) { UNUSED(laser); }; // TODO
-
-  bool canBeRotated() const override { return false; }
+  void receiveLaser(Laser &laser) override { UNUSED(laser); }; // TODO
   
-  Position gfxTile() { return Position(8, 8); }
+  bool canBeRotated() const override { return false; }
 };
 
 
 
 class Goal : public Piece
 {
-  protected:
-    bool satisfied;
-    u8 satisfyDirection;
-    LaserColor satisfyColor;
+protected:
+  bool satisfied;
+  u8 satisfyDirection;
+  LaserColor satisfyColor;
   
-  public:
-    Goal(PieceType type, LaserColor color, Field *field);
+public:
+  Goal(PieceType type, LaserColor color, Field *field);
   
-    bool blocksLaser(Laser &laser) = 0;
-    void receiveLaser(Laser &laser) = 0;
-
-    bool isSatisfied() const { return satisfied; }
-    void reset() {
-      satisfied = color_ == COLOR_NONE;
-      satisfyColor = COLOR_NONE;
-      satisfyDirection = 0;
-    }
-  
-    Position gfxTile() = 0;
+  bool isSatisfied() const { return satisfied; }
+  void reset() {
+    satisfied = color_ == COLOR_NONE;
+    satisfyColor = COLOR_NONE;
+    satisfyDirection = 0;
+  }
 };
 
 class StrictGoal : public Goal
 {
-  private:
+private:
+  
+public:
+  StrictGoal(LaserColor color, Field *field) : Goal(PIECE_STRICT_GOAL, color, field) { }
+  
+  void receiveLaser(Laser &laser)
+  {
+    satisfyColor = static_cast<LaserColor>(satisfyColor | laser.color);
+    satisfyDirection |= 1 << laser.direction;
     
-  public:
-    StrictGoal(LaserColor color, Field *field) : Goal(PIECE_STRICT_GOAL, color, field) { }
-
-    bool blocksLaser(Laser &laser) { UNUSED(laser); return false; }
-    void receiveLaser(Laser &laser)
-    {
-      satisfyColor = static_cast<LaserColor>(satisfyColor | laser.color);
-      satisfyDirection |= 1 << laser.direction;
-      
-      u8 foundDirections = 0;
-      for (int i = 0; i < 4; ++i)
-        if ((satisfyDirection & 1<<(4+i)) || (satisfyDirection & 1<<(i)))
-          ++foundDirections;
-      
-      if (color_ == COLOR_NONE)
-        satisfied = satisfyColor == COLOR_NONE && foundDirections == 0;
-      else
-        satisfied = satisfyColor == color_ && foundDirections == 1;
-    }
-
-    Position gfxTile() { return Position(color_+8, isSatisfied() ? 14 : 13); }
+    u8 foundDirections = 0;
+    for (int i = 0; i < 4; ++i)
+      if ((satisfyDirection & 1<<(4+i)) || (satisfyDirection & 1<<(i)))
+        ++foundDirections;
+    
+    if (color_ == COLOR_NONE)
+      satisfied = satisfyColor == COLOR_NONE && foundDirections == 0;
+    else
+      satisfied = satisfyColor == color_ && foundDirections == 1;
+  }
 };
 
 
