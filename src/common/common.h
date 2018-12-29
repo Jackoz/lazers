@@ -92,7 +92,7 @@ enum PieceType : u8
   PIECES_COUNT
 };
   
-enum Direction : u8
+enum Direction
 {
   NORTH = 0,
   NORTH_EAST,
@@ -103,6 +103,8 @@ enum Direction : u8
   WEST,
   NORTH_WEST
 };
+
+using Dir = Direction;
 
 struct Position
 {
@@ -124,6 +126,8 @@ struct Position
   
   static const s8 directions[8][2];
 };
+
+using Pos = Position;
 
   
 #endif

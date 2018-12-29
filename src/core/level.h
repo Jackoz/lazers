@@ -99,7 +99,7 @@ public:
       }
     
     
-    for (int i = 0; i < 7; ++i)
+    /*for (int i = 0; i < 7; ++i)
     {
       place({(s8)(i+3),8}, new LaserSource(NORTH, static_cast<LaserColor>(i+1)));
       
@@ -134,7 +134,7 @@ public:
     place({12, 2}, new DoubleSkewMirror(NORTH));
     place({13, 2}, new DoubleSplitterMirror(NORTH));
     place({14, 2}, new StarSplitter(this));
-
+    */
     
     /*std::stringstream ss;
     for (int i = 0; i < width(); ++i)
@@ -183,13 +183,13 @@ public:
     tile->place(piece);
   }
   
-  const Tile* tileAt(Position p) const {
+  inline const Tile* tileAt(Position p) const {
     return p.type == Position::Type::INVENTORY ?
       &inventory[p.y * _invWidth + p.x] :
       &tiles[p.y * _width + p.x];
   }
 
-  Tile* tileAt(Position p) {
+  inline Tile* tileAt(Position p) {
     return p.type == Position::Type::INVENTORY ?
     &inventory[p.y * _invWidth + p.x] :
     &tiles[p.y * _width + p.x];
