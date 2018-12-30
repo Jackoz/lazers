@@ -64,7 +64,7 @@ class Field
 private:
   u32 _width, _height, _invWidth, _invHeight;
   
-  LevelSpec* _level;
+  const LevelSpec* _level;
   
   Tile *tiles;
   Tile *inventory;
@@ -158,7 +158,7 @@ public:
     updateLasers();
   }
   
-  LevelSpec* const level() { return _level; }
+  const LevelSpec* const level() { return _level; }
   u32 width() const { return _width; }
   u32 height() const { return _height; }
   u32 invWidth() const { return _invWidth; }
@@ -177,7 +177,7 @@ public:
   }
 
   Piece* generatePiece(const PieceInfo *info);
-  void load(LevelSpec* level);
+  void load(const LevelSpec* level);
 
   void fail() { failed = true; }
   bool isFailed() { return failed; }

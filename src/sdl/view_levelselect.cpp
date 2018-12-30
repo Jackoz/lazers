@@ -34,13 +34,13 @@ void LevelSelectView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
-  Gfx::drawString(20, 10, false, "- %s - by %s", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 10, false, "- %s - by %s", game->pack->name().c_str(), game->pack->author().c_str());
 
-  Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back");
 
   for (int i = 0; levelList.hasNext(i) && i < ui::LIST_SIZE; ++i)
   {
-    LevelSpec *spec = levelList.get(i);
+    const LevelSpec* spec = levelList.get(i);
     
     Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s%s", spec->name.c_str(), spec->solved ? " \x1D" : "");
     

@@ -30,13 +30,13 @@ void PackSelectList::draw()
   
   Gfx::drawString(20, 10, false, "CHOOSE A LEVEL PACK");
 
-  Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name.c_str(), game->pack->author.c_str());
+  Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name().c_str(), game->pack->author().c_str());
 
   for (int i = 0; levelList.hasNext(i); ++i)
   {
-    LevelPack *spec = levelList.get(i);
+    const LevelPack *spec = levelList.get(i);
     
-    Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s - %d of %d", spec->name.c_str(), spec->solvedCount, spec->count());
+    Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s - %d of %d", spec->name().c_str(), spec->solvedCount, spec->count());
     
     if (levelList.isSelected(i))
       Gfx::blit(Gfx::ui, 0, 0, 4, 7, ui::LIST_X-8, ui::LIST_Y+ ui::LIST_DY*i);

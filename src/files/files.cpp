@@ -426,7 +426,7 @@ void Files::loadPacks()
 
 void Files::savePack(LevelPack *pack)
 {
-  ofstream os = ofstream(PATH_PAK+pack->filename+".pak");
+  ofstream os = ofstream(PATH_PAK+pack->path()+".pak");
   
   char *output;
   size_t outputLength;
@@ -434,7 +434,7 @@ void Files::savePack(LevelPack *pack)
   if (os)
   {
     stringstream ss;
-    ss << (char)pack->name.length() << pack->name << pack->author;
+    ss << (char)pack->name().length() << pack->name() << pack->author();
     
     std::string header = ss.str();
     
@@ -476,7 +476,7 @@ void Files::loadSolvedStatus()
       
       for (LevelPack &pack : packs)
       {
-        if (pack.filename == packName)
+        if (pack.path() == packName)
         {
           u8 *status = output + 1 + output[0];
           
@@ -487,7 +487,8 @@ void Files::loadSolvedStatus()
             
             if (status[b] & (1 << k))
             {
-              pack.at(i)->solved = true;
+              //TODO: move solved from pack.at(i)
+              //pack.at(i)->solved = true;
               ++pack.solvedCount;
             }
           }
@@ -511,8 +512,8 @@ void Files::saveSolvedStatus()
     {
       stringstream ss;
       
-      ss << static_cast<char>(pack.filename.length());
-      ss << pack.filename;
+      ss << static_cast<char>(pack.path().length());
+      ss << pack.path();
       
       u32 steps = pack.count() / 8 + (pack.count() % 8 != 0 ? 1 : 0);
       

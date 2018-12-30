@@ -71,10 +71,10 @@ protected:
   PieceType type_;
   Direction rotation_;
   LaserColor color_;
-  bool movable, roteable;
+  bool movable, roteable, infinite;
   
 public:
-  Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true) { }
+  Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), infinite(false) { }
   virtual ~Piece() { }
   
   Direction rotation() const { return rotation_; }
@@ -90,8 +90,11 @@ public:
   
   void setCanBeMoved(bool value) { movable = value; };
   void setCanBeRotated(bool value) { roteable = value; }
+  void setInfinite(bool value) { infinite = value; }
+  
   virtual bool canBeMoved() const { return movable; }
   virtual bool canBeRotated() const { return roteable; }
+  bool isInfinite() const { return infinite; }
   
   int deltaDirection(Laser& laser)
   {

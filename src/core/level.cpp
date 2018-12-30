@@ -55,7 +55,7 @@ Piece* Field::generatePiece(const PieceInfo *info)
   return nullptr;
 }
 
-void Field::load(LevelSpec* level)
+void Field::load(const LevelSpec* level)
 {
   this->_level = level;
   
@@ -141,7 +141,6 @@ void Field::updateLasers()
       
       beams.insert(laser);
 
-      
       Tile *tile = tileAt(laser.position);
       
       const auto& piece = tile->piece();
@@ -169,8 +168,8 @@ void Field::updateLasers()
   
   if (checkForWin() && _level && !_level->solved)
   {
-    _level->solved = true;
     //TODO: non-sense here, need to be managed somewhere else
+    //_level->solved = true;
     //++Files::packAt(Files::selectedPack)->solvedCount;
   }
 }

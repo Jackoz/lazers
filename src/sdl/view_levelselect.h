@@ -15,7 +15,7 @@ struct SDL_Surface;
 
 class View;
 
-class LevelList : public OffsettableList<LevelSpec*>
+class LevelList : public OffsettableList<const LevelSpec*>
 {
   private:
     Game *game;
@@ -26,7 +26,7 @@ class LevelList : public OffsettableList<LevelSpec*>
     u32 current() const { return game->pack->selected; }
     u32 count() const { return game->pack->count(); }
     void set(u32 i) { game->pack->selected = i; }
-    LevelSpec* get(u32 i) const { return game->pack->at(offset+i); }
+    const LevelSpec* get(u32 i) const { return game->pack->at(offset+i); }
 };
 
 class LevelSelectView : public View

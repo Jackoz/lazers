@@ -13,7 +13,7 @@
 
 class View;
 
-class PackList : public OffsettableList<LevelPack*>
+class PackList : public OffsettableList<const LevelPack*>
 {
   private:
     Game *game;
@@ -24,7 +24,7 @@ class PackList : public OffsettableList<LevelPack*>
     u32 current() const { return Files::selectedPack; }
     u32 count() const { return Files::packCount(); }
     void set(u32 i) { Files::selectedPack = i; }
-    LevelPack* get(u32 i) const { return Files::packAt(i); }
+    const LevelPack* get(u32 i) const { return Files::packAt(i); }
 };
 
 class PackSelectList : public View
