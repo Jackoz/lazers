@@ -28,21 +28,26 @@ void PackSelectList::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
-  Gfx::drawString(20, 10, false, "CHOOSE A LEVEL PACK");
-
-  Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name().c_str(), game->pack->author().c_str());
-
-  for (int i = 0; levelList.hasNext(i); ++i)
+  if (levelList.count() > 0)
   {
-    const LevelPack *spec = levelList.get(i);
+    Gfx::drawString(20, 10, false, "CHOOSE A LEVEL PACK");
     
-    Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s - %d of %d", spec->name().c_str(), spec->solvedCount, spec->count());
+    Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name().c_str(), game->pack->author().c_str());
+
+    for (int i = 0; levelList.hasNext(i); ++i)
+    {
+      const LevelPack *spec = levelList.get(i);
+      
+      Gfx::drawString(ui::LIST_X, ui::LIST_Y+ ui::LIST_DY*i, false, "%s - %d of %d", spec->name().c_str(), spec->solvedCount, spec->count());
+      
+      if (levelList.isSelected(i))
+        Gfx::blit(Gfx::ui, 0, 0, 4, 7, ui::LIST_X-8, ui::LIST_Y+ ui::LIST_DY*i);
+    }
     
-    if (levelList.isSelected(i))
-      Gfx::blit(Gfx::ui, 0, 0, 4, 7, ui::LIST_X-8, ui::LIST_Y+ ui::LIST_DY*i);
+    Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
   }
-  
-  Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
+  else
+    Gfx::drawString(Gfx::width()/2, Gfx::height()/2, true, "No level pack loaded.");
 
   /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
@@ -73,7 +78,7 @@ void PackSelectList::handleEvent(SDL_Event &event)
 
       if (i >= 0 && levelList.isValidIndex(i))
       {
-        game->pack = Files::packAt(Files::selectedPack);
+        game->pack = &game->packs[Files::selectedPack];
         game->switchView(VIEW_LEVEL_SELECT);
       }
 
@@ -125,7 +130,7 @@ void PackSelectList::handleEvent(SDL_Event &event)
           
         case KEY_B:
         {
-          game->pack = Files::packAt(Files::selectedPack);
+          game->pack = &game->packs[Files::selectedPack];
           game->switchView(VIEW_LEVEL_SELECT);
         }
           

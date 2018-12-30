@@ -29,6 +29,9 @@ private:
   static u8 charWidth(char c);
   
 public:
+  static u32 width() { return WIDTH; }
+  static u32 height() { return HEIGHT; }
+  
   static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
   static void rect(u16 x1, u16 y1, u16 w, u16 h, u32 color);
   static void rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color);

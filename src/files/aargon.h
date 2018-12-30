@@ -14,12 +14,13 @@
 #include <string>
 
 struct LevelSpec;
+class LevelPack;
 
 class Aargon
 {
-  public:
-    static LevelSpec parseLevel(const std::string& name);
-    static void parseLevels();
+public:
+  static LevelSpec parseLevel(const std::string& name);
+  static std::vector<LevelPack> parseLevels();
 };
 
 #endif

@@ -67,7 +67,7 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_SKEW_MIRROR: gfx = Position(piece->rotation(), 10); break;
     case PIECE_DOUBLE_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 5); break;
     case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 11); break;
-    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 12); break;
+    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(piece->rotation() % 4, 12); break;
     case PIECE_REFRACTOR: gfx = Position(piece->rotation() % 4, 5); break;
     case PIECE_SPLITTER: gfx = Position(piece->rotation(), 2); break;
     case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 17); break;

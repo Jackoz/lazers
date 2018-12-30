@@ -268,6 +268,7 @@ LevelSpec Aargon::parseLevel(const string& filename)
       }
       else if (type != PIECE_IGNORE)
       {
+        
         ASSERT(data[3] == '.' || data[3] == 'n' || data[3] == 'r' || data[3] == 'm', "movable is not a legal character (" << data[3] << ")");
         
         ASSERT(data[1] == ' ' || (data[1] >= '1' && data[1] <= '7'), "direction is not a legal character (" << data[1] << ")");
@@ -276,10 +277,11 @@ LevelSpec Aargon::parseLevel(const string& filename)
         LaserColor color = colorForChar(data[2]);
         
         PieceType pieceType = static_cast<PieceType>(type);
-        
+        auto pspec = Files::specForPiece(pieceType);
+
         PieceInfo info = PieceInfo(pieceType);
         
-        ASSERT(info.spec, "spec mapping is null for " << data[0]);
+        ASSERT(pspec, "spec mapping is null for " << data[0]);
         
         info.inventory = INVENTORY_ROWS > 0 && j <= INVENTORY_ROWS;
         
@@ -314,9 +316,9 @@ LevelSpec Aargon::parseLevel(const string& filename)
           case 'm': info.moveable = true; info.roteable = false; break;
         }
         
-        if (info.spec->type == PIECE_FILTER && info.color == LaserColor::WHITE)
+        if (info.type == PIECE_FILTER && info.color == LaserColor::WHITE)
         {
-          info.spec = Files::specForPiece(PIECE_GLASS);
+          info.type = PIECE_GLASS;
           info.color = LaserColor::NONE;
         }
         
@@ -338,7 +340,7 @@ struct AargonPack
   int skillNumber;
 };
 
-void Aargon::parseLevels()
+std::vector<LevelPack> Aargon::parseLevels()
 {
   /*string base = "/Users/jack/Desktop/Twilight/Aargon Deluxe/Level Packs/";
   string packs[] = {"Tutorial", "Deluxe", "Classic", "Smooth Sailing", "Demo Level Set", "Level Pack 1"};
@@ -387,6 +389,8 @@ void Aargon::parseLevels()
   apacks.push_back({ "Aargon Space Station (Engineering)", "Twilight Games", "aargon-space-station-02", "Level Pack 1", 3 });
   apacks.push_back({ "Aargon Space Station (Intelligence)", "Twilight Games", "aargon-space-station-03", "Level Pack 1", 4 });
   
+  std::vector<LevelPack> packs;
+  
   for (const AargonPack &apack : apacks)
   {
     LevelPack npack = LevelPack(apack.name, apack.author, apack.filename);
@@ -406,8 +410,8 @@ void Aargon::parseLevels()
       npack.addLevel(parseLevel(path));
     }
     
-    Files::addPack(npack);
-
-
+    packs.push_back(npack);
   }
+  
+  return packs;
 }

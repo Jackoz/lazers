@@ -124,7 +124,7 @@ public:
     {
       field.place(Pos(2+i, 2), new Mirror((Direction)i));
       field.place(Pos(2+i, 3), new Prism((Direction)i));
-      field.place(Pos(2+i, 6), new LaserSource((Direction)i, COLOR_RED));
+      field.place(Pos(2+i, 6), new LaserSource((Direction)i, LaserColor::RED));
     }
   }
 };

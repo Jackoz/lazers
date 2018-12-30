@@ -34,13 +34,15 @@ void Game::init()
   printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
   
   
-  Aargon::parseLevels();
+  auto apacks = Aargon::parseLevels();
+  this->packs.move(apacks);
+  apacks.clear();
   //Files::loadPacks();
   
   Files::loadSolvedStatus();
   
-  if (Files::packCount() > 0)
-    pack = Files::packAt(0);
+  if (packs.packCount() > 0)
+    pack = &packs[0];
   
   //for (int i = 0; i < Files::packCount(); ++i)
   //  Files::savePack(Files::packAt(i));

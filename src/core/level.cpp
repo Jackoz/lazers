@@ -12,46 +12,45 @@
 
 using namespace std;
 
-Piece* Field::generatePiece(const PieceInfo *info)
+Piece* Field::generatePiece(const PieceInfo& info)
 {
-  if (info->spec)
+  switch (info.type)
   {
-  switch (info->spec->type)
-  {
-    case PIECE_MIRROR: return new Mirror(info->direction);
-    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info->direction);
+    case PIECE_MIRROR: return new Mirror(info.direction);
+    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info.direction);
     case PIECE_STRICT_GOAL:
     {
-      Goal* goal = new StrictGoal(info->color);
+      Goal* goal = new StrictGoal(info.color);
       addGoal(goal);
       return goal;
     }
-    case PIECE_SOURCE: return new LaserSource(info->direction, info->color);
-    case PIECE_SPLITTER: return new Splitter(info->direction);
-    case PIECE_DSPLITTER: return new DSplitter(info->direction);
-    case PIECE_REFRACTOR: return new Refractor(info->direction);
-    case PIECE_FILTER: return new Filter(info->color);
+    case PIECE_SOURCE: return new LaserSource(info.direction, info.color);
+    case PIECE_SPLITTER: return new Splitter(info.direction);
+    case PIECE_DSPLITTER: return new DSplitter(info.direction);
+    case PIECE_REFRACTOR: return new Refractor(info.direction);
+    case PIECE_FILTER: return new Filter(info.color);
     case PIECE_WALL: return new Wall();
     case PIECE_GLASS: return new Glass();
-    case PIECE_COLOR_SHIFTER: return new ColorShifter(info->direction);
-    case PIECE_PRISM: return new Prism(info->direction);
-    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info->direction);
-    case PIECE_TUNNEL: return new Tunnel(info->direction);
-    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info->direction);
-    case PIECE_POLARIZER: return new Polarizer(info->direction, info->color);
-    case PIECE_SELECTOR: return new Selector(info->direction, info->color);
-    case PIECE_SPLICER: return new Splicer(info->direction, info->color);
+    case PIECE_COLOR_SHIFTER: return new ColorShifter(info.direction);
+    case PIECE_PRISM: return new Prism(info.direction);
+    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info.direction);
+    case PIECE_TUNNEL: return new Tunnel(info.direction);
+    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info.direction);
+    case PIECE_POLARIZER: return new Polarizer(info.direction, info.color);
+    case PIECE_SELECTOR: return new Selector(info.direction, info.color);
+    case PIECE_SPLICER: return new Splicer(info.direction, info.color);
     case PIECE_BENDER: return new Bender();
-    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info->direction);
+    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info.direction);
 
       
     case PIECE_MINE: return new Mine();
     case PIECE_TNT: return new TNT();
     case PIECE_SLIME: return new Slime();
     // TODO: finire
-    default: return nullptr;
+    default:
+      return nullptr;
   }
-  }
+  
   return nullptr;
 }
 
@@ -61,29 +60,29 @@ void Field::load(const LevelSpec* level)
   
   u8 curInvSlot = 0;
   
-  for (u32 i = 0; i < level->count(); ++i)
+  for (size_t i = 0; i < level->count(); ++i)
   {
-    const PieceInfo *info = level->at(i);
+    const PieceInfo& info = level->at(i);
     
-    Piece *piece = generatePiece(info);
+    Piece* piece = generatePiece(info);
     
     if (piece)
     {
       //if (info->spec->canBeRotated)
-      piece->setCanBeRotated(info->roteable);
-      piece->setCanBeMoved(info->moveable);
+      piece->setCanBeRotated(info.roteable);
+      piece->setCanBeMoved(info.moveable);
       
-      if (info->inventory)
+      if (info.inventory)
       {
         place(Position(Position::Type::INVENTORY, curInvSlot%_invWidth, curInvSlot/_invWidth), piece);
         ++curInvSlot;
       }
       else
-        place(Position(info->x, info->y), piece);
+        place(Position(info.x, info.y), piece);
     }
     else
     {
-      printf("Missing allocation: %c (%s)\n",info->spec->mapping,level->name.c_str());
+      printf("Missing allocation: %c (%s)\n",info.type,level->name.c_str());
     }
   }
   

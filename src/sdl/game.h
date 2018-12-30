@@ -16,27 +16,27 @@ template<class T>
 class OffsettableList
 {
 protected:
-  u32 offset;
+  size_t offset;
   
 public:
-  OffsettableList(u32 listSize) : offset(0), LIST_SIZE(listSize) { }
+  OffsettableList(size_t listSize) : offset(0), LIST_SIZE(listSize) { }
   
-  u32 getOffset() { return offset; }
+  size_t getOffset() { return offset; }
   void changeOffset(int delta) { offset += delta; }
   
-  u32 minOffset() { return offset; }
-  u32 maxOffset() { return offset + LIST_SIZE - 1; }
-  bool isSelected(u32 i) { return i + offset == current(); }
+  size_t minOffset() { return offset; }
+  size_t maxOffset() { return offset + LIST_SIZE - 1; }
+  bool isSelected(size_t i) { return i + offset == current(); }
   void reset() { offset = 0; }
-
-  bool isValidIndex(u32 i) const { return offset + i < count(); }
   
-  virtual u32 current() const = 0;
-  virtual u32 count() const = 0;
-  virtual void set(u32 i) = 0;
-  virtual T get(u32 i) const  = 0;
+  bool isValidIndex(size_t i) const { return offset + i < count(); }
   
-  bool hasNext(u32 i) { return i < LIST_SIZE && i + offset < count(); }
+  virtual size_t current() const = 0;
+  virtual size_t count() const = 0;
+  virtual void set(size_t i) = 0;
+  virtual T get(size_t i) const  = 0;
+  
+  bool hasNext(size_t i) { return i < LIST_SIZE && i + offset < count(); }
   
   bool down() {
     if (current() < count() - 1)
@@ -109,7 +109,7 @@ public:
     return false;
   }
   
-  const u32 LIST_SIZE;
+  const size_t LIST_SIZE;
 };
 
 
@@ -126,16 +126,16 @@ union SDL_Event;
 
 class View
 {
-  protected:
-    Game *game;
+protected:
+  Game *game;
   
-  public:
-    View(Game *game) : game(game) { }
-    virtual void handleEvent(SDL_Event& event) = 0;
-    virtual void draw() = 0;
+public:
+  View(Game *game) : game(game) { }
+  virtual void handleEvent(SDL_Event& event) = 0;
+  virtual void draw() = 0;
   
-    virtual void activate() { };
-    virtual void deactivate() { };
+  virtual void activate() { };
+  virtual void deactivate() { };
 };
 
 
@@ -143,27 +143,27 @@ class View
 
 class Game
 {
-  public:
-    Field *field;
-
-  private:
-    bool running;
-    View* views[VIEWS_COUNT];
-    View* view;
-    View* overView;
+public:
+  Field *field;
+  Repository packs;
   
-    void handleEvents();
-
-  public:
-    Game();
-    void init();
-    void loop();
-    void quit() { Files::saveSolvedStatus(); running = false; }
+private:
+  bool running;
+  View* views[VIEWS_COUNT];
+  View* view;
+  View* overView;
   
-    void switchView(ViewType type);
+  void handleEvents();
   
-    LevelPack *pack;
-    
+public:
+  Game();
+  void init();
+  void loop();
+  void quit() { Files::saveSolvedStatus(); running = false; }
+  
+  void switchView(ViewType type);
+  
+  const LevelPack *pack;
 };
 
 #endif

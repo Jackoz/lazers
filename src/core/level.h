@@ -176,7 +176,7 @@ public:
     std::for_each(inventory, inventory + _invWidth*_invHeight, [] (Tile& tile) { tile.clear(); });    
   }
 
-  Piece* generatePiece(const PieceInfo *info);
+  Piece* generatePiece(const PieceInfo& info);
   void load(const LevelSpec* level);
 
   void fail() { failed = true; }

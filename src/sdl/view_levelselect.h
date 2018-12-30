@@ -23,10 +23,10 @@ class LevelList : public OffsettableList<const LevelSpec*>
   public:
     LevelList(Game *game) : OffsettableList(14), game(game) { }
     
-    u32 current() const { return game->pack->selected; }
-    u32 count() const { return game->pack->count(); }
-    void set(u32 i) { game->pack->selected = i; }
-    const LevelSpec* get(u32 i) const { return game->pack->at(offset+i); }
+    size_t current() const { return game->pack->selected; }
+    size_t count() const { return game->pack->count(); }
+    void set(size_t i) { game->pack->selected = i; }
+    const LevelSpec* get(size_t i) const { return game->pack->at(offset+i); }
 };
 
 class LevelSelectView : public View

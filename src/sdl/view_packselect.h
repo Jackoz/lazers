@@ -15,16 +15,16 @@ class View;
 
 class PackList : public OffsettableList<const LevelPack*>
 {
-  private:
-    Game *game;
-    
-  public:
-    PackList(Game *game) : OffsettableList(14), game(game) { }
-    
-    u32 current() const { return Files::selectedPack; }
-    u32 count() const { return Files::packCount(); }
-    void set(u32 i) { Files::selectedPack = i; }
-    const LevelPack* get(u32 i) const { return Files::packAt(i); }
+private:
+  Game *game;
+  
+public:
+  PackList(Game *game) : OffsettableList(14), game(game) { }
+  
+  size_t current() const { return Files::selectedPack; }
+  size_t count() const { return game->packs.packCount(); }
+  void set(size_t i) { Files::selectedPack = i; }
+  const LevelPack* get(size_t i) const { return &game->packs[i]; }
 };
 
 class PackSelectList : public View

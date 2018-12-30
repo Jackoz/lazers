@@ -114,7 +114,6 @@ public:
   Wall() : Piece(PIECE_WALL, NORTH, LaserColor::NONE) { }
   
   bool blocksLaser(Laser &laser) override { UNUSED(laser); return true; }
-  
   bool canBeRotated() const override { return false; }
 };
 
@@ -122,8 +121,6 @@ class Glass : public Piece
 {
 public:
   Glass() : Piece(PIECE_GLASS, NORTH, LaserColor::NONE) { }
-  
-  
   bool canBeRotated() const override { return false; }
 };
 
