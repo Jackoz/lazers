@@ -23,6 +23,9 @@
 class ui
 {
 public:
+  static constexpr u16 TILE_SIZE = 15;
+  static constexpr u16 PIECE_SIZE = 14;
+  
   static constexpr u32 LIST_X = 20;
   static constexpr u32 LIST_Y = 30;
   static constexpr u32 LIST_DY = 10;

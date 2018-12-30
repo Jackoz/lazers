@@ -12,7 +12,7 @@
 
 void DoubleSplitterMirror::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == -1 || delta == 3)
     field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color);
@@ -24,7 +24,7 @@ void DoubleSplitterMirror::receiveLaser(Field* field, Laser &laser)
 
 void Splitter::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 0)
   {
@@ -38,7 +38,7 @@ void Splitter::receiveLaser(Field* field, Laser &laser)
 
 void ThreeWaySplitter::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 0)
   {
@@ -60,7 +60,7 @@ void StarSplitter::receiveLaser(Field* field, Laser &laser)
 
 void DSplitter::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 0)
   {
@@ -82,32 +82,32 @@ void DSplitter::receiveLaser(Field* field, Laser &laser)
 
 void Prism::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 0)
   {
-    if (laser.color & COLOR_RED)
-      field->generateBeam(laser.position, laser.direction, COLOR_RED);
-    if (laser.color & COLOR_GREEN)
-      field->generateBeam(laser.position, laser.rotatedDirection(1), COLOR_GREEN);
-    if (laser.color & COLOR_BLUE)
-      field->generateBeam(laser.position, laser.rotatedDirection(2), COLOR_BLUE);
+    if ((laser.color & LaserColor::RED) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.direction, LaserColor::RED);
+    if ((laser.color & LaserColor::GREEN) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(1), LaserColor::GREEN);
+    if ((laser.color & LaserColor::BLUE) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(2), LaserColor::BLUE);
 
   }
   else if (delta == 4)
   {
-    if (laser.color & COLOR_RED)
-      field->generateBeam(laser.position, laser.direction, COLOR_RED);
+    if ((laser.color & LaserColor::RED) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.direction, LaserColor::RED);
   }
   else if (delta == -3)
   {
-    if (laser.color & COLOR_GREEN)
-      field->generateBeam(laser.position, laser.rotatedDirection(-1), COLOR_GREEN);
+    if ((laser.color & LaserColor::GREEN) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(-1), LaserColor::GREEN);
   }
   else if (delta == -2)
   {
-    if (laser.color & COLOR_BLUE)
-      field->generateBeam(laser.position, laser.rotatedDirection(-2), COLOR_BLUE);
+    if ((laser.color & LaserColor::BLUE) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(-2), LaserColor::BLUE);
   }
   
   laser.invalidate();
@@ -115,32 +115,32 @@ void Prism::receiveLaser(Field* field, Laser &laser)
 
 void FlippedPrism::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 0)
   {
-    if (laser.color & COLOR_RED)
-      field->generateBeam(laser.position, laser.direction, COLOR_RED);
-    if (laser.color & COLOR_GREEN)
-      field->generateBeam(laser.position, laser.rotatedDirection(-1), COLOR_GREEN);
-    if (laser.color & COLOR_BLUE)
-      field->generateBeam(laser.position, laser.rotatedDirection(-2), COLOR_BLUE);
+    if ((laser.color & LaserColor::RED) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.direction, LaserColor::RED);
+    if ((laser.color & LaserColor::GREEN) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(-1), LaserColor::GREEN);
+    if ((laser.color & LaserColor::BLUE) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(-2), LaserColor::BLUE);
     
   }
   else if (delta == 4)
   {
-    if (laser.color & COLOR_RED)
-      field->generateBeam(laser.position, laser.direction, COLOR_RED);
+    if ((laser.color & LaserColor::RED) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.direction, LaserColor::RED);
   }
   else if (delta == 3)
   {
-    if (laser.color & COLOR_GREEN)
-      field->generateBeam(laser.position, laser.rotatedDirection(+1), COLOR_GREEN);
+    if ((laser.color & LaserColor::GREEN) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(+1), LaserColor::GREEN);
   }
   else if (delta == 2)
   {
-    if (laser.color & COLOR_BLUE)
-      field->generateBeam(laser.position, laser.rotatedDirection(+2), COLOR_BLUE);
+    if ((laser.color & LaserColor::BLUE) != LaserColor::NONE)
+      field->generateBeam(laser.position, laser.rotatedDirection(+2), LaserColor::BLUE);
   }
   
   laser.invalidate();
@@ -148,18 +148,18 @@ void FlippedPrism::receiveLaser(Field* field, Laser &laser)
 
 void Selector::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 4)
     ;
   else if (delta == 0)
   {
     LaserColor deflected = static_cast<LaserColor>(laser.color & color());
-    LaserColor kept = static_cast<LaserColor>((laser.color & ~color()) & COLOR_WHITE);
+    LaserColor kept = static_cast<LaserColor>((laser.color & ~color()) & LaserColor::WHITE);
 
-    if (deflected != COLOR_NONE)
+    if (deflected != LaserColor::NONE)
       field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
-    if (kept != COLOR_NONE)      
+    if (kept != LaserColor::NONE)      
       field->generateBeam(laser.position, laser.direction, kept);
 
     laser.invalidate();
@@ -168,18 +168,18 @@ void Selector::receiveLaser(Field* field, Laser &laser)
 
 void Splicer::receiveLaser(Field* field, Laser &laser)
 {
-  s8 delta = deltaDirection(laser);
+  int delta = deltaDirection(laser);
   
   if (delta == 4)
     ;
   else if (delta == 0)
   {
     LaserColor kept = static_cast<LaserColor>(laser.color & color());
-    LaserColor deflected = static_cast<LaserColor>((laser.color & ~color()) & COLOR_WHITE);
+    LaserColor deflected = static_cast<LaserColor>((laser.color & ~color()) & LaserColor::WHITE);
     
-    if (deflected != COLOR_NONE)
+    if (deflected != LaserColor::NONE)
       field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
-    if (kept != COLOR_NONE)
+    if (kept != LaserColor::NONE)
       field->generateBeam(laser.position, laser.direction, kept);
     
     laser.invalidate();
@@ -194,7 +194,7 @@ void Teleporter::receiveLaser(Field* field, Laser &laser)
 
   p += dir;
   
-  while (p.isValid())
+  while (field->isInside(p))
   {
     Tile *tile = field->tileAt(p);
     
@@ -215,4 +215,4 @@ void TNT::receiveLaser(Field* field, Laser &laser) { field->fail(); UNUSED(laser
 
 
 
-Goal::Goal(PieceType type, LaserColor color) : Piece(type, NORTH, color), satisfied(false), satisfyDirection(0), satisfyColor(COLOR_NONE) { }
+Goal::Goal(PieceType type, LaserColor color) : Piece(type, NORTH, color), satisfied(false), satisfyDirection(0), satisfyColor(LaserColor::NONE) { }

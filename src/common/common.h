@@ -18,30 +18,40 @@ using u8 = uint8_t;
 typedef signed char s8;
 typedef signed short s16;
 
-static const u16 FIELD_WIDTH = 16;
-static const u16 FIELD_HEIGHT = 11;
-
-static const u16 INVENTORY_WIDTH = 4;
-static const u16 INVENTORY_HEIGHT = 6;
-
-static const u16 TILE_SIZE = 15;
-static const u16 PIECE_SIZE = 14;
-
 enum LaserColor : u8
 {
-  COLOR_NONE = 0x00,
-  COLOR_RED = 0x01,
-  COLOR_GREEN = 0x02,
-  COLOR_BLUE = 0x04,
+  NONE    = 0b000,
+  RED     = 0b001,
+  GREEN   = 0b010,
+  BLUE    = 0b100,
   
-  COLOR_YELLOW = 0x03,
-  COLOR_MAGENTA = 0x05,
-  COLOR_CYAN = 0x06,
+  YELLOW  = RED | GREEN,
+  MAGENTA = RED | BLUE,
+  CYAN    = GREEN | BLUE,
   
-  COLOR_WHITE = 0x07
+  WHITE   = RED | GREEN | BLUE
 };
+
+inline LaserColor& operator|=(LaserColor& c1, LaserColor c2) { c1 = static_cast<LaserColor>((int)c1 | (int)c2); return c1; }
+
+struct Color
+{
+private:
+  using type_t = u8;
+  type_t value;
   
+  Color(type_t value) : value(value) { }
+public:
   
+  inline Color operator~() const { return Color(~value); }
+  inline Color operator|(Color c) const { return Color(value | c.value); }
+  inline Color operator&(Color c) const { return Color(value & c.value); }
+  inline Color operator<<(int v) const { return Color((value << 1 | (value & 0b100) >> 2) & 0x0b111); }
+  inline Color operator>>(int v) const { return Color((value >> 1 | (value & 0b001) << 2) & 0x0b111); }
+  inline Color next() { return this->operator<<(1); }
+  inline Color prev() { return this->operator>>(1); }
+};
+
 enum PieceType : u8
 {
   PIECE_WALL = 0,
@@ -118,7 +128,6 @@ struct Position
   Position(Type type) : Position(Type::INVALID, -1, -1) { }
   
   bool isInventory() const { return type == Position::Type::INVENTORY; }
-  bool isValid() const { return type != Type::INVALID && x >= 0 && y >= 0 && x < FIELD_WIDTH && y < FIELD_HEIGHT; }
 
   Position& operator+=(Direction dir) { x += directions[dir][0]; y += directions[dir][1]; return *this; }
   Position operator+(Direction dir) const { return Position(x + directions[dir][0], y + directions[dir][1]); }

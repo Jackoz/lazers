@@ -206,29 +206,29 @@ PieceInfoSpec* Files::specForPiece(PieceType type)
 LaserColor Files::colorForChar(u8 color)
 {
   switch (color) {
-    case 'n': case 'N': return COLOR_NONE;
-    case 'r': case 'R': return COLOR_RED;
-    case 'g': case 'G': return COLOR_GREEN;
-    case 'b': case 'B': return COLOR_BLUE;
-    case 'c': case 'C': return COLOR_CYAN;
-    case 'm': case 'M': return COLOR_MAGENTA;
-    case 'y': case 'Y': return COLOR_YELLOW;
-    case 'w': case 'W': return COLOR_WHITE;
-    default: return COLOR_WHITE;
+    case 'n': case 'N': return LaserColor::NONE;
+    case 'r': case 'R': return LaserColor::RED;
+    case 'g': case 'G': return LaserColor::GREEN;
+    case 'b': case 'B': return LaserColor::BLUE;
+    case 'c': case 'C': return LaserColor::CYAN;
+    case 'm': case 'M': return LaserColor::MAGENTA;
+    case 'y': case 'Y': return LaserColor::YELLOW;
+    case 'w': case 'W': return LaserColor::WHITE;
+    default: return LaserColor::WHITE;
   }
 }
 
 u8 Files::charForColor(LaserColor color)
 {
   switch (color) {
-    case COLOR_NONE: return 'n';
-    case COLOR_RED: return 'r';
-    case COLOR_GREEN: return 'g';
-    case COLOR_BLUE: return 'b';
-    case COLOR_CYAN: return 'c';
-    case COLOR_MAGENTA: return 'm';
-    case COLOR_YELLOW: return 'y';
-    case COLOR_WHITE: return 'w';
+    case LaserColor::NONE: return 'n';
+    case LaserColor::RED: return 'r';
+    case LaserColor::GREEN: return 'g';
+    case LaserColor::BLUE: return 'b';
+    case LaserColor::CYAN: return 'c';
+    case LaserColor::MAGENTA: return 'm';
+    case LaserColor::YELLOW: return 'y';
+    case LaserColor::WHITE: return 'w';
   }
 }
 

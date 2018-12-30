@@ -155,29 +155,25 @@ int main(void)
   port_bg_cnt* bg0cnt =  gfx.bg0Cnt();
   bg0cnt->set(0);
   bg0cnt->setScreenSize(bg_screen_size::SIZE32x32);
-  bg0cnt->setTileDataBlock(0);
-  bg0cnt->setTileMapBlock(16);
+  bg0cnt->setBlocks(0, 16);
   bg0cnt->setPriority(3);
   
   port_bg_cnt* bg1cnt = gfx.bg1Cnt();
   bg1cnt->set(0);
   bg1cnt->setScreenSize(bg_screen_size::SIZE32x32);
-  bg1cnt->setTileDataBlock(0);
-  bg1cnt->setTileMapBlock(17);
+  bg1cnt->setBlocks(0, 17);
   bg1cnt->setPriority(2);
   
   port_bg_cnt* bg2cnt = gfx.bg2Cnt();
   bg2cnt->set(0);
   bg2cnt->setScreenSize(bg_screen_size::SIZE32x32);
-  bg2cnt->setTileDataBlock(0);
-  bg2cnt->setTileMapBlock(18);
+  bg2cnt->setBlocks(0, 18);
   bg2cnt->setPriority(1);
   
   port_bg_cnt* bg3cnt = gfx.bg3Cnt();
   bg3cnt->set(0);
   bg3cnt->setScreenSize(bg_screen_size::SIZE32x32);
-  bg3cnt->setTileDataBlock(0);
-  bg3cnt->setTileMapBlock(19);
+  bg3cnt->setBlocks(0, 19);
   bg3cnt->setPriority(0);
   
   gfx.bg0().setOffset(0, 0);
@@ -185,6 +181,17 @@ int main(void)
   gfx.bg2().setOffset(-4, 0);
   gfx.bg3().setOffset(0, -4);
   
+  gfx.blendCnt()->setFX(fx_type::ALPHA_BLEND);
+  
+  gfx.blendCnt()->enable1stTarget(fx_target::BG2);
+  gfx.blendCnt()->enable1stTarget(fx_target::BG3);
+  
+  gfx.blendCnt()->enable2stTarget(fx_target::BG2);
+  gfx.blendCnt()->enable2stTarget(fx_target::BG1);
+  gfx.blendCnt()->enable2stTarget(fx_target::BG0);
+  gfx.blendAlpha()->set1st(0.60f);
+  gfx.blendAlpha()->set2nd(0.50f);
+
   memcpy(&gfx.getBgPalette(0), shipPalette, PALETTE_SMALL_SIZE * sizeof(color_t));
   memcpy(&gfx.getBgPalette(1), mirrorPalette, PALETTE_SMALL_SIZE * sizeof(color_t));
   memcpy(&gfx.getBgPalette(2), laserPalette, PALETTE_SMALL_SIZE * sizeof(color_t));
@@ -214,10 +221,14 @@ int main(void)
     }
   
   auto* laserMap = gfx.getBgTileMap(18);
+  auto* laserMap2 = gfx.getBgTileMap(19);
+
   laserMap[0].set(LevelView::LASER_RED, 4, false, false);
   laserMap[32].set(LevelView::LASER_RED, 4, false, false);
   
-  auto* laserMap2 = gfx.getBgTileMap(19);
+  laserMap[32*4 + 4].set(LevelView::LASER_RED+6, 4, false, false);
+  laserMap[32*4 + 4].set(LevelView::LASER_RED+6, 4, false, false);
+  
   laserMap2[0].set(LevelView::LASER_RED+3 + 2, 4, false, false);
   laserMap2[1].set(LevelView::LASER_RED+3 + 2, 4, false, false);
 
@@ -292,6 +303,8 @@ int main(void)
     object.setX(hover.x * 16);
     object.setY(hover.y * 16);
     gfx.getOAM(0)->set(&object);
+    
+    gfx.waitVsync();
   }
   
   return 0;

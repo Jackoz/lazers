@@ -24,8 +24,8 @@ private:
   Position fposition, iposition;
   Position *position;
   
-  static u16 coordX(const Position& p);
-  static u16 coordY(const Position& p);
+  u16 coordX(const Position& p);
+  u16 coordY(const Position& p);
   static SDL_Rect rectForPiece(const Piece* piece);
   
   Field* field() { return game->field; }

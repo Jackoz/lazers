@@ -163,7 +163,6 @@ alignas(4) sprite_info_t sprites[] =
   
   { red_laser, 3, 1 },
   { green_laser, 3, 1 },
-  { blue_laser, 3, 1 },
   { yellow_laser, 3, 1 },
   { blue_laser, 3, 1 },
   { purple_laser, 3, 1 },

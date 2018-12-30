@@ -18,6 +18,7 @@
 #include <string>
 #include <algorithm>
 #include <memory>
+#include <array>
 
 #include <cassert>
 
@@ -32,14 +33,14 @@ private:
   std::unique_ptr<Piece> _piece;
 
 public:
-  u8 colors[8];
+  std::array<LaserColor, 8> colors;
   
   u8 x, y;
   u8 variant;
   
-  Tile() : _piece{nullptr}, colors{COLOR_NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
+  Tile() : _piece{nullptr}, colors{LaserColor::NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
   
-  void resetLasers() { std::fill(colors, colors + 8, COLOR_NONE); }
+  void resetLasers() { std::fill(colors.begin(), colors.end(), LaserColor::NONE); }
   void clear() { _piece.reset(); }
 
   bool empty() const { return _piece == nullptr; }
@@ -70,6 +71,7 @@ private:
   std::list<Laser> lasers;
   std::list<Goal*> goals;
   std::unordered_set<Laser, Laser::hash> beams;
+  
   bool failed;
 
   void resetLasers();
@@ -107,13 +109,13 @@ public:
         place({(s8)(i+3),9}, new Filter(static_cast<LaserColor>(i+1)));
     }
     
-    place({2, 10}, new Polarizer(NORTH, COLOR_MAGENTA));
-    place({1, 10}, new Polarizer(NORTH, COLOR_WHITE));
+    place({2, 10}, new Polarizer(NORTH, LaserColor::MAGENTA));
+    place({1, 10}, new Polarizer(NORTH, LaserColor::WHITE));
     place({3, 10}, new Tunnel(NORTH));
     place({4, 10}, new ColorShifter(NORTH));
     place({5, 10}, new ColorInverter(NORTH));
-    place({6, 10}, new StrictGoal(COLOR_NONE));
-    place({7, 10}, new StrictGoal(COLOR_YELLOW));
+    place({6, 10}, new StrictGoal(LaserColor::NONE));
+    place({7, 10}, new StrictGoal(LaserColor::YELLOW));
     place({8, 10}, new Teleporter());
     place({9, 10}, new Teleporter());
     place({10, 10}, new Refractor(NORTH));
@@ -161,6 +163,8 @@ public:
   u32 height() const { return _height; }
   u32 invWidth() const { return _invWidth; }
   u32 invHeight() const { return _invHeight; }
+  
+  bool isInside(const Pos& p) const { return p.x >= 0 && p.x < _width && p.y >= 0 && p.y < _height; }
 
   void reset()
   {
@@ -176,6 +180,7 @@ public:
   void load(LevelSpec* level);
 
   void fail() { failed = true; }
+  bool isFailed() { return failed; }
   
   void place(Position p, Piece* piece)
   {

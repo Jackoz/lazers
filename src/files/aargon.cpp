@@ -23,7 +23,7 @@ do { \
   if (! (condition)) { \
     std::cerr << "Assertion '" #condition "' failed in " << __FILE__ \
     << " line " << __LINE__ << ": " << message << std::endl; \
-    std::exit(EXIT_FAILURE); \
+    /*std::exit(EXIT_FAILURE);*/ assert(false); \
     } \
     } while (false)
 
@@ -72,7 +72,9 @@ s8 pieceType(char c)
     case 'c': return PIECE_CRYSTAL;
     case 'h': return PIECE_VOID_HOLE;
       
-    default: return PIECE_UNKNOWN;
+    default:
+      assert(false);
+      return PIECE_UNKNOWN;
   }
 }
 
@@ -137,15 +139,15 @@ bool canHaveRotation(PieceType type)
 LaserColor colorForChar(char c)
 {
   switch (c) {
-    case ' ': return COLOR_WHITE;
-    case 'R': return COLOR_RED;
-    case 'G': return COLOR_GREEN;
-    case 'B': return COLOR_BLUE;
-    case 'M': return COLOR_MAGENTA;
-    case 'C': return COLOR_CYAN;
-    case 'Y': return COLOR_YELLOW;
-    case 'X': return COLOR_NONE;
-    default:  ASSERT(false, "color is not a legal character (" << c << ")"); return COLOR_NONE;
+    case ' ': return LaserColor::WHITE;
+    case 'R': return LaserColor::RED;
+    case 'G': return LaserColor::GREEN;
+    case 'B': return LaserColor::BLUE;
+    case 'M': return LaserColor::MAGENTA;
+    case 'C': return LaserColor::CYAN;
+    case 'Y': return LaserColor::YELLOW;
+    case 'X': return LaserColor::NONE;
+    default:  ASSERT(false, "color is not a legal character (" << c << ")"); return LaserColor::NONE;
   }
 }
 
@@ -287,6 +289,8 @@ LevelSpec Aargon::parseLevel(const string& filename)
           info.y = i - 1;
         }
         
+        //ASSERT(info.inventory || (info.x >= 0 && info.y >= 0), "piece coordinate must be greater than 0");
+        
         //ASSERT(canHaveRotation(pieceType) || data[1] == ' ', "direction is specified for piece " << data[0] << ": " << data[1] << "  " << i << "," << (j*4));
         
         if (canHaveRotation(pieceType))
@@ -294,13 +298,13 @@ LevelSpec Aargon::parseLevel(const string& filename)
         else
           info.direction = NORTH;
         
-        ASSERT(!canHaveColor(pieceType) || color != COLOR_NONE || pieceType == PIECE_STRICT_GOAL || pieceType == PIECE_FILTER, "X color specifier found for not a goal");
+        ASSERT(!canHaveColor(pieceType) || color != LaserColor::NONE || pieceType == PIECE_STRICT_GOAL || pieceType == PIECE_FILTER, "X color specifier found for not a goal");
         //ASSERT(canHaveColor(pieceType) || data[2] == ' ' || pieceType == PIECE_WALL, "color is specified for piece " << data[0]);
         
         if (canHaveColor(pieceType))
           info.color = color;
         else
-          info.color = COLOR_NONE;
+          info.color = LaserColor::NONE;
       
         switch (data[3])
         {
@@ -310,10 +314,10 @@ LevelSpec Aargon::parseLevel(const string& filename)
           case 'm': info.moveable = true; info.roteable = false; break;
         }
         
-        if (info.spec->type == PIECE_FILTER && info.color == COLOR_WHITE)
+        if (info.spec->type == PIECE_FILTER && info.color == LaserColor::WHITE)
         {
           info.spec = Files::specForPiece(PIECE_GLASS);
-          info.color = COLOR_NONE;
+          info.color = LaserColor::NONE;
         }
         
         spec.add(info);

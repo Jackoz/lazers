@@ -22,21 +22,20 @@ struct Laser
   
   Laser(Position position, Direction direction, LaserColor color) : position(position), direction(direction), color(color) { }
   
-  bool isValid() const { return position.isValid(); }
   void invalidate() { position.x = -1; position.y = -1; }
   
   void advance() { position += direction; }
   
   void rotateLeft(u8 steps)
   {
-    s8 delta = direction - steps;
+    int delta = direction - steps;
     if (delta < 0) delta += 8;
     direction = static_cast<Direction>(delta);
   }
   
   void rotateRight(u8 steps)
   {
-    s8 delta = direction + steps;
+    int delta = direction + steps;
     delta %= 8;
     direction = static_cast<Direction>(delta);
   }
@@ -45,7 +44,7 @@ struct Laser
   
   Direction rotatedDirection(u8 steps)
   {
-    s8 delta = direction + steps;
+    int delta = direction + steps;
     if (delta < 0) delta += 8;
     else if (delta >= 8) delta %= 8;
     return static_cast<Direction>(delta);
@@ -58,7 +57,7 @@ struct Laser
   public:
     size_t operator()(const Laser& k) const
     {
-      return (k.position.x << 24) | (k.position.y << 16) | (k.color << 8) | k.direction;
+      return (k.position.x << 24) | (k.position.y << 16) | ((size_t)k.color << 8) | k.direction;
     }
   };
 };
@@ -85,7 +84,7 @@ public:
   void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
   void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
   
-  virtual Laser produceLaser() const { return Laser(Position(-1, -1), Direction::NORTH, COLOR_NONE); }
+  virtual Laser produceLaser() const { return Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE); }
   virtual bool blocksLaser(Laser &laser) { return false; }
   virtual void receiveLaser(Field* field, Laser &laser) { };
   
@@ -109,7 +108,7 @@ public:
 class Wall : public Piece
 {
 public:
-  Wall() : Piece(PIECE_WALL, NORTH, COLOR_NONE) { }
+  Wall() : Piece(PIECE_WALL, NORTH, LaserColor::NONE) { }
   
   bool blocksLaser(Laser &laser) override { UNUSED(laser); return true; }
   
@@ -119,7 +118,7 @@ public:
 class Glass : public Piece
 {
 public:
-  Glass() : Piece(PIECE_GLASS, NORTH, COLOR_NONE) { }
+  Glass() : Piece(PIECE_GLASS, NORTH, LaserColor::NONE) { }
   
   
   bool canBeRotated() const override { return false; }
@@ -137,11 +136,11 @@ public:
 class Mirror : public Piece
 {
 public:
-  Mirror(Direction rotation) : Piece(PIECE_MIRROR, rotation, COLOR_NONE) { }
+  Mirror(Direction rotation) : Piece(PIECE_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta == 0)
       laser.flip();
@@ -157,11 +156,11 @@ public:
 class SkewMirror : public Piece
 {
 public:
-  SkewMirror(Direction rotation) : Piece(PIECE_SKEW_MIRROR, rotation, COLOR_NONE) { }
+  SkewMirror(Direction rotation) : Piece(PIECE_SKEW_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta == 0)
       laser.rotateRight(3);
@@ -179,11 +178,11 @@ public:
 class DoubleMirror : public Piece
 {
 public:
-  DoubleMirror(Direction rotation) : Piece(PIECE_DOUBLE_MIRROR, rotation, COLOR_NONE) { }
+  DoubleMirror(Direction rotation) : Piece(PIECE_DOUBLE_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta == 0 || delta == 4)
       laser.flip();
@@ -199,7 +198,7 @@ public:
 class DoubleSplitterMirror : public Piece
 {
 public:
-  DoubleSplitterMirror(Direction rotation) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, COLOR_NONE) { }
+  DoubleSplitterMirror(Direction rotation) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
 };
@@ -207,11 +206,11 @@ public:
 class DoubleSkewMirror : public Piece
 {
 public:
-  DoubleSkewMirror(Direction rotation) : Piece(PIECE_DOUBLE_SKEW_MIRROR, rotation, COLOR_NONE) { }
+  DoubleSkewMirror(Direction rotation) : Piece(PIECE_DOUBLE_SKEW_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser)%4;
+    int delta = deltaDirection(laser)%4;
     if (delta < 0) delta += 4;
     
     if (delta == 0)
@@ -231,11 +230,11 @@ public:
 class DoublePassMirror : public Piece
 {
 public:
-  DoublePassMirror(Direction rotation) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, COLOR_NONE) { }
+  DoublePassMirror(Direction rotation) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta == 0 || delta == 4)
       laser.flip();
@@ -249,11 +248,11 @@ public:
 class Refractor : public Piece
 {
 public:
-  Refractor(Direction rotation) : Piece(PIECE_REFRACTOR, rotation, COLOR_NONE) { }
+  Refractor(Direction rotation) : Piece(PIECE_REFRACTOR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser)%4;
+    int delta = deltaDirection(laser)%4;
     if (delta < 0) delta += 4;
     
     if (delta == 0)
@@ -268,14 +267,14 @@ public:
 class Splitter : public Piece
 {
 public:
-  Splitter(Direction rotation) : Piece(PIECE_SPLITTER, rotation, COLOR_NONE) { }
+  Splitter(Direction rotation) : Piece(PIECE_SPLITTER, rotation, LaserColor::NONE) { }
   void receiveLaser(Field* field, Laser &laser) override;
 };
 
 class ThreeWaySplitter : public Piece
 {
 public:
-  ThreeWaySplitter(Direction rotation) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, COLOR_NONE) { }
+  ThreeWaySplitter(Direction rotation) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, LaserColor::NONE) { }
   void receiveLaser(Field* field, Laser &laser) override;
   
 };
@@ -283,7 +282,7 @@ public:
 class StarSplitter : public Piece
 {
 public:
-  StarSplitter(Field *field) : Piece(PIECE_STAR_SPLITTER, NORTH, COLOR_NONE) { }
+  StarSplitter(Field *field) : Piece(PIECE_STAR_SPLITTER, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
   
@@ -293,7 +292,7 @@ public:
 class DSplitter : public Piece
 {
 public:
-  DSplitter(Direction rotation) : Piece(PIECE_DSPLITTER, rotation, COLOR_NONE) { }
+  DSplitter(Direction rotation) : Piece(PIECE_DSPLITTER, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
 };
@@ -301,7 +300,7 @@ public:
 class Prism : public Piece
 {
 public:
-  Prism(Direction rotation) : Piece(PIECE_PRISM, rotation, COLOR_NONE) { }
+  Prism(Direction rotation) : Piece(PIECE_PRISM, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
 };
@@ -309,7 +308,7 @@ public:
 class FlippedPrism : public Piece
 {
 public:
-  FlippedPrism(Direction rotation) : Piece(PIECE_FLIPPED_PRISM, rotation, COLOR_NONE) { }
+  FlippedPrism(Direction rotation) : Piece(PIECE_FLIPPED_PRISM, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
 };
@@ -335,7 +334,7 @@ public:
 class Bender : public Piece
 {
 public:
-  Bender() : Piece(PIECE_BENDER, NORTH, COLOR_NONE) { }
+  Bender() : Piece(PIECE_BENDER, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
@@ -348,7 +347,7 @@ public:
 class Twister : public Piece
 {
 public:
-  Twister() : Piece(PIECE_TWISTER, NORTH, COLOR_NONE) { }
+  Twister() : Piece(PIECE_TWISTER, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
@@ -362,7 +361,7 @@ class Filter : public Piece
 public:
   Filter(LaserColor color) : Piece(PIECE_FILTER, NORTH, color) { }
   
-  bool blocksLaser(Laser &laser) override { return (color_ & laser.color) == 0; }
+  bool blocksLaser(Laser &laser) override { return (color_ & laser.color) == LaserColor::NONE; }
   void receiveLaser(Field* field, Laser &laser) override
   {
     laser.color = static_cast<LaserColor>(laser.color & color_);
@@ -374,35 +373,35 @@ public:
 class RoundFilter : public Piece
 {
 public:
-  RoundFilter() : Piece(PIECE_FILTER, NORTH, COLOR_NONE) { }
+  RoundFilter() : Piece(PIECE_FILTER, NORTH, LaserColor::NONE) { }
   
   bool blocksLaser(Laser &laser) override
   {
-    s8 delta = deltaDirection(laser) % 4;
+    int delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
     
     if (delta == 3)
       return true;
     else if (delta == 0)
-      return (laser.color & COLOR_RED) == 0;
+      return (laser.color & LaserColor::RED) == LaserColor::NONE;
     else if (delta == 1)
-      return (laser.color & COLOR_GREEN) == 0;
+      return (laser.color & LaserColor::GREEN) == LaserColor::NONE;
     else if (delta == 2)
-      return (laser.color & COLOR_BLUE) == 0;
+      return (laser.color & LaserColor::BLUE) == LaserColor::NONE;
     else return true;
   }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser) % 4;
+    int delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
     
     if (delta == 0)
-      laser.color = static_cast<LaserColor>(laser.color & COLOR_RED);
+      laser.color = static_cast<LaserColor>(laser.color & LaserColor::RED);
     else if (delta == 1)
-      laser.color = static_cast<LaserColor>(laser.color & COLOR_GREEN);
+      laser.color = static_cast<LaserColor>(laser.color & LaserColor::GREEN);
     else if (delta == 2)
-      laser.color = static_cast<LaserColor>(laser.color & COLOR_BLUE);
+      laser.color = static_cast<LaserColor>(laser.color & LaserColor::BLUE);
   }
 };
 
@@ -411,7 +410,7 @@ class Polarizer : public Piece
 public:
   Polarizer(Direction rotation, LaserColor color) : Piece(PIECE_POLARIZER, rotation, color) { }
   
-  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == 0; }
+  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == LaserColor::NONE; }
   void receiveLaser(Field* field, Laser &laser) override
   {
     laser.color = static_cast<LaserColor>(laser.color & color_);
@@ -421,7 +420,7 @@ public:
 class Tunnel : public Piece
 {
 public:
-  Tunnel(Direction rotation) : Piece(PIECE_TUNNEL, rotation, COLOR_NONE) { }
+  Tunnel(Direction rotation) : Piece(PIECE_TUNNEL, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
@@ -433,20 +432,20 @@ public:
 class ColorShifter : public Piece
 {
 public:
-  ColorShifter(Direction rotation) : Piece(PIECE_COLOR_SHIFTER, rotation, COLOR_NONE) { }
+  ColorShifter(Direction rotation) : Piece(PIECE_COLOR_SHIFTER, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta%4 != 0)
       laser.invalidate();
     else
     {
       if (delta == 0)
-        laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & COLOR_RED) << 2));
+        laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & LaserColor::RED) << 2));
       else if (delta == 4)
-        laser.color = static_cast<LaserColor>(((laser.color << 1) & COLOR_WHITE) | ((laser.color & COLOR_BLUE) >> 2));
+        laser.color = static_cast<LaserColor>(((laser.color << 1) & LaserColor::WHITE) | ((laser.color & LaserColor::BLUE) >> 2));
     }
   }
   
@@ -456,17 +455,17 @@ public:
 class ColorInverter : public Piece
 {
 public:
-  ColorInverter(Direction rotation) : Piece(PIECE_COLOR_INVERTER, rotation, COLOR_NONE) { }
+  ColorInverter(Direction rotation) : Piece(PIECE_COLOR_INVERTER, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta%4 != 0)
       laser.invalidate();
     else
     {
-      laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
+      laser.color = static_cast<LaserColor>(~laser.color & LaserColor::WHITE);
     }
   }
 };
@@ -474,17 +473,17 @@ public:
 class CrossColorInverter : public Piece
 {
 public:
-  CrossColorInverter(Direction rotation) : Piece(PIECE_CROSS_COLOR_INVERTER, rotation, COLOR_NONE) { }
+  CrossColorInverter(Direction rotation) : Piece(PIECE_CROSS_COLOR_INVERTER, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override
   {
-    s8 delta = deltaDirection(laser);
+    int delta = deltaDirection(laser);
     
     if (delta%2 != 0)
       laser.invalidate();
     else
     {
-      laser.color = static_cast<LaserColor>(~laser.color & COLOR_WHITE);
+      laser.color = static_cast<LaserColor>(~laser.color & LaserColor::WHITE);
     }
   }
 };
@@ -493,7 +492,7 @@ public:
 class Teleporter : public Piece
 {
 public:
-  Teleporter() : Piece(PIECE_TELEPORTER, NORTH, COLOR_NONE) { }
+  Teleporter() : Piece(PIECE_TELEPORTER, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
   
@@ -503,7 +502,7 @@ public:
 class TNT : public Piece
 {
 public:
-  TNT() : Piece(PIECE_TNT, NORTH, COLOR_NONE) { }
+  TNT() : Piece(PIECE_TNT, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
   
@@ -513,7 +512,7 @@ public:
 class Slime : public Piece
 {
 public:
-  Slime() : Piece(PIECE_SLIME, NORTH, COLOR_NONE) { }
+  Slime() : Piece(PIECE_SLIME, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override { UNUSED(laser); }; // TODO
 };
@@ -521,7 +520,7 @@ public:
 class Mine : public Piece
 {
 public:
-  Mine() : Piece(PIECE_MINE, NORTH, COLOR_NONE) { }
+  Mine() : Piece(PIECE_MINE, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override { UNUSED(laser); }; // TODO
   
@@ -542,8 +541,8 @@ public:
   
   bool isSatisfied() const { return satisfied; }
   void reset() {
-    satisfied = color_ == COLOR_NONE;
-    satisfyColor = COLOR_NONE;
+    satisfied = color_ == LaserColor::NONE;
+    satisfyColor = LaserColor::NONE;
     satisfyDirection = 0;
   }
 };
@@ -565,8 +564,8 @@ public:
       if ((satisfyDirection & 1<<(4+i)) || (satisfyDirection & 1<<(i)))
         ++foundDirections;
     
-    if (color_ == COLOR_NONE)
-      satisfied = satisfyColor == COLOR_NONE && foundDirections == 0;
+    if (color_ == LaserColor::NONE)
+      satisfied = satisfyColor == LaserColor::NONE && foundDirections == 0;
     else
       satisfied = satisfyColor == color_ && foundDirections == 1;
   }

@@ -94,7 +94,7 @@ void Field::generateBeam(Position position, Direction direction, LaserColor colo
 {
   Laser beam = Laser(position + direction, direction, color);
   
-  if (beam.isValid())
+  if (isInside(beam.position))
   {
     lasers.push_back(beam);
     
@@ -123,7 +123,7 @@ void Field::updateLasers()
       {
         Laser laser = piece->produceLaser();
         
-        if (laser.color != COLOR_NONE)
+        if (laser.color != LaserColor::NONE)
           generateBeam(laser.position + Position(i, j), laser.direction, laser.color);
 
       }
@@ -134,7 +134,7 @@ void Field::updateLasers()
   {
     Laser& laser = (*it);
 
-    while (laser.isValid())
+    while (isInside(laser.position))
     {
       if (beams.find(laser) != beams.end())
         break;
@@ -157,7 +157,7 @@ void Field::updateLasers()
         piece->receiveLaser(this, laser);
       
       // keep drawing the other laser if receiveLaser didn't invalidate it
-      if (laser.isValid())
+      if (isInside(laser.position))
       {
         tile->colors[laser.direction] |= laser.color;
         laser.advance();

@@ -24,7 +24,7 @@ struct PieceInfoSpec;
 struct PieceInfo
 {
   PieceInfoSpec *spec;
-  u8 x, y;
+  s8 x, y;
   LaserColor color;
   Direction direction;
   bool moveable;
