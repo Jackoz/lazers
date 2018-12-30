@@ -58,7 +58,7 @@ void Field::load(const LevelSpec* level)
 {
   this->_level = level;
   
-  u8 curInvSlot = 0;
+  u32 curInvSlot = 0;
   
   for (size_t i = 0; i < level->count(); ++i)
   {

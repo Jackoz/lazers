@@ -26,24 +26,21 @@ void Game::init()
   running = true;  
 
   
-  /*auto apacks = Aargon::parseLevels();
+  auto apacks = Aargon::parseLevels();
   packs.move(apacks);
   apacks.clear();
   
-  for (const auto& pack : packs)
+  /*for (const auto& pack : packs)
     Files::savePack(pack);*/
   
-  auto lpacks = Files::loadPacks();
-  this->packs.move(lpacks);
+  /*auto lpacks = Files::loadPacks();
+  this->packs.move(lpacks);*/
   
   //Files::loadSolvedStatus();
   
   if (packs.packCount() > 0)
     pack = &packs[0];
-  
-  //for (int i = 0; i < Files::packCount(); ++i)
-  //  Files::savePack(Files::packAt(i));
-  
+
   view = views[2];
   
   view->activate();

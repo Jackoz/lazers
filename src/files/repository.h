@@ -13,6 +13,8 @@ struct PieceInfoSpec
   bool canBeRotated;
 };
 
+#ifdef _WIN32
+#pragma pack(push, 1)
 struct PieceInfo
 {
   bool inventory : 1;
@@ -22,9 +24,25 @@ struct PieceInfo
   Direction direction : 4;
   bool moveable : 1;
   bool roteable : 1;
-  
+
+  PieceInfo(PieceType type) : type(type) { }
+};
+#pragma pack(pop)
+#else
+struct PieceInfo
+{
+  bool inventory : 1;
+  PieceType type : 7;
+  s8 x, y;
+  LaserColor color : 3;
+  Direction direction : 4;
+  bool moveable : 1;
+  bool roteable : 1;
+
   PieceInfo(PieceType type) : type(type) { }
 } __attribute__((packed));
+#endif
+
 
 struct LevelSpec
 {

@@ -261,7 +261,9 @@ u32 Files::selectedPack = 0;
 LevelSpec Files::loadLevel(const byte_t *ptr)
 {
   static_assert(std::alignment_of<PieceInfo>::value == 1, "must be 1");
+#ifndef _WIN32
   static_assert(sizeof(PieceInfo) == 5, "must be 5");
+#endif
   
   size_t nameLength = ptr[0];
   size_t piecesCount = ptr[1];
@@ -287,7 +289,12 @@ void Files::saveLevel(const LevelSpec* level, byte_t **ptr, size_t *length)
   
   optr[0] = static_cast<u8>(level->name.length());
   optr[1] = static_cast<u8>(level->count());
-  strncpy(reinterpret_cast<char*>(optr+2), level->name.c_str(), level->name.length());
+
+#ifdef _WIN32
+  strncpy_s(reinterpret_cast<char*>(optr + 2), *length, level->name.c_str(), level->name.length());
+#else
+  strncpy(reinterpret_cast<char*>(optr + 2), level->name.c_str(), level->name.length());
+#endif
   
   PieceInfo* poptr = reinterpret_cast<PieceInfo*>(optr + 2 + level->name.length());
   

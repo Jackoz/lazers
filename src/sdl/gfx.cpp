@@ -276,10 +276,10 @@ const u16 space = 3;
 
 u16 Gfx::stringWidth(const char *text)
 {
-  u16 len = strlen(text);
-  u16 strLen = 0;
+  size_t len = strlen(text);
+  size_t strLen = 0;
 
-  for (u16 i = 0; i < len; ++i)
+  for (size_t i = 0; i < len; ++i)
   {
     char c = text[i];
 
@@ -307,13 +307,13 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
     x -= length/2;
   }
   
-  u16 len = strlen(buffer);
-  u16 dy = 9;
+  size_t len = strlen(buffer);
+  u32 dy = 9;
   
   SDL_Rect rect;
   SDL_Rect out = ccr(x, y, 0, 0);
   
-  for (u16 i = 0; i < len; ++i)
+  for (size_t i = 0; i < len; ++i)
   {
     char c = buffer[i];
     

@@ -180,7 +180,7 @@ public:
   void load(const LevelSpec* level);
 
   void fail() { failed = true; }
-  bool isFailed() { return failed; }
+  bool isFailed() const { return failed; }
   
   void place(Position p, Piece* piece)
   {

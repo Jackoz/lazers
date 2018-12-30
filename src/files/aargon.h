@@ -12,6 +12,7 @@
 #include "common/common.h"
 
 #include <string>
+#include <vector>
 
 struct LevelSpec;
 class LevelPack;
