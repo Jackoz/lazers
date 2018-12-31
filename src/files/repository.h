@@ -76,4 +76,7 @@ public:
   void move(std::vector<LevelPack>& elems) { packs.insert(packs.end(), std::make_move_iterator(elems.begin()), std::make_move_iterator(elems.end())); }
   void add(const LevelPack& pack) { packs.push_back(pack); }
   const LevelPack& operator[](size_t index) { return packs[index]; }
+  
+  auto begin() const { return packs.begin(); }
+  auto end() const { return packs.end(); }
 };

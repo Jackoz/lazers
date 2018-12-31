@@ -30,9 +30,6 @@ class Files
   static u8 charForColor(LaserColor color);
   static u8 charForDirection(Direction dir);
   
-  static std::vector<LevelPack> packs;
-  
-  
 public:
   static void encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength);
   static void decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength);
@@ -46,9 +43,10 @@ public:
   static void saveSolvedStatus();
   
   static std::vector<std::string> findFiles(std::string path, const char *ext);
-  static void loadPacks();
-  static LevelPack loadPack(std::string filename);
-  static void savePack(LevelPack *pack);
+  
+  static std::vector<LevelPack> loadPacks();
+  static LevelPack loadPack(const std::string& filename);
+  static void savePack(const LevelPack& pack);
 
   static u32 selectedPack;
   

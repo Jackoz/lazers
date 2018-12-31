@@ -256,7 +256,6 @@ u8 Files::charForDirection(Direction dir)
 
 // type x y color direction roteable moveable
 
-vector<LevelPack> Files::packs;
 u32 Files::selectedPack = 0;
 
 LevelSpec Files::loadLevel(const byte_t *ptr)
@@ -300,9 +299,9 @@ void Files::saveLevel(const LevelSpec* level, byte_t **ptr, size_t *length)
 }
 
 
-const string PATH_SAVE = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/";
+const string PATH_SAVE = "/Users/jack/Documents/Dev/c++/lazers/data/packs/";
 
-const string PATH_PAK = "/Users/jack/Documents/Dev/xcode/lazers/Lazers/";
+const string PATH_PAK = "/Users/jack/Documents/Dev/c++/lazers/data/packs/";
 
 std::vector<std::string> Files::findFiles(std::string path, const char *ext)
 {
@@ -328,7 +327,20 @@ std::vector<std::string> Files::findFiles(std::string path, const char *ext)
   return packs;
 }
 
-LevelPack Files::loadPack(std::string filename)
+std::vector<LevelPack> Files::loadPacks()
+{
+  std::vector<LevelPack> packs;
+  std::vector<std::string> files = findFiles(PATH_PAK, ".pak");
+  std::sort(files.begin(), files.end());
+  
+  std::transform(files.begin(), files.end(), std::back_inserter(packs),
+                 [] (const std::string& filename) { return loadPack(filename); }
+                 );
+  
+  return packs;
+}
+
+LevelPack Files::loadPack(const std::string& filename)
 {
   ifstream in = ifstream(PATH_PAK+filename);
   
@@ -359,27 +371,14 @@ LevelPack Files::loadPack(std::string filename)
     }
     
     return pack;
-    //while (getline(in, line))
   }
   else
     throw exception();
 }
 
-void Files::loadPacks()
+void Files::savePack(const LevelPack& pack)
 {
-  vector<string> packs = findFiles(PATH_PAK, ".pak");
-  std::sort(packs.begin(), packs.end());
-  
-  for (string filename : packs)
-  {
-    LevelPack pack = loadPack(filename);
-    Files::packs.push_back(pack);
-  }
-}
-
-void Files::savePack(LevelPack *pack)
-{
-  ofstream os = ofstream(PATH_PAK+pack->path()+".pak");
+  ofstream os = ofstream(PATH_PAK+pack.path()+".pak");
   
   char *output;
   size_t outputLength;
@@ -387,7 +386,7 @@ void Files::savePack(LevelPack *pack)
   if (os)
   {
     stringstream ss;
-    ss << (char)pack->name().length() << pack->name() << pack->author();
+    ss << (u8)pack.name().length() << pack.name() << pack.author();
     
     std::string header = ss.str();
     
@@ -395,12 +394,12 @@ void Files::savePack(LevelPack *pack)
     os.write(output, outputLength) << endl;
     delete [] output;
     
-    for (int i = 0; i < pack->count(); ++i)
+    for (int i = 0; i < pack.count(); ++i)
     {
       u8 *levelOutput;
       size_t levelOutputLength;
       
-      saveLevel(pack->at(i), &levelOutput, &levelOutputLength);
+      saveLevel(pack.at(i), &levelOutput, &levelOutputLength);
       encode(levelOutput, levelOutputLength, &output, &outputLength);
       os.write(output, outputLength) << endl;
       delete [] output;
@@ -427,6 +426,8 @@ void Files::loadSolvedStatus()
       
       string packName = string(reinterpret_cast<const char *>(output+1), output[0]);
       
+      //TODO: reimplement separated from LevelPack
+      /*
       for (LevelPack &pack : packs)
       {
         if (pack.path() == packName)
@@ -449,6 +450,7 @@ void Files::loadSolvedStatus()
           break;
         }
       }
+      */
       
       delete [] output;
     }
@@ -459,6 +461,8 @@ void Files::saveSolvedStatus()
 {  
   ofstream os = ofstream(PATH_SAVE+"save.dat");
   
+  //TODO: reimplement
+  /*
   if (os)
   {
     for (LevelPack &pack : packs)
@@ -493,7 +497,7 @@ void Files::saveSolvedStatus()
       
       delete [] output;
     }
-  }
+  }*/
 }
 
 

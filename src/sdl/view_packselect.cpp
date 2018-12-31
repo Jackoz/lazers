@@ -47,7 +47,7 @@ void PackSelectList::draw()
     Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
   }
   else
-    Gfx::drawString(Gfx::width()/2, Gfx::height()/2, true, "No level pack loaded.");
+    Gfx::drawString(Gfx::width()/2, Gfx::height()/2 - 5, true, "No level pack loaded.");
 
   /*Gfx::lock();
   Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));

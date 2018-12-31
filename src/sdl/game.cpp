@@ -24,22 +24,19 @@ void Game::init()
 {
   Gfx::init();
   running = true;  
-  /*const char *input = "foobar testaaa";
-  char *encoded, *decoded;
-  size_t encodedLength, decodedLength;
-  Files::encode(reinterpret_cast<const u8*>(input), strlen(input), &encoded, &encodedLength);
-  Files::decode(encoded, encodedLength, reinterpret_cast<u8**>(&decoded), &decodedLength);
-  printf("  INPUT: %s (%d)\n",input, (u32)strlen(input));
-  printf("ENCODED: %.*s (%d)\n",(u32)encodedLength, encoded, (u32)encodedLength);
-  printf("DECODED: %.*s (%d)\n",(u32)decodedLength, decoded, (u32)decodedLength);*/
+
   
-  
-  auto apacks = Aargon::parseLevels();
-  this->packs.move(apacks);
+  /*auto apacks = Aargon::parseLevels();
+  packs.move(apacks);
   apacks.clear();
-  //Files::loadPacks();
   
-  Files::loadSolvedStatus();
+  for (const auto& pack : packs)
+    Files::savePack(pack);*/
+  
+  auto lpacks = Files::loadPacks();
+  this->packs.move(lpacks);
+  
+  //Files::loadSolvedStatus();
   
   if (packs.packCount() > 0)
     pack = &packs[0];
