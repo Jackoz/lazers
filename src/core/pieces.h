@@ -10,7 +10,9 @@
 #define _PIECES_H_
 
 #include "common/common.h"
+
 #include <list>
+#include <functional>
 
 #define UNUSED(x) (void)(x)
 
@@ -62,6 +64,27 @@ struct Laser
   };
 };
 
+class PieceMechanics
+{
+private:
+  bool _canBeColored, _canBeRotated, _doesBlockLaser;
+  std::function<void(Field*, Laser&)> onLaserReceive;
+  std::function<Laser(void)> onLaserGeneration;
+
+public:
+  PieceMechanics(bool canBeColored, bool canBeRotated, bool doesBlockLaser, decltype(onLaserReceive) onLaserReceive, decltype(onLaserGeneration) onLaserGeneration) :
+    _canBeColored(canBeColored), _canBeRotated(canBeRotated), _doesBlockLaser(doesBlockLaser), onLaserReceive(onLaserReceive), onLaserGeneration(onLaserGeneration) { }
+
+  inline bool canBeColored() const { return _canBeColored; }
+  inline bool canBeRotated() const { return _canBeRotated; }
+  inline bool doesBlockLaser() const { return _doesBlockLaser; }
+
+  inline void onLaserReceive(Field* field, Laser& laser) const { onLaserReceive(field, laser); }
+  inline Laser onLaserGeneration() { return onLaserGeneration(); }
+
+  static decltype(onLaserGeneration) emptyGenerator() { return []() { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
+};
+
 class Field;
 class Tile;
 
@@ -71,10 +94,10 @@ protected:
   PieceType type_;
   Direction rotation_;
   LaserColor color_;
-  bool movable, roteable, infinite;
+  bool movable, roteable, colorable, infinite;
   
 public:
-  Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), infinite(false) { }
+  Piece(PieceType type, Direction rotation, LaserColor color) : type_(type), rotation_(rotation), color_(color), movable(true), roteable(true), infinite(false), colorable(false) { }
   virtual ~Piece() { }
   
   Direction rotation() const { return rotation_; }
@@ -83,6 +106,7 @@ public:
   
   void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
   void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
+  void setColor(LaserColor color) { color_ = color;  }
   
   virtual Laser produceLaser() const { return Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE); }
   virtual bool blocksLaser(Laser &laser) { return false; }
@@ -91,9 +115,11 @@ public:
   void setCanBeMoved(bool value) { movable = value; };
   void setCanBeRotated(bool value) { roteable = value; }
   void setInfinite(bool value) { infinite = value; }
+  void setCanBeColored(bool value) { colorable = value;  }
   
   virtual bool canBeMoved() const { return movable; }
   virtual bool canBeRotated() const { return roteable; }
+  bool canBeColored() const { return colorable; }
   bool isInfinite() const { return infinite; }
   
   int deltaDirection(Laser& laser)
@@ -292,7 +318,7 @@ public:
 class DSplitter : public Piece
 {
 public:
-  DSplitter(Direction rotation) : Piece(PIECE_DSPLITTER, rotation, LaserColor::NONE) { }
+  DSplitter(Direction rotation) : Piece(PIECE_ANGLED_SPLITTER, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
 };

@@ -65,16 +65,21 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_GLASS: gfx = Position(11,7); break;
     
     case PIECE_SOURCE: gfx = Position(piece->rotation(), 1); break;
+
     case PIECE_MIRROR: gfx = Position(piece->rotation(), 0); break;
     case PIECE_SKEW_MIRROR: gfx = Position(piece->rotation(), 10); break;
     case PIECE_DOUBLE_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 5); break;
     case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 11); break;
     case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(piece->rotation() % 4, 12); break;
+    case PIECE_DOUBLE_SKEW_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 12); break;
     case PIECE_REFRACTOR: gfx = Position(piece->rotation() % 4, 5); break;
+
     case PIECE_SPLITTER: gfx = Position(piece->rotation(), 2); break;
+    case PIECE_ANGLED_SPLITTER: gfx = Position(piece->rotation(), 3); break;
+
+
     case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 17); break;
     case PIECE_STAR_SPLITTER: gfx = Position(10, 7); break;
-    case PIECE_DSPLITTER: gfx = Position(piece->rotation(), 3); break;
     case PIECE_PRISM: gfx = Position(piece->rotation(), 4); break;
     case PIECE_FLIPPED_PRISM: gfx = Position(piece->rotation() + 8, 17); break;
     case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + color); break;
@@ -229,7 +234,7 @@ void LevelView::drawTooltip(int x, int y, const char* text)
   Gfx::rectFill(x, y, x + width, y + height, Gfx::ccc(0, 45, 120));
   Gfx::rect(x, y, width, height, Gfx::ccc(30, 116, 255));
 
-  Gfx::drawString(x + padding, y + padding + 1, false, text);
+  Gfx::drawString(x + padding + 1, y + padding + 1, false, text);
 }
 
 
@@ -377,11 +382,33 @@ void LevelView::handleEvent(SDL_Event &event)
     case SDL_KEYDOWN:			// Button press
     {
       auto*& p = position;
+      auto key = event.key.keysym.sym;
       
-      switch(event.key.keysym.sym)
+      switch(key)
       {
         case KEY_START: game->quit(); break;
         case KEY_SELECT: game->switchView(VIEW_LEVEL_SELECT); break;
+
+        case SDLK_z:
+        case SDLK_x:
+        case SDLK_c:
+        {
+          const auto& piece = field->tileAt(*position)->piece();
+
+          if (piece.get() && piece->canBeColored())
+          {
+            LaserColor channel = key == SDLK_z ? LaserColor::RED : (key == SDLK_x ? LaserColor::GREEN : LaserColor::BLUE);
+            LaserColor color = piece->color();
+            
+            if ((color & channel) && (color != channel)) color = (LaserColor)((color & ~channel) & LaserColor::WHITE);
+            else color = (LaserColor)(color | channel);
+
+            piece->setColor(color);
+            field->updateLasers();
+          }
+
+          break;
+        }
           
         case SDLK_LEFT:
         {

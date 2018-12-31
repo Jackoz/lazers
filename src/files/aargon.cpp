@@ -54,7 +54,7 @@ s8 pieceType(char c)
     case 'X': return PIECE_TNT;
     case 's': return PIECE_SLIME;
     case '+': return PIECE_DOUBLE_PASS_MIRROR;
-    case 'T': return PIECE_DSPLITTER;
+    case 'T': return PIECE_ANGLED_SPLITTER;
     case 'J': return PIECE_COLOR_SHIFTER;
     case 'R': return PIECE_REFRACTOR;
     case 'P': return PIECE_PRISM;
@@ -85,7 +85,7 @@ s8 baseDirection(PieceType type)
     case PIECE_MIRROR: return SOUTH;
     case PIECE_SOURCE: return NORTH;
     case PIECE_DOUBLE_PASS_MIRROR: return SOUTH;
-    case PIECE_DSPLITTER: return SOUTH;
+    case PIECE_ANGLED_SPLITTER: return SOUTH;
     case PIECE_COLOR_SHIFTER: return EAST; // check
     case PIECE_REFRACTOR: return NORTH;
     case PIECE_FLIPPED_PRISM: return NORTH;
@@ -107,7 +107,7 @@ bool canHaveRotation(PieceType type)
     case PIECE_MIRROR:
     case PIECE_SOURCE:
     case PIECE_DOUBLE_PASS_MIRROR:
-    case PIECE_DSPLITTER:
+    case PIECE_ANGLED_SPLITTER:
     case PIECE_COLOR_SHIFTER:
     case PIECE_REFRACTOR:
     case PIECE_PRISM:
@@ -159,7 +159,7 @@ bool canHaveColor(PieceType type)
     case PIECE_TNT:
     case PIECE_SLIME:
     case PIECE_DOUBLE_PASS_MIRROR:
-    case PIECE_DSPLITTER:
+    case PIECE_ANGLED_SPLITTER:
     case PIECE_COLOR_SHIFTER:
     case PIECE_REFRACTOR:
     case PIECE_PRISM:
