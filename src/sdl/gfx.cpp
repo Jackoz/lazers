@@ -231,7 +231,7 @@ void Gfx::clear(u32 color)
   clear(screen, color);
 }
 
-u8 Gfx::charWidth(char c)
+u32 Gfx::charWidth(char c)
 {
   switch (c) {
     case '!':
@@ -292,6 +292,7 @@ u16 Gfx::stringWidth(const char *text)
   return strLen;
 }
 
+constexpr u32 dy = 9;
 
 void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
 {
@@ -308,7 +309,6 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
   }
   
   size_t len = strlen(buffer);
-  u32 dy = 9;
   
   SDL_Rect rect;
   SDL_Rect out = ccr(x, y, 0, 0);
@@ -328,11 +328,71 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
     }
     else
     {    
-      u8 w = charWidth(c);
+      u32 w = charWidth(c);
       rect = ccr(6 * (c%32), 9 * (c/32), w, 9);
       SDL_BlitSurface(font, &rect, screen, &out);
       out.x += w+1;
     }
+  }
+}
+
+void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)
+{
+  char buffer[256];
+  va_list args;
+  va_start(args, text);
+  vsnprintf(buffer, 256, text, args);
+  va_end(args);
+
+  std::string_view string = buffer;
+  std::vector<std::string_view> words;
+  size_t c = 0;
+  size_t len = string.size();
+
+  while (c < len)
+  {
+    size_t s = string.find_first_of(" ", c);
+
+    if (c != s)
+      words.emplace_back(string.substr(c, s - c));
+
+    if (s == std::string_view::npos)
+      break;
+    else
+      buffer[s] = '\0';
+
+    c = s + 1;
+  }
+
+  int cx = 0;
+  for (size_t i = 0; i < words.size(); ++i)
+  {
+    const auto& word = words[i];
+    u32 wlen = stringWidth(word.data());
+
+    if (cx + wlen > w)
+    {
+      cx = 0;
+      y += 9;
+      --i;
+    }
+    else
+    {
+      if (cx != 0)
+        cx += stringWidth(" ");
+
+      for (const char c : word)
+      {
+        u32 w = charWidth(c);
+
+        SDL_Rect rect = ccr(6 * (c % 32), 9 * (c / 32), w, 9);
+        SDL_Rect out = ccr(cx + x, y, 0, 0);
+
+        SDL_BlitSurface(font, &rect, screen, &out);
+        cx += w + 1;
+      }
+    }
+    
   }
 }
 

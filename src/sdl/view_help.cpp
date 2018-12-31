@@ -33,8 +33,9 @@ public:
 };
 
 static const HelpEntry help[] = {
+  HelpEntry("Source", "A source produces a beam of a specific color. Some can be rotated.", "S112RS122GS132BS350YS450MS550C"),
   HelpEntry( "Mirror", "The mirror deflects laser beams by 90 degrees.", "M221 S02erM260 S303yM632 M454 "),
-  HelpEntry( "Double Mirror", "A double mirror works as a normal mirror but on both sides", "")
+  HelpEntry( "Double Mirror", "A double mirror works as a normal mirror but on both sides", "S113RS557BD332 "),
 };
 
 class HelpEntryList : public OffsettableList<const HelpEntry*>
@@ -73,11 +74,15 @@ void HelpView::draw()
   {
     const HelpEntry& entry = help[list.current()];
 
+    const int x = Gfx::width() - ui::TILE_SIZE*field->width() - 10;
+
     if (!entry.level.empty())
     {
-      LevelView::drawGrid(Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10, field->width(), field->height(), Gfx::screen);
+      LevelView::drawGrid(x, 10, field->width(), field->height(), Gfx::screen);
       LevelView::drawField(field, Gfx::screen, Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10);
     }
+
+    Gfx::drawStringBounded(x, 20 + field->height()*ui::TILE_SIZE, 100, entry.text.data());
   }
 
 

@@ -26,7 +26,7 @@ private:
   static const u16 WIDTH = 320;
   static const u16 HEIGHT = 240;
 
-  static u8 charWidth(char c);
+  static u32 charWidth(char c);
   
 public:
   static u32 width() { return WIDTH; }
@@ -49,6 +49,8 @@ public:
   static void blit(SDL_Surface *src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
   static u16  stringWidth(const char *text);
   static void drawString(int x, int y, bool centered, const char *text, ...);
+  static void drawStringBounded(int x, int y, int w, const char *text, ...);
+
 
   static void scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 dw, u16 dh);
 
