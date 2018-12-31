@@ -191,7 +191,7 @@ LevelSpec Aargon::parseLevel(const string& filename)
 {
   ifstream in = ifstream(filename);
   
-  cout << "parsing " << filename << endl;
+  //cout << "parsing " << filename << endl;
 
   assert(!in.fail());
   
@@ -277,12 +277,9 @@ LevelSpec Aargon::parseLevel(const string& filename)
         LaserColor color = colorForChar(data[2]);
         
         PieceType pieceType = static_cast<PieceType>(type);
-        auto pspec = Files::specForPiece(pieceType);
 
         PieceInfo info = PieceInfo(pieceType);
-        
-        ASSERT(pspec, "spec mapping is null for " << data[0]);
-        
+                
         info.inventory = INVENTORY_ROWS > 0 && j <= INVENTORY_ROWS;
         
         if (!info.inventory)

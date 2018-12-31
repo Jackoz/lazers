@@ -3,6 +3,9 @@
 #include "common/common.h"
 
 #include "SDL.h"
+#include "gfx.h"
+
+#include <string_view>
 
 #define SCALE (3)
 
@@ -31,6 +34,9 @@ public:
   static constexpr u32 LIST_DY = 10;
   static constexpr u32 LIST_SIZE = 14;
   static constexpr u32 LIST_WIDTH = 150;
+
+  static constexpr u32 TITLE_X = 20;
+  static constexpr u32 TITLE_Y = 10;
 
   static int coordToListEntry(int x, int y)
   {

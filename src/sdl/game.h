@@ -29,6 +29,7 @@ public:
   bool isSelected(size_t i) { return i + offset == current(); }
   void reset() { offset = 0; }
   
+  bool hasSelection() const { return current() != std::numeric_limits<size_t>::max(); }
   bool isValidIndex(size_t i) const { return offset + i < count(); }
   
   virtual size_t current() const = 0;
@@ -116,8 +117,9 @@ public:
 enum ViewType
 {
   VIEW_LEVEL = 0,
-  VIEW_LEVEL_SELECT = 1,
-  VIEW_PACK_SELECT = 2,
+  VIEW_LEVEL_SELECT,
+  VIEW_PACK_SELECT,
+  VIEW_HELP,
   
   VIEWS_COUNT
 };

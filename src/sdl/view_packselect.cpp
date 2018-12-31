@@ -30,7 +30,7 @@ void PackSelectList::draw()
   
   if (levelList.count() > 0)
   {
-    Gfx::drawString(20, 10, false, "CHOOSE A LEVEL PACK");
+    Gfx::drawString(ui::TITLE_X, ui::TITLE_Y, false, "CHOOSE A LEVEL PACK");
     
     Gfx::drawString(20, 220, false, "B: enter pack    \x1F\x1E: choose pack    A: back", game->pack->name().c_str(), game->pack->author().c_str());
 

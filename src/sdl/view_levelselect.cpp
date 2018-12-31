@@ -34,7 +34,7 @@ void LevelSelectView::draw()
 {
   Gfx::clear(BACKGROUND_COLOR);
   
-  Gfx::drawString(20, 10, false, "- %s - by %s", game->pack->name().c_str(), game->pack->author().c_str());
+  Gfx::drawString(ui::TITLE_X, ui::TITLE_Y, false, "- %s - by %s", game->pack->name().c_str(), game->pack->author().c_str());
 
   Gfx::drawString(20, 220, false, "B: start level    \x1F\x1E: choose level    A: back");
 

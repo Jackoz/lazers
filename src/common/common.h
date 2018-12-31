@@ -16,6 +16,8 @@ using u16 = uint16_t;
 using u8 = uint8_t;
 using byte_t = u8;
 
+using s32 = int32_t;
+
 typedef signed char s8;
 typedef signed short s16;
 
@@ -124,8 +126,8 @@ struct Position
   Type type;
   s8 x, y;
   
-  Position(Type type, s8 x, s8 y) : type(type), x(x), y(y) { }
-  Position(s8 x, s8 y) : Position(Type::FIELD, x, y) { }
+  Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { }
+  Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { }
   Position(Type type) : Position(Type::INVALID, -1, -1) { }
   
   bool isInventory() const { return type == Position::Type::INVENTORY; }

@@ -74,8 +74,6 @@ private:
   
   bool failed;
 
-  void resetLasers();
-
 public:
   Field(u32 width, u32 height, u32 invWidth, u32 invHeight) :
   _width(width), _height(height),

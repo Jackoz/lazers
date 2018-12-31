@@ -295,10 +295,10 @@ u16 Gfx::stringWidth(const char *text)
 
 void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
 {
-  char buffer[64];
+  char buffer[256];
   va_list args;
-  va_start (args, text);
-  vsnprintf (buffer, 64, text, args);
+  va_start(args, text);
+  vsnprintf(buffer, 256, text, args);
   va_end(args);
   
   if (centered)

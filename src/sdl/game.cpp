@@ -12,10 +12,11 @@
 #include "view_level.h"
 #include "view_levelselect.h"
 #include "view_packselect.h"
+#include "view_help.h"
 
 #include "files/aargon.h"
 
-Game::Game() : field(new Field(16, 11, 4, 11)), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this)}, view(views[0]), overView(nullptr)
+Game::Game() : field(new Field(16, 11, 4, 11)), running(true), views{new LevelView(this), new LevelSelectView(this), new PackSelectList(this), new HelpView(this)}, view(views[0]), overView(nullptr)
 {
 
 }
@@ -41,7 +42,7 @@ void Game::init()
   if (packs.packCount() > 0)
     pack = &packs[0];
 
-  view = views[2];
+  view = views[3];
   
   view->activate();
 }

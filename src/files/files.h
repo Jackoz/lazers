@@ -20,22 +20,11 @@
 class Field;
 
 class Files
-{
-  static u8 charForPiece(PieceType type);
-  static PieceType pieceForChar(u8 type);
-  
-  static LaserColor colorForChar(u8 color);
-  static Direction directionForChar(u8 dir);
-  
-  static u8 charForColor(LaserColor color);
-  static u8 charForDirection(Direction dir);
-  
+{  
 public:
   static void encode(const u8 *input, size_t length, char **outputPtr, size_t *outputLength);
   static void decode(const char *input, size_t length, u8 **outputPtr, size_t *outputLength);
   
-  static PieceInfoSpec *specForPiece(PieceType type);
-
   static LevelSpec loadLevel(const byte_t *ptr);
   static void saveLevel(const LevelSpec* level, byte_t **ptr, size_t *length);
   
@@ -53,5 +42,6 @@ public:
   
   friend struct PieceInfo;
 };
+
 
 #endif
