@@ -203,6 +203,8 @@ public:
   void generateBeam(Position position, Direction direction, LaserColor color);
   void updateLasers();
   bool checkForWin();
+
+  void generateDummy();
 };
   
 

@@ -178,6 +178,26 @@ bool Field::checkForWin()
   return std::all_of(goals.begin(), goals.end(), [](const Goal *goal){ return goal->isSatisfied(); });
 }
 
+void Field::generateDummy()
+{
+  reset();
 
+  static const PieceType pieces[] = { PIECE_MIRROR, PIECE_DOUBLE_MIRROR };
 
+  for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)
+  {
+    Pos base = Pos(Pos::Type::INVENTORY, i % invWidth(), i / invWidth());
 
+    PieceInfo info = PieceInfo(pieces[i]);
+    info.inventory = true;
+    info.moveable = true;
+    info.roteable = true;
+    info.color = LaserColor::RED;
+    info.direction = Dir::NORTH;
+    Piece* piece = generatePiece(info);
+
+    place(base, piece);
+
+  }
+
+}

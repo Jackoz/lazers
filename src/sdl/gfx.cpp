@@ -187,7 +187,7 @@ void Gfx::blit(SDL_Surface *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
 }
 
 
-void Gfx::line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
+void Gfx::line(u32 x1, u32 y1, u32 x2, u32 y2, u32 color)
 {
   bool hor = y1 == y2;
   u32* p = (u32*)screen->pixels;
@@ -200,7 +200,7 @@ void Gfx::line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color)
       p[y*screen->w + x1] = color;
 }
 
-void Gfx::rect(u16 x, u16 y, u16 w, u16 h, u32 color)
+void Gfx::rect(s32 x, s32 y, u32 w, u32 h, u32 color)
 {
   line(x, y, x, y+h, color);
   line(x, y, x+w, y, color);
@@ -208,7 +208,7 @@ void Gfx::rect(u16 x, u16 y, u16 w, u16 h, u32 color)
   line(x, y+h, x+w, y+h, color);
 }
 
-void Gfx::rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color)
+void Gfx::rectFill(s32 x1, s32 y1, u32 x2, u32 y2, u32 color)
 {
   SDL_Rect rect = {x1,y1,static_cast<u16>(x2-x1+1),static_cast<u16>(y2-y1+1)};
   SDL_FillRect(screen, &rect, color);
@@ -265,16 +265,17 @@ u32 Gfx::charWidth(char c)
     case 'r':
     case 't':
       return 4;
-      
-      
+
     default: return 5;
   }
 }
 
-const u16 space = 3;
+u32 Gfx::stringHeight(const char* text)
+{
+  return 9;
+}
 
-
-u16 Gfx::stringWidth(const char *text)
+u32 Gfx::stringWidth(const char *text)
 {
   size_t len = strlen(text);
   size_t strLen = 0;
@@ -282,11 +283,7 @@ u16 Gfx::stringWidth(const char *text)
   for (size_t i = 0; i < len; ++i)
   {
     char c = text[i];
-
-    if (c == ' ')
-      strLen += space;
-    else
-      strLen += charWidth(c);
+    strLen += charWidth(c) + 1;
   }
   
   return strLen;
@@ -322,16 +319,12 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
       out.y += dy;
       out.x = x;
     }
-    else if (c == ' ')
-    {
-      out.x += space;
-    }
     else
     {    
-      u32 w = charWidth(c);
+      u32 w = charWidth(c) + 1;
       rect = ccr(6 * (c%32), 9 * (c/32), w, 9);
       SDL_BlitSurface(font, &rect, screen, &out);
-      out.x += w+1;
+      out.x += w;
     }
   }
 }

@@ -32,9 +32,9 @@ public:
   static u32 width() { return WIDTH; }
   static u32 height() { return HEIGHT; }
   
-  static void line(u16 x1, u16 y1, u16 x2, u16 y2, u32 color);
-  static void rect(u16 x1, u16 y1, u16 w, u16 h, u32 color);
-  static void rectFill(s16 x1, s16 y1, u16 x2, u16 y2, u32 color);
+  static void line(u32 x1, u32 y1, u32 x2, u32 y2, u32 color);
+  static void rect(s32 x1, s32 y1, u32 w, u32 h, u32 color);
+  static void rectFill(s32 x1, s32 y1, u32 x2, u32 y2, u32 color);
 
   static void clear(u32 color);
   static void clear(SDL_Surface *surf, u32 color);
@@ -47,7 +47,9 @@ public:
 
   static void blit(SDL_Surface *src, SDL_Surface *dst, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
   static void blit(SDL_Surface *src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
-  static u16  stringWidth(const char *text);
+
+  static u32 stringHeight(const char* text);
+  static u32 stringWidth(const char* text);
   static void drawString(int x, int y, bool centered, const char *text, ...);
   static void drawStringBounded(int x, int y, int w, const char *text, ...);
 

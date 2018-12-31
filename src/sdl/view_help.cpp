@@ -35,7 +35,7 @@ public:
 static const HelpEntry help[] = {
   HelpEntry("Source", "A source produces a beam of a specific color. Some can be rotated.", "S112RS122GS132BS350YS450MS550C"),
   HelpEntry( "Mirror", "The mirror deflects laser beams by 90 degrees.", "M221 S02erM260 S303yM632 M454 "),
-  HelpEntry( "Double Mirror", "A double mirror works as a normal mirror but on both sides", "S113RS557BD332 "),
+  HelpEntry( "Double Mirror", "A double mirror works as a normal mirror but on both sides.", "S113RS557BD332 "),
 };
 
 class HelpEntryList : public OffsettableList<const HelpEntry*>

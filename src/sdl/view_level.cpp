@@ -12,6 +12,8 @@
 #include "gfx.h"
 #include "SDL.h"
 
+#include "common/i18n.h"
+
 
 static const u16 GFX_FIELD_POS_X = 0;
 static const u16 GFX_FIELD_POS_Y = 15;
@@ -209,9 +211,34 @@ void LevelView::drawGrid(int x, int y, int w, int h, SDL_Surface *screen)
     }
 }
 
+void LevelView::drawTooltip(int x, int y, const char* text)
+{
+  static constexpr u32 padding = 2;
+  static constexpr u32 margin = 2;
+
+  auto width = Gfx::stringWidth(text) + padding * 2;
+  auto height = Gfx::stringHeight(text) + padding * 2;
+
+  x -= width / 2;
+
+  if (x < 0) x = margin;
+  else if (x + width > Gfx::width() - margin) x = Gfx::width() - margin - width;
+  if (y < 0) y = margin;
+  else if (y + height > Gfx::height() - margin) y = Gfx::height() - margin - height;
+
+  Gfx::rectFill(x, y, x + width, y + height, Gfx::ccc(0, 45, 120));
+  Gfx::rect(x, y, width, height, Gfx::ccc(30, 116, 255));
+
+  Gfx::drawString(x + padding, y + padding + 1, false, text);
+}
+
 
 void LevelView::draw()
 {
+  int x, y;
+  SDL_GetMouseState(&x, &y);
+  x /= SCALE, y /= SCALE;
+  
   auto field = this->field();
   
   Gfx::clear(BACKGROUND_COLOR);
@@ -272,15 +299,15 @@ void LevelView::draw()
   }
   
   if (heldPiece)
-  {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    x /= SCALE; y /= SCALE;
-    
+  {    
     SDL_Rect src = rectForPiece(heldPiece.get());
     SDL_Rect dst = Gfx::ccr(x - ui::PIECE_SIZE/2, y - ui::PIECE_SIZE/2,0,0);
     SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+  }
 
+  if (curTile->piece())
+  {
+    drawTooltip(x, y + 15, i18n::nameForPiece(curTile->piece()->type()));
   }
   
   if (field->isFailed())

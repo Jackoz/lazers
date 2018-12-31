@@ -39,10 +39,12 @@ void Game::init()
   
   //Files::loadSolvedStatus();
   
+  field->generateDummy();
+
   if (packs.packCount() > 0)
     pack = &packs[0];
 
-  view = views[3];
+  view = views[0];
   
   view->activate();
 }
