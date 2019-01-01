@@ -72,29 +72,35 @@ class PieceMechanics
 public:
   using on_laser_receive_t = std::function<void(Field*, const Piece*, Laser&)>;
   using on_laser_generate_t = std::function<Laser(const Piece*)>;
+  using blocks_laser_predicate = std::function<bool(const Piece*)>;
 
 private:
-  bool _canBeColored, _canBeRotated, _doesBlockLaser;
+  bool _canBeColored, _canBeRotated;
+  blocks_laser_predicate _doesBlockLaser;
   on_laser_receive_t _onLaserReceive;
   on_laser_generate_t _onLaserGeneration;
 
 public:
-  PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, emptyMechanics(), emptyGenerator()) { }
-  PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser, on_laser_receive_t onLaserReceive) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, onLaserReceive, emptyGenerator()) { }
-  PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser, on_laser_receive_t onLaserReceive, on_laser_generate_t onLaserGeneration) :
+  PieceMechanics(bool canBeRotated, bool canBeColored, blocks_laser_predicate doesBlockLaser) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, emptyMechanics(), emptyGenerator()) { }
+  PieceMechanics(bool canBeRotated, bool canBeColored, blocks_laser_predicate doesBlockLaser, on_laser_receive_t onLaserReceive) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, onLaserReceive, emptyGenerator()) { }
+  PieceMechanics(bool canBeRotated, bool canBeColored, blocks_laser_predicate doesBlockLaser, on_laser_receive_t onLaserReceive, on_laser_generate_t onLaserGeneration) :
     _canBeColored(canBeColored), _canBeRotated(canBeRotated), _doesBlockLaser(doesBlockLaser), _onLaserReceive(onLaserReceive), _onLaserGeneration(onLaserGeneration) { }
 
   inline bool canBeColored() const { return _canBeColored; }
   inline bool canBeRotated() const { return _canBeRotated; }
-  inline bool doesBlockLaser() const { return _doesBlockLaser; }
+  inline bool doesBlockLaser(const Piece* piece) const { return _doesBlockLaser(piece); }
 
   inline void onLaserReceive(Field* field, const Piece* piece, Laser& laser) const { _onLaserReceive(field, piece, laser); }
   inline Laser onLaserGeneration(const Piece* piece) const { return _onLaserGeneration(piece); }
 
   static const PieceMechanics* mechanicsForType(PieceType type);
 
+private:
   static on_laser_receive_t emptyMechanics() { return [](Field*, const Piece*, Laser&) {}; }
   static on_laser_generate_t emptyGenerator() { return [](const Piece*) { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
+
+  static inline blocks_laser_predicate always() { return [](const Piece*) { return true;  }; }
+  static inline blocks_laser_predicate never() { return [](const Piece*) { return false;  }; }
 };
 
 class Tile;
@@ -111,6 +117,8 @@ protected:
 public:
   Piece(PieceType type) : Piece(type, Dir::NORTH, LaserColor::NONE) { }
   Piece(PieceType type, Dir orientation) : Piece(type, orientation, LaserColor::NONE) { }
+  Piece(PieceType type, LaserColor color) : Piece(type, Dir::NORTH, color) { }
+
 
   Piece(PieceType type, Direction orientation, LaserColor color) :
     mechanics(PieceMechanics::mechanicsForType(type)),
@@ -131,7 +139,7 @@ public:
   virtual Laser produceLaser() const { 
     return mechanics ? mechanics->onLaserGeneration(this) : Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE);
   }
-  virtual bool blocksLaser(Laser &laser) { return mechanics ? mechanics->doesBlockLaser() : false; }
+  virtual bool blocksLaser(Laser &laser) { return mechanics ? mechanics->doesBlockLaser(this) : false; }
   virtual void receiveLaser(Field* field, Laser& laser) { if (mechanics) mechanics->onLaserReceive(field, this, laser); }
   
   void setCanBeMoved(bool value) { movable = value; };
@@ -154,14 +162,6 @@ public:
     
     return delta;
   }
-};
-
-class DoubleSplitterMirror : public Piece
-{
-public:
-  DoubleSplitterMirror(Direction rotation) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
 };
 
 class Refractor : public Piece
@@ -232,37 +232,6 @@ public:
   void receiveLaser(Field* field, Laser &laser) override;
 };
 
-class Selector : public Piece
-{
-public:
-  Selector(Direction rotation, LaserColor color) : Piece(PIECE_SELECTOR, rotation, color) { }
-  
-  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0; }
-  void receiveLaser(Field* field, Laser &laser) override;
-};
-
-class Splicer : public Piece
-{
-public:
-  Splicer(Direction rotation, LaserColor color) : Piece(PIECE_SPLICER, rotation, color) { }
-  
-  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0; }
-  void receiveLaser(Field* field, Laser &laser) override;
-};
-
-class Filter : public Piece
-{
-public:
-  Filter(LaserColor color) : Piece(PIECE_FILTER, NORTH, color) { }
-  
-  bool blocksLaser(Laser &laser) override { return (color_ & laser.color) == LaserColor::NONE; }
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    laser.color = static_cast<LaserColor>(laser.color & color_);
-  }
-  
-  bool canBeRotated() const override { return false; }
-};
 
 class RoundFilter : public Piece
 {
@@ -296,18 +265,6 @@ public:
       laser.color = static_cast<LaserColor>(laser.color & LaserColor::GREEN);
     else if (delta == 2)
       laser.color = static_cast<LaserColor>(laser.color & LaserColor::BLUE);
-  }
-};
-
-class Polarizer : public Piece
-{
-public:
-  Polarizer(Direction rotation, LaserColor color) : Piece(PIECE_POLARIZER, rotation, color) { }
-  
-  bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0 || (color_ & laser.color) == LaserColor::NONE; }
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    laser.color = static_cast<LaserColor>(laser.color & color_);
   }
 };
 

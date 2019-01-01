@@ -12,6 +12,7 @@ const char* i18n::nameForPiece(PieceType type)
     case PIECE_SKEW_MIRROR: return "Skew Mirror";
     case PIECE_DOUBLE_SKEW_MIRROR: return "Double Skew Mirror";
     case PIECE_DOUBLE_PASS_MIRROR: return "Double Pass Mirror";
+    case PIECE_DOUBLE_SPLITTER_MIRROR: return "Double Splitter Mirror";
     case PIECE_REFRACTOR: return "Refractor";
 
     case PIECE_SPLITTER: return "Splitter";
@@ -26,6 +27,10 @@ const char* i18n::nameForPiece(PieceType type)
     case PIECE_LEFT_BENDER: return "Left Bender";
     case PIECE_RIGHT_TWISTER: return "Right Twister";
     case PIECE_LEFT_TWISTER: return "Left Twister";
+
+    case PIECE_SELECTOR: return "Selector";
+    case PIECE_SPLICER: return "Splicer";
+
 
     default: return "Unnamed Piece";
   }

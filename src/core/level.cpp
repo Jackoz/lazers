@@ -25,19 +25,23 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_SKEW_MIRROR: return new Piece(PIECE_SKEW_MIRROR, info.direction);
     case PIECE_DOUBLE_SKEW_MIRROR: return new Piece(PIECE_DOUBLE_SKEW_MIRROR, info.direction);
     case PIECE_DOUBLE_MIRROR: return new Piece(PIECE_DOUBLE_MIRROR, info.direction);
+    case PIECE_DOUBLE_SPLITTER_MIRROR: return new Piece(PIECE_DOUBLE_SPLITTER_MIRROR, info.direction);
     case PIECE_REFRACTOR: return new Refractor(info.direction);
 
     case PIECE_SPLITTER: return new Splitter(info.direction);
     case PIECE_ANGLED_SPLITTER: return new DSplitter(info.direction);
 
     case PIECE_GLASS: return new Piece(PIECE_GLASS);
-    case PIECE_FILTER: return new Filter(info.color);
-    case PIECE_POLARIZER: return new Polarizer(info.direction, info.color);
+    case PIECE_FILTER: return new Piece(PIECE_FILTER, info.color);
+    case PIECE_POLARIZER: return new Piece(PIECE_POLARIZER, info.direction, info.color);
 
     case PIECE_RIGHT_BENDER: return new Piece(PIECE_RIGHT_BENDER);
     case PIECE_RIGHT_TWISTER: return new Piece(PIECE_RIGHT_TWISTER);
     case PIECE_LEFT_BENDER: return new Piece(PIECE_LEFT_BENDER);
     case PIECE_LEFT_TWISTER: return new Piece(PIECE_LEFT_TWISTER);
+
+    case PIECE_SELECTOR: return new Piece(PIECE_SELECTOR, info.direction, info.color);
+    case PIECE_SPLICER: return new Piece(PIECE_SPLICER, info.direction, info.color);
 
     //case PIECE_ROUND_FILTER: return new RoundFilter(); //TODO: why empty constructor?
 
@@ -53,8 +57,7 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_PRISM: return new Prism(info.direction);
     case PIECE_FLIPPED_PRISM: return new FlippedPrism(info.direction);
     case PIECE_TUNNEL: return new Tunnel(info.direction);
-    case PIECE_SELECTOR: return new Selector(info.direction, info.color);
-    case PIECE_SPLICER: return new Splicer(info.direction, info.color);
+    
     case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info.direction);
 
       
@@ -200,10 +203,11 @@ void Field::generateDummy()
 
   static const PieceType pieces[] = { 
     PIECE_WALL, PIECE_SOURCE,
-    PIECE_MIRROR, PIECE_DOUBLE_MIRROR, PIECE_DOUBLE_PASS_MIRROR, PIECE_SKEW_MIRROR, PIECE_DOUBLE_SKEW_MIRROR,
+    PIECE_MIRROR, PIECE_DOUBLE_MIRROR, PIECE_DOUBLE_PASS_MIRROR, PIECE_SKEW_MIRROR, PIECE_DOUBLE_SKEW_MIRROR, PIECE_DOUBLE_SPLITTER_MIRROR,
     PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_PRISM,
     PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
-    PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER
+    PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER,
+    PIECE_SELECTOR, PIECE_SPLICER
   };
 
   for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)

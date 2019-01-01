@@ -13,11 +13,11 @@
 const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
 {
   static const std::unordered_map<PieceType, PieceMechanics> mechanics = {
-    { PIECE_WALL, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
-    { PIECE_SOURCE, PieceMechanics(true, true, true, emptyMechanics(), [](const Piece* piece) { return Laser(Position(0,0), piece->orientation(), piece->color()); })}, //TODO: why 0,0?
+    { PIECE_WALL, PieceMechanics(false, false, always(), emptyMechanics(), emptyGenerator()) },
+    { PIECE_SOURCE, PieceMechanics(true, true, always(), emptyMechanics(), [](const Piece* piece) { return Laser(Position(0,0), piece->orientation(), piece->color()); })}, //TODO: why 0,0?
 
     /* mirrors */
-    { PIECE_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser) 
+    { PIECE_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) 
       {
         int delta = piece->deltaDirection(laser);
 
@@ -29,7 +29,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
         }
       })
     },
-    { PIECE_SKEW_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser) 
+    { PIECE_SKEW_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser);
 
@@ -42,7 +42,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
         }
       })
     },
-    { PIECE_DOUBLE_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+    { PIECE_DOUBLE_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser);
 
@@ -54,7 +54,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
         }
       })
     },
-    { PIECE_DOUBLE_SKEW_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+    { PIECE_DOUBLE_SKEW_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser) % 4;
         if (delta < 0) delta += 4;
@@ -69,7 +69,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
       })
     },
 
-    { PIECE_DOUBLE_PASS_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+    { PIECE_DOUBLE_PASS_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser);
 
@@ -81,31 +81,72 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
       })
     },
 
-    { PIECE_GLASS, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
+    { PIECE_DOUBLE_SPLITTER_MIRROR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case -1: case 3: field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color); break;
+          case 1: case -3: field->generateBeam(laser.position, laser.rotatedDirection(2), laser.color); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+
+    { PIECE_GLASS, PieceMechanics(false, false, never(), emptyMechanics(), emptyGenerator()) },
 
 
-    { PIECE_RIGHT_BENDER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(1); }) },
-    { PIECE_LEFT_BENDER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(1); }) },
-    { PIECE_RIGHT_TWISTER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(2); }) },
-    { PIECE_LEFT_TWISTER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(2); }) },
+    { PIECE_RIGHT_BENDER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(1); }) },
+    { PIECE_LEFT_BENDER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(1); }) },
+    { PIECE_RIGHT_TWISTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(2); }) },
+    { PIECE_LEFT_TWISTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(2); }) },
+
+    { PIECE_SELECTOR, PieceMechanics(true, true, [](const Piece* piece) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        if (delta == 4)
+          ;
+        else if (delta == 0)
+        {
+          LaserColor deflected = static_cast<LaserColor>(laser.color & piece->color());
+          LaserColor kept = static_cast<LaserColor>((laser.color & ~piece->color()) & LaserColor::WHITE);
+
+          if (deflected != LaserColor::NONE)
+            field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
+          if (kept != LaserColor::NONE)
+            field->generateBeam(laser.position, laser.direction, kept);
+
+          laser.invalidate();
+        }
+      }
+    )},
+
+    { PIECE_SPLICER, PieceMechanics(true, true, [](const Piece* piece) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
+      {
+        const int delta = piece->deltaDirection(laser);
+
+        if (delta == 4)
+          ;
+        else if (delta == 0)
+        {
+          LaserColor kept = static_cast<LaserColor>(laser.color & piece->color());
+          LaserColor deflected = static_cast<LaserColor>((laser.color & ~piece->color()) & LaserColor::WHITE);
+
+          if (deflected != LaserColor::NONE)
+            field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
+          if (kept != LaserColor::NONE)
+            field->generateBeam(laser.position, laser.direction, kept);
+
+          laser.invalidate();
+        }
+      }
+    )}
    };
 
   auto it = mechanics.find(type);
 
   return it != mechanics.end() ? &it->second : nullptr;
-}
-
-
-void DoubleSplitterMirror::receiveLaser(Field* field, Laser &laser)
-{
-  int delta = deltaDirection(laser);
-  
-  if (delta == -1 || delta == 3)
-    field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color);
-  else if (delta == 1 || delta == -3)
-    field->generateBeam(laser.position, laser.rotatedDirection(2), laser.color);
-  else
-    laser.invalidate();
 }
 
 void Splitter::receiveLaser(Field* field, Laser &laser)
@@ -231,47 +272,6 @@ void FlippedPrism::receiveLaser(Field* field, Laser &laser)
   
   laser.invalidate();
 }
-
-void Selector::receiveLaser(Field* field, Laser &laser)
-{
-  int delta = deltaDirection(laser);
-  
-  if (delta == 4)
-    ;
-  else if (delta == 0)
-  {
-    LaserColor deflected = static_cast<LaserColor>(laser.color & color());
-    LaserColor kept = static_cast<LaserColor>((laser.color & ~color()) & LaserColor::WHITE);
-
-    if (deflected != LaserColor::NONE)
-      field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
-    if (kept != LaserColor::NONE)      
-      field->generateBeam(laser.position, laser.direction, kept);
-
-    laser.invalidate();
-  }
-}
-
-void Splicer::receiveLaser(Field* field, Laser &laser)
-{
-  int delta = deltaDirection(laser);
-  
-  if (delta == 4)
-    ;
-  else if (delta == 0)
-  {
-    LaserColor kept = static_cast<LaserColor>(laser.color & color());
-    LaserColor deflected = static_cast<LaserColor>((laser.color & ~color()) & LaserColor::WHITE);
-    
-    if (deflected != LaserColor::NONE)
-      field->generateBeam(laser.position, laser.rotatedDirection(1), deflected);
-    if (kept != LaserColor::NONE)
-      field->generateBeam(laser.position, laser.direction, kept);
-    
-    laser.invalidate();
-  }
-}
-
 
 void Teleporter::receiveLaser(Field* field, Laser &laser)
 {
