@@ -10,6 +10,31 @@
 
 #include "level.h"
 
+const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
+{
+  static const std::unordered_map<PieceType, PieceMechanics> mechanics = {
+    { PIECE_WALL, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
+    { PIECE_GLASS, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
+    { PIECE_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser) 
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case 0: laser.flip(); break;
+          case -1: laser.rotateLeft(2); break;
+          case 1: laser.rotateRight(2); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+   };
+
+  auto it = mechanics.find(type);
+
+  return it != mechanics.end() ? &it->second : nullptr;
+}
+
+
 void DoubleSplitterMirror::receiveLaser(Field* field, Laser &laser)
 {
   int delta = deltaDirection(laser);

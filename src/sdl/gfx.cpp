@@ -90,7 +90,7 @@ void Gfx::scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u1
 }
 
 float cubicInterpolate (float p[4], float x) {
-	return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));
+	return p[1] + 0.5f * x*(p[2] - p[0] + x*(2.0f*p[0] - 5.0f*p[1] + 4.0f*p[2] - p[3] + x*(3.0f*(p[1] - p[2]) + p[3] - p[0])));
 }
 
 void Gfx::scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 dw, u16 dh)
@@ -108,23 +108,23 @@ void Gfx::scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 d
   float grid[3][4][4];
   
   // for each pixel in destination width
-  for (u16 x = 0; x < dw; ++x)
+  for (u32 x = 0; x < dw; ++x)
   {
     // for each pixel in destination height
-    for (u16 y = 0; y < dh; ++y)
+    for (u32 y = 0; y < dh; ++y)
     {
       // compute coordinates in source image for the 4x4 grid
       float sxf[4] = {(dx)*(x-1), dx*x, dx*(x+1), dx*(x+2)};
       float syf[4] = {(dy)*(y-1), dy*y, dy*(y+1), dy*(y+2)};
 
       // clamp coordinates to min and max width/height
-      for (u16 t = 0; t < 4; ++t)
+      for (u32 t = 0; t < 4; ++t)
       {
         if (sxf[t] < 0) sxf[t] = 0;
-        else if (sxf[t] >= sw) sxf[t] = sw-1;
+        else if (sxf[t] >= sw) sxf[t] = (float)(sw-1);
         
         if (syf[t] < 0) syf[t] = 0;
-        else if (syf[t] >= sh) syf[t] = sh-1;
+        else if (syf[t] >= sh) syf[t] = (float)(sh-1);
         
         sxf[t] = roundf(sxf[t]);
         syf[t] = roundf(syf[t]);
@@ -278,7 +278,7 @@ u32 Gfx::stringHeight(const char* text)
 u32 Gfx::stringWidth(const char *text)
 {
   size_t len = strlen(text);
-  size_t strLen = 0;
+  u32 strLen = 0;
 
   for (size_t i = 0; i < len; ++i)
   {

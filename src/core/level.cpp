@@ -16,11 +16,11 @@ Piece* Field::generatePiece(const PieceInfo& info)
 {
   switch (info.type)
   {
-    case PIECE_WALL: return new Wall();
+    case PIECE_WALL: return new Piece(PIECE_WALL);
 
     case PIECE_SOURCE: return new LaserSource(info.direction, info.color);
     
-    case PIECE_MIRROR: return new Mirror(info.direction);
+    case PIECE_MIRROR: return new Piece(PIECE_MIRROR, info.direction);
     case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info.direction);
     case PIECE_SKEW_MIRROR: return new SkewMirror(info.direction);
     case PIECE_DOUBLE_SKEW_MIRROR: return new DoubleSkewMirror(info.direction);
@@ -30,9 +30,14 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_SPLITTER: return new Splitter(info.direction);
     case PIECE_ANGLED_SPLITTER: return new DSplitter(info.direction);
 
-    case PIECE_GLASS: return new Glass();
+    case PIECE_GLASS: return new Piece(PIECE_GLASS);
     case PIECE_FILTER: return new Filter(info.color);
     case PIECE_POLARIZER: return new Polarizer(info.direction, info.color);
+
+    case PIECE_BENDER: return new Bender();
+    case PIECE_TWISTER: return new Twister();
+
+
     //case PIECE_ROUND_FILTER: return new RoundFilter(); //TODO: why empty constructor?
 
     case PIECE_STRICT_GOAL:
@@ -49,7 +54,6 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_TUNNEL: return new Tunnel(info.direction);
     case PIECE_SELECTOR: return new Selector(info.direction, info.color);
     case PIECE_SPLICER: return new Splicer(info.direction, info.color);
-    case PIECE_BENDER: return new Bender();
     case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info.direction);
 
       
@@ -196,8 +200,9 @@ void Field::generateDummy()
   static const PieceType pieces[] = { 
     PIECE_WALL, PIECE_SOURCE,
     PIECE_MIRROR, PIECE_DOUBLE_MIRROR, PIECE_DOUBLE_PASS_MIRROR, PIECE_SKEW_MIRROR, PIECE_DOUBLE_SKEW_MIRROR,
-    PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER,
-    PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER
+    PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_PRISM,
+    PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
+    PIECE_BENDER, PIECE_TWISTER
   };
 
   for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)
