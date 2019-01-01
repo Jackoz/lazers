@@ -72,7 +72,7 @@ class PieceMechanics
 public:
   using on_laser_receive_t = std::function<void(Field*, const Piece*, Laser&)>;
   using on_laser_generate_t = std::function<Laser(const Piece*)>;
-  using blocks_laser_predicate = std::function<bool(const Piece*)>;
+  using blocks_laser_predicate = std::function<bool(const Piece*, const Laser&)>;
 
 private:
   bool _canBeColored, _canBeRotated;
@@ -88,7 +88,7 @@ public:
 
   inline bool canBeColored() const { return _canBeColored; }
   inline bool canBeRotated() const { return _canBeRotated; }
-  inline bool doesBlockLaser(const Piece* piece) const { return _doesBlockLaser(piece); }
+  inline bool doesBlockLaser(const Piece* piece, const Laser& laser) const { return _doesBlockLaser(piece, laser); }
 
   inline void onLaserReceive(Field* field, const Piece* piece, Laser& laser) const { _onLaserReceive(field, piece, laser); }
   inline Laser onLaserGeneration(const Piece* piece) const { return _onLaserGeneration(piece); }
@@ -99,8 +99,8 @@ private:
   static on_laser_receive_t emptyMechanics() { return [](Field*, const Piece*, Laser&) {}; }
   static on_laser_generate_t emptyGenerator() { return [](const Piece*) { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
 
-  static inline blocks_laser_predicate always() { return [](const Piece*) { return true;  }; }
-  static inline blocks_laser_predicate never() { return [](const Piece*) { return false;  }; }
+  static inline blocks_laser_predicate always() { return [](const Piece*, const Laser&) { return true;  }; }
+  static inline blocks_laser_predicate never() { return [](const Piece*, const Laser&) { return false;  }; }
 };
 
 class Tile;
@@ -139,7 +139,7 @@ public:
   virtual Laser produceLaser() const { 
     return mechanics ? mechanics->onLaserGeneration(this) : Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE);
   }
-  virtual bool blocksLaser(Laser &laser) { return mechanics ? mechanics->doesBlockLaser(this) : false; }
+  virtual bool blocksLaser(const Laser &laser) { return mechanics ? mechanics->doesBlockLaser(this, laser) : false; }
   virtual void receiveLaser(Field* field, Laser& laser) { if (mechanics) mechanics->onLaserReceive(field, this, laser); }
   
   void setCanBeMoved(bool value) { movable = value; };
@@ -152,7 +152,7 @@ public:
   bool canBeColored() const { return colorable; }
   bool isInfinite() const { return infinite; }
   
-  int deltaDirection(Laser& laser) const
+  int deltaDirection(const Laser& laser) const
   {
     int delta = laser.direction - rotation_;
     
@@ -162,32 +162,6 @@ public:
     
     return delta;
   }
-};
-
-class Refractor : public Piece
-{
-public:
-  Refractor(Direction rotation) : Piece(PIECE_REFRACTOR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser)%4;
-    if (delta < 0) delta += 4;
-    
-    if (delta == 0)
-      laser.rotateRight(1);
-    else if (delta == 1)
-      laser.rotateLeft(1);
-    else
-      laser.invalidate();
-  }
-};
-
-class Splitter : public Piece
-{
-public:
-  Splitter(Direction rotation) : Piece(PIECE_SPLITTER, rotation, LaserColor::NONE) { }
-  void receiveLaser(Field* field, Laser &laser) override;
 };
 
 class ThreeWaySplitter : public Piece
@@ -206,14 +180,6 @@ public:
   void receiveLaser(Field* field, Laser &laser) override;
   
   bool canBeRotated() const override { return false; }
-};
-
-class DSplitter : public Piece
-{
-public:
-  DSplitter(Direction rotation) : Piece(PIECE_ANGLED_SPLITTER, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
 };
 
 class Prism : public Piece
@@ -238,7 +204,7 @@ class RoundFilter : public Piece
 public:
   RoundFilter() : Piece(PIECE_FILTER, NORTH, LaserColor::NONE) { }
   
-  bool blocksLaser(Laser &laser) override
+  bool blocksLaser(const Laser &laser) override
   {
     int delta = deltaDirection(laser) % 4;
     if (delta < 0) delta += 4;
@@ -299,8 +265,6 @@ public:
         laser.color = static_cast<LaserColor>(((laser.color << 1) & LaserColor::WHITE) | ((laser.color & LaserColor::BLUE) >> 2));
     }
   }
-  
-  Position gfxTile() { return Position(rotation_, 8); }
 };
 
 class ColorInverter : public Piece

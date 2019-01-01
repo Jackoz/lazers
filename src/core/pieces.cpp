@@ -93,7 +93,26 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
       })
     },
 
+
+    { PIECE_REFRACTOR, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser) % 4;
+        if (delta < 0) delta += 4;
+
+        switch (delta) {
+          case 0: laser.rotateRight(1); break;
+          case 1: laser.rotateLeft(1); break;
+          default: laser.invalidate(); break;
+        }
+      })
+    },
+
     { PIECE_GLASS, PieceMechanics(false, false, never(), emptyMechanics(), emptyGenerator()) },
+    { PIECE_FILTER, PieceMechanics(false, true, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.color = static_cast<LaserColor>(laser.color & piece->color()); })},
+    { PIECE_POLARIZER, PieceMechanics(false, true, 
+      [](const Piece* piece, const Laser& laser) { return piece->deltaDirection(laser) % 4 != 0 || (piece->color() & laser.color) == LaserColor::NONE; },
+      [](Field* field, const Piece* piece, Laser& laser) { laser.color = static_cast<LaserColor>(laser.color & piece->color()); })
+    },
 
 
     { PIECE_RIGHT_BENDER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(1); }) },
@@ -101,7 +120,40 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
     { PIECE_RIGHT_TWISTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(2); }) },
     { PIECE_LEFT_TWISTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(2); }) },
 
-    { PIECE_SELECTOR, PieceMechanics(true, true, [](const Piece* piece) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
+
+    { PIECE_SPLITTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        if (delta == 0)
+        {
+          field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color);
+          laser.rotateRight(2);
+        }
+        else
+          laser.invalidate();
+      })
+    },
+
+    { PIECE_ANGLED_SPLITTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case 0:
+            field->generateBeam(laser.position, laser.rotatedDirection(-1), laser.color);
+            laser.rotateRight(1);
+            break;
+          case -3: laser.rotateLeft(1); break;
+          case 3: laser.rotateRight(1); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+
+
+
+    { PIECE_SELECTOR, PieceMechanics(true, true, [](const Piece* piece, const Laser&) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser);
 
@@ -122,7 +174,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
       }
     )},
 
-    { PIECE_SPLICER, PieceMechanics(true, true, [](const Piece* piece) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
+    { PIECE_SPLICER, PieceMechanics(true, true, [](const Piece* piece, const Laser&) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
       {
         const int delta = piece->deltaDirection(laser);
 
@@ -149,20 +201,6 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
   return it != mechanics.end() ? &it->second : nullptr;
 }
 
-void Splitter::receiveLaser(Field* field, Laser &laser)
-{
-  int delta = deltaDirection(laser);
-  
-  if (delta == 0)
-  {
-    // first generate a second beam for left split
-    field->generateBeam(laser.position, laser.rotatedDirection(-2), laser.color);
-    laser.rotateRight(2);
-  }
-  else
-    laser.invalidate();
-}
-
 void ThreeWaySplitter::receiveLaser(Field* field, Laser &laser)
 {
   int delta = deltaDirection(laser);
@@ -183,28 +221,6 @@ void StarSplitter::receiveLaser(Field* field, Laser &laser)
     field->generateBeam(laser.position, laser.rotatedDirection(1+i*2), laser.color);
 
   laser.invalidate();
-}
-
-void DSplitter::receiveLaser(Field* field, Laser &laser)
-{
-  int delta = deltaDirection(laser);
-  
-  if (delta == 0)
-  {
-    // first generate a second beam for left split
-    field->generateBeam(laser.position, laser.rotatedDirection(-1), laser.color);
-    laser.rotateRight(1);
-  }
-  else if (delta == -3)
-  {
-    laser.rotateLeft(1);
-  }
-  else if (delta == 3)
-  {
-    laser.rotateRight(1);
-  }
-  else
-    laser.invalidate();
 }
 
 void Prism::receiveLaser(Field* field, Laser &laser)

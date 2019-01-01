@@ -26,10 +26,10 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_DOUBLE_SKEW_MIRROR: return new Piece(PIECE_DOUBLE_SKEW_MIRROR, info.direction);
     case PIECE_DOUBLE_MIRROR: return new Piece(PIECE_DOUBLE_MIRROR, info.direction);
     case PIECE_DOUBLE_SPLITTER_MIRROR: return new Piece(PIECE_DOUBLE_SPLITTER_MIRROR, info.direction);
-    case PIECE_REFRACTOR: return new Refractor(info.direction);
+    case PIECE_REFRACTOR: return new Piece(PIECE_REFRACTOR, info.direction);
 
-    case PIECE_SPLITTER: return new Splitter(info.direction);
-    case PIECE_ANGLED_SPLITTER: return new DSplitter(info.direction);
+    case PIECE_SPLITTER: return new Piece(PIECE_SPLITTER, info.direction);
+    case PIECE_ANGLED_SPLITTER: return new Piece(PIECE_ANGLED_SPLITTER, info.direction);
 
     case PIECE_GLASS: return new Piece(PIECE_GLASS);
     case PIECE_FILTER: return new Piece(PIECE_FILTER, info.color);
