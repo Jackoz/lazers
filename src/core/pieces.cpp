@@ -14,7 +14,9 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
 {
   static const std::unordered_map<PieceType, PieceMechanics> mechanics = {
     { PIECE_WALL, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
-    { PIECE_GLASS, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
+    { PIECE_SOURCE, PieceMechanics(true, true, true, emptyMechanics(), [](const Piece* piece) { return Laser(Position(0,0), piece->orientation(), piece->color()); })}, //TODO: why 0,0?
+
+    /* mirrors */
     { PIECE_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser) 
       {
         int delta = piece->deltaDirection(laser);
@@ -27,6 +29,65 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
         }
       })
     },
+    { PIECE_SKEW_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser) 
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case 0: laser.rotateRight(3); break;
+          case -1: laser.rotateLeft(3); break;
+          case -2: laser.rotateLeft(1); break;
+          case 1: laser.rotateRight(1); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+    { PIECE_DOUBLE_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case 0: case 4: laser.flip(); break;
+          case -1: case 3: laser.rotateLeft(2); break;
+          case 1: case -3: laser.rotateRight(2); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+    { PIECE_DOUBLE_SKEW_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser) % 4;
+        if (delta < 0) delta += 4;
+
+        switch (delta) {
+          case 0: laser.rotateRight(3); break;
+          case 3: laser.rotateLeft(3); break;
+          case 2: laser.rotateLeft(1); break;
+          case 1: laser.rotateRight(1); break;
+          default: laser.invalidate();
+        }
+      })
+    },
+
+    { PIECE_DOUBLE_PASS_MIRROR, PieceMechanics(true, false, false, [](Field* field, const Piece* piece, Laser& laser)
+      {
+        int delta = piece->deltaDirection(laser);
+
+        switch (delta) {
+          case 0: case 4: laser.flip(); break;
+          case -1: case 3: laser.rotateLeft(2); break;
+          case 1: case -3: laser.rotateRight(2); break;
+        }
+      })
+    },
+
+    { PIECE_GLASS, PieceMechanics(false, false, true, emptyMechanics(), emptyGenerator()) },
+
+
+    { PIECE_RIGHT_BENDER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(1); }) },
+    { PIECE_LEFT_BENDER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(1); }) },
+    { PIECE_RIGHT_TWISTER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(2); }) },
+    { PIECE_LEFT_TWISTER, PieceMechanics(true, false, false,[](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(2); }) },
    };
 
   auto it = mechanics.find(type);

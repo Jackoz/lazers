@@ -82,9 +82,10 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_ROUND_FILTER: gfx = Position(piece->rotation() % 4, 9); break;
     case PIECE_POLARIZER: gfx = Position(color + 8, piece->rotation() % 4 + 9); break;
 
-    case PIECE_BENDER: gfx = Position(14, 7); break;
-    case PIECE_TWISTER: gfx = Position(12, 7); break;
-
+    case PIECE_RIGHT_BENDER: gfx = Position(14, 7); break;
+    case PIECE_RIGHT_TWISTER: gfx = Position(12, 7); break;
+    case PIECE_LEFT_BENDER: gfx = Position(10, 7); break;
+    case PIECE_LEFT_TWISTER: gfx = Position(9, 7); break;
 
     case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 17); break;
     case PIECE_STAR_SPLITTER: gfx = Position(10, 7); break;

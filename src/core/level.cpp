@@ -18,13 +18,13 @@ Piece* Field::generatePiece(const PieceInfo& info)
   {
     case PIECE_WALL: return new Piece(PIECE_WALL);
 
-    case PIECE_SOURCE: return new LaserSource(info.direction, info.color);
+    case PIECE_SOURCE: return new Piece(PIECE_SOURCE, info.direction, info.color);
     
     case PIECE_MIRROR: return new Piece(PIECE_MIRROR, info.direction);
-    case PIECE_DOUBLE_PASS_MIRROR: return new DoublePassMirror(info.direction);
-    case PIECE_SKEW_MIRROR: return new SkewMirror(info.direction);
-    case PIECE_DOUBLE_SKEW_MIRROR: return new DoubleSkewMirror(info.direction);
-    case PIECE_DOUBLE_MIRROR: return new DoubleMirror(info.direction);
+    case PIECE_DOUBLE_PASS_MIRROR: return new Piece(PIECE_DOUBLE_PASS_MIRROR, info.direction);
+    case PIECE_SKEW_MIRROR: return new Piece(PIECE_SKEW_MIRROR, info.direction);
+    case PIECE_DOUBLE_SKEW_MIRROR: return new Piece(PIECE_DOUBLE_SKEW_MIRROR, info.direction);
+    case PIECE_DOUBLE_MIRROR: return new Piece(PIECE_DOUBLE_MIRROR, info.direction);
     case PIECE_REFRACTOR: return new Refractor(info.direction);
 
     case PIECE_SPLITTER: return new Splitter(info.direction);
@@ -34,9 +34,10 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_FILTER: return new Filter(info.color);
     case PIECE_POLARIZER: return new Polarizer(info.direction, info.color);
 
-    case PIECE_BENDER: return new Bender();
-    case PIECE_TWISTER: return new Twister();
-
+    case PIECE_RIGHT_BENDER: return new Piece(PIECE_RIGHT_BENDER);
+    case PIECE_RIGHT_TWISTER: return new Piece(PIECE_RIGHT_TWISTER);
+    case PIECE_LEFT_BENDER: return new Piece(PIECE_LEFT_BENDER);
+    case PIECE_LEFT_TWISTER: return new Piece(PIECE_LEFT_TWISTER);
 
     //case PIECE_ROUND_FILTER: return new RoundFilter(); //TODO: why empty constructor?
 
@@ -202,7 +203,7 @@ void Field::generateDummy()
     PIECE_MIRROR, PIECE_DOUBLE_MIRROR, PIECE_DOUBLE_PASS_MIRROR, PIECE_SKEW_MIRROR, PIECE_DOUBLE_SKEW_MIRROR,
     PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_PRISM,
     PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
-    PIECE_BENDER, PIECE_TWISTER
+    PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER
   };
 
   for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)

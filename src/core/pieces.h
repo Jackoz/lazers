@@ -71,15 +71,17 @@ class PieceMechanics
 {
 public:
   using on_laser_receive_t = std::function<void(Field*, const Piece*, Laser&)>;
+  using on_laser_generate_t = std::function<Laser(const Piece*)>;
+
 private:
   bool _canBeColored, _canBeRotated, _doesBlockLaser;
   on_laser_receive_t _onLaserReceive;
-  std::function<Laser(void)> _onLaserGeneration;
+  on_laser_generate_t _onLaserGeneration;
 
 public:
   PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, emptyMechanics(), emptyGenerator()) { }
   PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser, on_laser_receive_t onLaserReceive) : PieceMechanics(canBeRotated, canBeColored, doesBlockLaser, onLaserReceive, emptyGenerator()) { }
-  PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser, decltype(_onLaserReceive) onLaserReceive, decltype(_onLaserGeneration) onLaserGeneration) :
+  PieceMechanics(bool canBeRotated, bool canBeColored, bool doesBlockLaser, on_laser_receive_t onLaserReceive, on_laser_generate_t onLaserGeneration) :
     _canBeColored(canBeColored), _canBeRotated(canBeRotated), _doesBlockLaser(doesBlockLaser), _onLaserReceive(onLaserReceive), _onLaserGeneration(onLaserGeneration) { }
 
   inline bool canBeColored() const { return _canBeColored; }
@@ -87,12 +89,12 @@ public:
   inline bool doesBlockLaser() const { return _doesBlockLaser; }
 
   inline void onLaserReceive(Field* field, const Piece* piece, Laser& laser) const { _onLaserReceive(field, piece, laser); }
-  inline Laser onLaserGeneration() const { return _onLaserGeneration(); }
+  inline Laser onLaserGeneration(const Piece* piece) const { return _onLaserGeneration(piece); }
 
   static const PieceMechanics* mechanicsForType(PieceType type);
 
   static on_laser_receive_t emptyMechanics() { return [](Field*, const Piece*, Laser&) {}; }
-  static decltype(_onLaserGeneration) emptyGenerator() { return []() { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
+  static on_laser_generate_t emptyGenerator() { return [](const Piece*) { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
 };
 
 class Tile;
@@ -117,6 +119,7 @@ public:
 
   virtual ~Piece() { }
   
+  Direction orientation() const { return rotation_;  }
   Direction rotation() const { return rotation_; }
   PieceType type() const { return type_; }
   LaserColor color() const { return color_; }
@@ -126,7 +129,7 @@ public:
   void setColor(LaserColor color) { color_ = color;  }
   
   virtual Laser produceLaser() const { 
-    return mechanics ? mechanics->onLaserGeneration() : Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE);
+    return mechanics ? mechanics->onLaserGeneration(this) : Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE);
   }
   virtual bool blocksLaser(Laser &laser) { return mechanics ? mechanics->doesBlockLaser() : false; }
   virtual void receiveLaser(Field* field, Laser& laser) { if (mechanics) mechanics->onLaserReceive(field, this, laser); }
@@ -153,105 +156,12 @@ public:
   }
 };
 
-class LaserSource : public Piece
-{
-public:
-  LaserSource(Direction rotation, LaserColor color) : Piece(PIECE_SOURCE, rotation, color) { }
-
-  Laser produceLaser() const override { return Laser(Position(0,0), rotation_, color_); }
-  bool blocksLaser(Laser &laser) override { UNUSED(laser); return true; }
-};
-
-class SkewMirror : public Piece
-{
-public:
-  SkewMirror(Direction rotation) : Piece(PIECE_SKEW_MIRROR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser);
-    
-    if (delta == 0)
-      laser.rotateRight(3);
-    else if (delta == -1)
-      laser.rotateLeft(3);
-    else if (delta == -2)
-      laser.rotateLeft(1);
-    else if (delta == 1)
-      laser.rotateRight(1);
-    else
-      laser.invalidate();
-  }
-};
-
-class DoubleMirror : public Piece
-{
-public:
-  DoubleMirror(Direction rotation) : Piece(PIECE_DOUBLE_MIRROR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser);
-    
-    if (delta == 0 || delta == 4)
-      laser.flip();
-    else if (delta == -1 || delta == 3)
-      laser.rotateLeft(2);
-    else if (delta == 1 || delta == -3)
-      laser.rotateRight(2);
-    else
-      laser.invalidate();
-  }
-};
-
 class DoubleSplitterMirror : public Piece
 {
 public:
   DoubleSplitterMirror(Direction rotation) : Piece(PIECE_DOUBLE_SPLITTER_MIRROR, rotation, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
-};
-
-class DoubleSkewMirror : public Piece
-{
-public:
-  DoubleSkewMirror(Direction rotation) : Piece(PIECE_DOUBLE_SKEW_MIRROR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser)%4;
-    if (delta < 0) delta += 4;
-    
-    if (delta == 0)
-      laser.rotateRight(3);
-    else if (delta == 3)
-      laser.rotateLeft(3);
-    else if (delta == 2)
-      laser.rotateLeft(1);
-    else if (delta == 1)
-      laser.rotateRight(1);
-    else
-      laser.invalidate();
-  }
-  
-};
-
-class DoublePassMirror : public Piece
-{
-public:
-  DoublePassMirror(Direction rotation) : Piece(PIECE_DOUBLE_PASS_MIRROR, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser);
-    
-    if (delta == 0 || delta == 4)
-      laser.flip();
-    else if (delta == -1 || delta == 3)
-      laser.rotateLeft(2);
-    else if (delta == 1 || delta == -3)
-      laser.rotateRight(2);
-  }
 };
 
 class Refractor : public Piece
@@ -339,31 +249,6 @@ public:
   bool blocksLaser(Laser &laser) override { return deltaDirection(laser)%4 != 0; }
   void receiveLaser(Field* field, Laser &laser) override;
 };
-
-class Bender : public Piece
-{
-public:
-  Bender() : Piece(PIECE_BENDER, NORTH, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    laser.rotateRight(1);
-  }
-  
-  bool canBeRotated() const override { return false; }
-};
-
-class Twister : public Piece
-{
-public:
-  Twister() : Piece(PIECE_TWISTER, NORTH, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    laser.rotateLeft(2);
-  }
-};
-
 
 class Filter : public Piece
 {

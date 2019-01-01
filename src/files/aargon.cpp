@@ -66,7 +66,7 @@ s8 pieceType(char c)
     case 'y': return PIECE_THREE_WAY_SPLITTER;
     case 'I': return PIECE_SELECTOR;
     case 'L': return PIECE_SPLICER;
-    case '@': return PIECE_BENDER;
+    case '@': return PIECE_RIGHT_BENDER;
       
     case 'p': return PIECE_UFO;
     case 'c': return PIECE_CRYSTAL;
@@ -129,7 +129,7 @@ bool canHaveRotation(PieceType type)
     case PIECE_CRYSTAL:
     case PIECE_VOID_HOLE:
     case PIECE_WALL:
-    case PIECE_BENDER:
+    case PIECE_RIGHT_BENDER:
       return false;
       
     default: return false;
@@ -171,7 +171,7 @@ bool canHaveColor(PieceType type)
     case PIECE_VOID_HOLE:
     case PIECE_WALL:
     case PIECE_THREE_WAY_SPLITTER:
-    case PIECE_BENDER:
+    case PIECE_RIGHT_BENDER:
     case PIECE_FLIPPED_PRISM:
       return false;
       
