@@ -16,32 +16,37 @@ Piece* Field::generatePiece(const PieceInfo& info)
 {
   switch (info.type)
   {
-    case PIECE_WALL: return new Piece(PIECE_WALL);
+    case PIECE_WALL: 
+    case PIECE_SOURCE:
 
-    case PIECE_SOURCE: return new Piece(PIECE_SOURCE, info.direction, info.color);
-    
-    case PIECE_MIRROR: return new Piece(PIECE_MIRROR, info.direction);
-    case PIECE_DOUBLE_PASS_MIRROR: return new Piece(PIECE_DOUBLE_PASS_MIRROR, info.direction);
-    case PIECE_SKEW_MIRROR: return new Piece(PIECE_SKEW_MIRROR, info.direction);
-    case PIECE_DOUBLE_SKEW_MIRROR: return new Piece(PIECE_DOUBLE_SKEW_MIRROR, info.direction);
-    case PIECE_DOUBLE_MIRROR: return new Piece(PIECE_DOUBLE_MIRROR, info.direction);
-    case PIECE_DOUBLE_SPLITTER_MIRROR: return new Piece(PIECE_DOUBLE_SPLITTER_MIRROR, info.direction);
-    case PIECE_REFRACTOR: return new Piece(PIECE_REFRACTOR, info.direction);
+    case PIECE_MIRROR:
+    case PIECE_DOUBLE_MIRROR:
+    case PIECE_DOUBLE_PASS_MIRROR:
+    case PIECE_DOUBLE_SKEW_MIRROR:
+    case PIECE_SKEW_MIRROR:
+    case PIECE_DOUBLE_SPLITTER_MIRROR:
+    case PIECE_REFRACTOR:
 
-    case PIECE_SPLITTER: return new Piece(PIECE_SPLITTER, info.direction);
-    case PIECE_ANGLED_SPLITTER: return new Piece(PIECE_ANGLED_SPLITTER, info.direction);
+    case PIECE_SPLITTER:
+    case PIECE_ANGLED_SPLITTER:
+    case PIECE_THREE_WAY_SPLITTER:
+    case PIECE_STAR_SPLITTER:
+    case PIECE_PRISM:
+    case PIECE_FLIPPED_PRISM:
 
-    case PIECE_GLASS: return new Piece(PIECE_GLASS);
-    case PIECE_FILTER: return new Piece(PIECE_FILTER, info.color);
-    case PIECE_POLARIZER: return new Piece(PIECE_POLARIZER, info.direction, info.color);
+    case PIECE_GLASS:
+    case PIECE_FILTER:
+    case PIECE_POLARIZER:
 
-    case PIECE_RIGHT_BENDER: return new Piece(PIECE_RIGHT_BENDER);
-    case PIECE_RIGHT_TWISTER: return new Piece(PIECE_RIGHT_TWISTER);
-    case PIECE_LEFT_BENDER: return new Piece(PIECE_LEFT_BENDER);
-    case PIECE_LEFT_TWISTER: return new Piece(PIECE_LEFT_TWISTER);
+    case PIECE_RIGHT_BENDER:
+    case PIECE_RIGHT_TWISTER:
+    case PIECE_LEFT_BENDER:
+    case PIECE_LEFT_TWISTER:
 
-    case PIECE_SELECTOR: return new Piece(PIECE_SELECTOR, info.direction, info.color);
-    case PIECE_SPLICER: return new Piece(PIECE_SPLICER, info.direction, info.color);
+    case PIECE_SELECTOR:
+    case PIECE_SPLICER:
+
+      return new Piece(info.type, info.direction, info.color);
 
     //case PIECE_ROUND_FILTER: return new RoundFilter(); //TODO: why empty constructor?
 
@@ -54,12 +59,8 @@ Piece* Field::generatePiece(const PieceInfo& info)
 
     
     case PIECE_COLOR_SHIFTER: return new ColorShifter(info.direction);
-    case PIECE_PRISM: return new Prism(info.direction);
-    case PIECE_FLIPPED_PRISM: return new FlippedPrism(info.direction);
-    case PIECE_TUNNEL: return new Tunnel(info.direction);
-    
-    case PIECE_THREE_WAY_SPLITTER: return new ThreeWaySplitter(info.direction);
 
+    case PIECE_TUNNEL: return new Tunnel(info.direction);
       
     case PIECE_MINE: return new Mine();
     case PIECE_TNT: return new TNT();
@@ -204,7 +205,7 @@ void Field::generateDummy()
   static const PieceType pieces[] = { 
     PIECE_WALL, PIECE_SOURCE,
     PIECE_MIRROR, PIECE_DOUBLE_MIRROR, PIECE_DOUBLE_PASS_MIRROR, PIECE_SKEW_MIRROR, PIECE_DOUBLE_SKEW_MIRROR, PIECE_DOUBLE_SPLITTER_MIRROR,
-    PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_PRISM,
+    PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_THREE_WAY_SPLITTER, PIECE_STAR_SPLITTER, PIECE_PRISM, PIECE_FLIPPED_PRISM,
     PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
     PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER,
     PIECE_SELECTOR, PIECE_SPLICER
@@ -213,12 +214,14 @@ void Field::generateDummy()
   for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)
   {
     Pos base = Pos(Pos::Type::INVENTORY, i % invWidth(), i / invWidth());
+    const auto* mechanics = PieceMechanics::mechanicsForType(pieces[i]);
+
 
     PieceInfo info = PieceInfo(pieces[i]);
     info.inventory = true;
     info.moveable = true;
     info.roteable = true;
-    info.color = LaserColor::RED; //TODO: only if color makes sense for piece
+    info.color = mechanics->canBeColored() ? LaserColor::RED : LaserColor::NONE;
     info.direction = Dir::NORTH;
     Piece* piece = generatePiece(info);
 

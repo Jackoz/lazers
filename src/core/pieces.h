@@ -14,6 +14,8 @@
 #include <list>
 #include <functional>
 
+#include <cassert>
+
 #define UNUSED(x) (void)(x)
 
 struct Laser
@@ -119,11 +121,17 @@ public:
   Piece(PieceType type, Dir orientation) : Piece(type, orientation, LaserColor::NONE) { }
   Piece(PieceType type, LaserColor color) : Piece(type, Dir::NORTH, color) { }
 
-
   Piece(PieceType type, Direction orientation, LaserColor color) :
     mechanics(PieceMechanics::mechanicsForType(type)),
     type_(type), rotation_(orientation), color_(color),
-    movable(true), roteable(true), infinite(false), colorable(false) { }
+    movable(true), roteable(true), infinite(false), colorable(false)
+  { 
+    if (mechanics)
+    {
+      assert(mechanics->canBeRotated() || orientation == Dir::NORTH);
+      assert(mechanics->canBeColored() || color == LaserColor::NONE);
+    }
+  }
 
   virtual ~Piece() { }
   
@@ -162,40 +170,6 @@ public:
     
     return delta;
   }
-};
-
-class ThreeWaySplitter : public Piece
-{
-public:
-  ThreeWaySplitter(Direction rotation) : Piece(PIECE_THREE_WAY_SPLITTER, rotation, LaserColor::NONE) { }
-  void receiveLaser(Field* field, Laser &laser) override;
-  
-};
-
-class StarSplitter : public Piece
-{
-public:
-  StarSplitter(Field *field) : Piece(PIECE_STAR_SPLITTER, NORTH, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
-  
-  bool canBeRotated() const override { return false; }
-};
-
-class Prism : public Piece
-{
-public:
-  Prism(Direction rotation) : Piece(PIECE_PRISM, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
-};
-
-class FlippedPrism : public Piece
-{
-public:
-  FlippedPrism(Direction rotation) : Piece(PIECE_FLIPPED_PRISM, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
 };
 
 

@@ -76,7 +76,10 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
 
     case PIECE_SPLITTER: gfx = Position(piece->rotation(), 2); break;
     case PIECE_ANGLED_SPLITTER: gfx = Position(piece->rotation(), 3); break;
+    case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 18); break;
+    case PIECE_STAR_SPLITTER: gfx = Position(8, 9); break;
     case PIECE_PRISM: gfx = Position(piece->rotation(), 4); break;
+    case PIECE_FLIPPED_PRISM: gfx = Position(piece->rotation() + 8, 17); break;
 
     case PIECE_FILTER: gfx = Position(color + 8, 8); break;
     case PIECE_ROUND_FILTER: gfx = Position(piece->rotation() % 4, 9); break;
@@ -88,14 +91,11 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_LEFT_TWISTER: gfx = Position(9, 7); break;
 
     case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + color); break;
-
-
-
-
-    case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 17); break;
-    case PIECE_STAR_SPLITTER: gfx = Position(10, 7); break;
-    case PIECE_FLIPPED_PRISM: gfx = Position(piece->rotation() + 8, 17); break;
     case PIECE_SPLICER: gfx = Position(piece->rotation(), 12 + 7 + color); break;
+
+
+
+
     
 
     case PIECE_TUNNEL: gfx = Position(piece->rotation(), 6); break;

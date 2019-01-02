@@ -17,7 +17,10 @@ const char* i18n::nameForPiece(PieceType type)
 
     case PIECE_SPLITTER: return "Splitter";
     case PIECE_ANGLED_SPLITTER: return "Angled Splitter";
+    case PIECE_THREE_WAY_SPLITTER: return "Three-way Splitter";
+    case PIECE_STAR_SPLITTER: return "Star Splitter";
     case PIECE_PRISM: return "Prism";
+    case PIECE_FLIPPED_PRISM: return "Prism";
 
     case PIECE_GLASS: return "Glass";
     case PIECE_FILTER: return "Filter";
