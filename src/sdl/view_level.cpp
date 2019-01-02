@@ -57,43 +57,43 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
 {
   Position gfx = Position(0,0);
   int color = piece->color();
-  
+  int orientaton = 0; // piece->orientation();
   
   switch (piece->type())
   {
     case PIECE_WALL: gfx = Position(13,7); break;
     case PIECE_GLASS: gfx = Position(11,7); break;
     
-    case PIECE_SOURCE: gfx = Position(piece->rotation(), 1); break;
+    case PIECE_SOURCE: gfx = Position(orientaton, 1); break;
 
-    case PIECE_MIRROR: gfx = Position(piece->rotation(), 0); break;
-    case PIECE_SKEW_MIRROR: gfx = Position(piece->rotation(), 10); break;
-    case PIECE_DOUBLE_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 5); break;
-    case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 11); break;
-    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(piece->rotation() % 4, 12); break;
-    case PIECE_DOUBLE_SKEW_MIRROR: gfx = Position(piece->rotation() % 4 + 4, 12); break;
-    case PIECE_REFRACTOR: gfx = Position(piece->rotation() % 4, 5); break;
+    case PIECE_MIRROR: gfx = Position(orientaton, 0); break;
+    case PIECE_SKEW_MIRROR: gfx = Position(orientaton, 10); break;
+    case PIECE_DOUBLE_MIRROR: gfx = Position(orientaton % 4 + 4, 5); break;
+    case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(orientaton % 4 + 4, 11); break;
+    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(orientaton % 4, 12); break;
+    case PIECE_DOUBLE_SKEW_MIRROR: gfx = Position(orientaton % 4 + 4, 12); break;
+    case PIECE_REFRACTOR: gfx = Position(orientaton % 4, 5); break;
 
-    case PIECE_SPLITTER: gfx = Position(piece->rotation(), 2); break;
-    case PIECE_ANGLED_SPLITTER: gfx = Position(piece->rotation(), 3); break;
-    case PIECE_THREE_WAY_SPLITTER: gfx = Position(piece->rotation() + 8, 18); break;
+    case PIECE_SPLITTER: gfx = Position(orientaton, 2); break;
+    case PIECE_ANGLED_SPLITTER: gfx = Position(orientaton, 3); break;
+    case PIECE_THREE_WAY_SPLITTER: gfx = Position(orientaton + 8, 18); break;
     case PIECE_STAR_SPLITTER: gfx = Position(8, 9); break;
-    case PIECE_PRISM: gfx = Position(piece->rotation(), 4); break;
-    case PIECE_FLIPPED_PRISM: gfx = Position(piece->rotation() + 8, 17); break;
+    case PIECE_PRISM: gfx = Position(orientaton, 4); break;
+    case PIECE_FLIPPED_PRISM: gfx = Position(orientaton + 8, 17); break;
 
     case PIECE_FILTER: gfx = Position(color + 8, 8); break;
-    case PIECE_ROUND_FILTER: gfx = Position(piece->rotation() % 4, 9); break;
-    case PIECE_POLARIZER: gfx = Position(color + 8, piece->rotation() % 4 + 9); break;
+    case PIECE_ROUND_FILTER: gfx = Position(orientaton % 4, 9); break;
+    case PIECE_POLARIZER: gfx = Position(color + 8, orientaton % 4 + 9); break;
 
     case PIECE_RIGHT_BENDER: gfx = Position(14, 7); break;
     case PIECE_RIGHT_TWISTER: gfx = Position(12, 7); break;
     case PIECE_LEFT_BENDER: gfx = Position(10, 7); break;
     case PIECE_LEFT_TWISTER: gfx = Position(9, 7); break;
 
-    case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + color); break;
-    case PIECE_SPLICER: gfx = Position(piece->rotation(), 12 + 7 + color); break;
-    case PIECE_COLOR_SHIFTER: gfx = Position(piece->rotation(), 8); break;
-    case PIECE_COLOR_INVERTER: gfx = Position(piece->rotation(), 6); break;
+    case PIECE_SELECTOR: gfx = Position(orientaton, 12 + color); break;
+    case PIECE_SPLICER: gfx = Position(orientaton, 12 + 7 + color); break;
+    case PIECE_COLOR_SHIFTER: gfx = Position(orientaton, 8); break;
+    case PIECE_COLOR_INVERTER: gfx = Position(orientaton, 6); break;
 
     case PIECE_TNT: gfx = Position(15, 7); break;
 
@@ -101,9 +101,9 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
 
     
 
-    case PIECE_TUNNEL: gfx = Position(piece->rotation(), 6); break;
+    case PIECE_TUNNEL: gfx = Position(orientaton, 6); break;
 
-    case PIECE_CROSS_COLOR_INVERTER: gfx = Position(piece->rotation() % 2 + 4, 9); break;
+    case PIECE_CROSS_COLOR_INVERTER: gfx = Position(orientaton % 2 + 4, 9); break;
     case PIECE_TELEPORTER: gfx = Position(9, 7); break;
     case PIECE_SLIME: gfx = Position(8, 7); break;
     case PIECE_MINE: gfx = Position(8, 8); break;
@@ -114,6 +114,16 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
   }
   
   return { gfx.x*ui::PIECE_SIZE, gfx.y*ui::PIECE_SIZE, ui::PIECE_SIZE, ui::PIECE_SIZE };
+}
+
+void LevelView::drawPiece(const Piece* piece, int cx, int cy)
+{
+  SDL_Rect src = rectForPiece(piece);
+  SDL_Rect dst = Gfx::ccr(cx + 1, cy + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
+
+  //TODO: verify if this is fine and don't rotate for unrotable pieces
+  SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, piece->orientation() * (360.0 / 8), nullptr, SDL_FLIP_NONE);
+  //Gfx::blit(Gfx::tiles, src, dst);
 }
 
 void LevelView::drawField(const Field *field, int bx, int by)
@@ -127,12 +137,8 @@ void LevelView::drawField(const Field *field, int bx, int by)
       u16 cy = by + y*ui::TILE_SIZE;
       
       if (tile->piece())
-      {
-        SDL_Rect src = rectForPiece(tile->piece().get());
-        SDL_Rect dst = Gfx::ccr(cx + 1, cy + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-      
+        drawPiece(tile->piece().get(), cx, cy);
+
       for (int i = 0; i < 8; ++i)
       {
         if (tile->colors[i] != LaserColor::NONE)
@@ -306,12 +312,8 @@ void LevelView::draw()
     Gfx::drawString(BASE_X + 40, BASE_Y + STEP, true, "A: rotate right");
   }
   
-  if (heldPiece)
-  {    
-    SDL_Rect src = rectForPiece(heldPiece.get());
-    SDL_Rect dst = Gfx::ccr(x - ui::PIECE_SIZE/2, y - ui::PIECE_SIZE/2, src.w, src.h);
-    Gfx::blit(Gfx::tiles, src, dst);
-  }
+  if (heldPiece) 
+    drawPiece(heldPiece.get(), x - ui::PIECE_SIZE / 2, y - ui::PIECE_SIZE / 2);
 
   if (curTile->piece())
   {

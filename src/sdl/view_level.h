@@ -43,6 +43,8 @@ public:
   static void drawInventory(const Field *field, int bx, int by);
 
   static void drawTooltip(int x, int y, const char* text);
+
+  static void drawPiece(const Piece* piece, int x, int y);
 };
 
 #endif
