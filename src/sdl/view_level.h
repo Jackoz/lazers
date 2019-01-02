@@ -14,7 +14,7 @@
 class View;
 
 struct SDL_Rect;
-struct SDL_Surface;
+struct SDL_Texture;
 
 class LevelView : public View
 {
@@ -38,9 +38,9 @@ public:
   void draw();
   void activate();
   
-  static void drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
-  static void drawGrid(int x, int y, int w, int h, SDL_Surface *screen);
-  static void drawInventory(const Field *field, SDL_Surface *screen, u16 bx, u16 by);
+  static void drawField(const Field *field, int bx, int by);
+  static void drawGrid(int x, int y, int w, int h);
+  static void drawInventory(const Field *field, int bx, int by);
 
   static void drawTooltip(int x, int y, const char* text);
 };

@@ -116,8 +116,8 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
   return { gfx.x*ui::PIECE_SIZE, gfx.y*ui::PIECE_SIZE, ui::PIECE_SIZE, ui::PIECE_SIZE };
 }
 
-void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 by)
-{
+void LevelView::drawField(const Field *field, int bx, int by)
+{  
   for (int x = 0; x < field->width(); ++x)
     for (int y = 0; y < field->height(); ++y)
     {
@@ -129,8 +129,8 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
       if (tile->piece())
       {
         SDL_Rect src = rectForPiece(tile->piece().get());
-        SDL_Rect dst = Gfx::ccr(cx+1,cy+1,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx + 1, cy + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
       
       for (int i = 0; i < 8; ++i)
@@ -138,8 +138,8 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
         if (tile->colors[i] != LaserColor::NONE)
         {
           SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*8+(ui::PIECE_SIZE)*i, ui::PIECE_SIZE*(tile->colors[i]-1), ui::PIECE_SIZE, ui::PIECE_SIZE);
-          SDL_Rect dst = Gfx::ccr(cx+1, cy+1, 0, 0);
-          SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+          SDL_Rect dst = Gfx::ccr(cx+1, cy+1, ui::PIECE_SIZE, ui::PIECE_SIZE);
+          Gfx::blit(Gfx::tiles, src, dst);
         }
       }
       
@@ -148,14 +148,14 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*17, ui::PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 5, 4, 4);
         SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
       // diagonal middle filler '/'
       if (tile->colors[SOUTH_WEST] != LaserColor::NONE && tile->colors[SOUTH_WEST] == tile->colors[NORTH_EAST])
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*17, ui::PIECE_SIZE*(tile->colors[SOUTH_WEST]-1), 4, 4);
         SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
 
       const Tile* upper = y > 0 ? field->tileAt(Position(x, y-1)) : nullptr;
@@ -167,38 +167,36 @@ void LevelView::drawField(const Field *field, SDL_Surface *screen, u16 bx, u16 b
       if (tile->colors[NORTH] != LaserColor::NONE && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16,ui::PIECE_SIZE*(tile->colors[NORTH]-1),ui::PIECE_SIZE,1);
-        SDL_Rect dst = Gfx::ccr(cx + 1, cy,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx + 1, cy, ui::PIECE_SIZE, ui::PIECE_SIZE);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
       
       // place vertical fillers
       if (tile->colors[WEST] != LaserColor::NONE && (left && left->colors[EAST] == tile->colors[WEST]))
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16,ui::PIECE_SIZE*(tile->colors[WEST]-1),1,ui::PIECE_SIZE);
-        SDL_Rect dst = Gfx::ccr(cx,cy + 1,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx,cy + 1, 1, ui::PIECE_SIZE);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
       
       // place cross filler upper left
       if (tile->colors[NORTH_WEST] != LaserColor::NONE && (upperLeft && upperLeft->colors[SOUTH_EAST] == tile->colors[NORTH_WEST]))
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16 + 9,ui::PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(cx - 2,cy - 2,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx - 2,cy - 2, 5, 5);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
       // place cross filler upper right
       if (tile->colors[NORTH_EAST] != LaserColor::NONE && (upperRight && upperRight->colors[SOUTH_WEST] == tile->colors[NORTH_EAST]))
       {
         SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16 + 9,ui::PIECE_SIZE*(tile->colors[NORTH_EAST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(cx - 2, cy - 2,0,0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(cx - 2, cy - 2, 5, 5);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
     }
-  
-
 }
 
-void LevelView::drawInventory(const Field* field, SDL_Surface *screen, u16 bx, u16 by)
+void LevelView::drawInventory(const Field* field, int bx, int by)
 {
   for (int x = 0; x < field->invWidth(); ++x)
     for (int y = 0; y < field->invHeight(); ++y)
@@ -208,20 +206,20 @@ void LevelView::drawInventory(const Field* field, SDL_Surface *screen, u16 bx, u
       if (tile->piece())
       {
         SDL_Rect src = rectForPiece(tile->piece().get());
-        SDL_Rect dst = Gfx::ccr(bx+ui::TILE_SIZE*x + 1, by + ui::TILE_SIZE*y + 1, 0, 0);
-        SDL_BlitSurface(Gfx::tiles, &src, screen, &dst);
+        SDL_Rect dst = Gfx::ccr(bx+ui::TILE_SIZE*x + 1, by + ui::TILE_SIZE*y + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
+        Gfx::blit(Gfx::tiles, src, dst);
       }
     }
 }
 
-void LevelView::drawGrid(int x, int y, int w, int h, SDL_Surface *screen)
+void LevelView::drawGrid(int x, int y, int w, int h)
 {
   for (int i = 0; i < w; ++i)
     for (int j = 0; j < h; ++j)
     {
       SDL_Rect bgRect = Gfx::ccr(176+16*0,266,16,16);
       SDL_Rect tileRect = Gfx::ccr(x+i*ui::TILE_SIZE, y+j*ui::TILE_SIZE, 15, 15);
-      SDL_BlitSurface(Gfx::tiles, &bgRect, screen, &tileRect);
+      Gfx::blit(Gfx::tiles, bgRect, tileRect);
     }
 }
 
@@ -240,7 +238,7 @@ void LevelView::drawTooltip(int x, int y, const char* text)
   if (y < 0) y = margin;
   else if (y + height > Gfx::height() - margin) y = Gfx::height() - margin - height;
 
-  Gfx::rectFill(x, y, x + width, y + height, Gfx::ccc(0, 45, 120));
+  Gfx::rectFill(x, y, width, height, Gfx::ccc(0, 45, 120));
   Gfx::rect(x, y, width, height, Gfx::ccc(30, 116, 255));
 
   Gfx::drawString(x + padding + 1, y + padding + 1, false, text);
@@ -261,21 +259,17 @@ void LevelView::draw()
   
   const auto inventoryBaseX = coordX(Position(Position::Type::INVENTORY, 0, 0));
   
-  drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width(), field->height(), Gfx::screen);
-  drawGrid(inventoryBaseX, GFX_FIELD_POS_Y, field->invWidth(), field->invHeight(), Gfx::screen);
-
-  Gfx::lock();
+  drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width(), field->height());
+  drawGrid(inventoryBaseX, GFX_FIELD_POS_Y, field->invWidth(), field->invHeight());
   
   Gfx::rect(coordX(*position), coordY(*position), ui::TILE_SIZE, ui::TILE_SIZE, Gfx::ccc(180, 0, 0));
   Gfx::rect(coordX(*position)+1, coordY(*position)+1, ui::TILE_SIZE-2, ui::TILE_SIZE-2, Gfx::ccc(180, 0, 0));
   
   if (selectedTile)
     Gfx::rect(coordX(Position(selectedTile->x, selectedTile->y)), coordY(Position(selectedTile->x, selectedTile->y)), ui::TILE_SIZE, ui::TILE_SIZE, Gfx::ccc(240, 240, 0));
-  
-  Gfx::unlock();
-  
-  drawField(field, Gfx::screen, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
-  drawInventory(field, Gfx::screen, inventoryBaseX, GFX_FIELD_POS_Y);
+    
+  drawField(field, GFX_FIELD_POS_X, GFX_FIELD_POS_Y);
+  drawInventory(field, inventoryBaseX, GFX_FIELD_POS_Y);
   
   if (field->level())
     Gfx::drawString(GFX_FIELD_POS_X + field->width()*ui::TILE_SIZE/2, 5, true, "%s%s", field->level()->name.c_str(), field->level()->solved ? " \x1D" : "");
@@ -315,8 +309,8 @@ void LevelView::draw()
   if (heldPiece)
   {    
     SDL_Rect src = rectForPiece(heldPiece.get());
-    SDL_Rect dst = Gfx::ccr(x - ui::PIECE_SIZE/2, y - ui::PIECE_SIZE/2,0,0);
-    SDL_BlitSurface(Gfx::tiles, &src, Gfx::screen, &dst);
+    SDL_Rect dst = Gfx::ccr(x - ui::PIECE_SIZE/2, y - ui::PIECE_SIZE/2, src.w, src.h);
+    Gfx::blit(Gfx::tiles, src, dst);
   }
 
   if (curTile->piece())
@@ -330,8 +324,6 @@ void LevelView::draw()
   }
   
   //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
-  
-  Gfx::postDraw();
 }
 
 

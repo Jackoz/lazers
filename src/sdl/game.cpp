@@ -80,7 +80,10 @@ void Game::loop()
 {
   while (running)
   {
+    SDL_RenderClear(Gfx::renderer);
     view->draw();
+    SDL_RenderPresent(Gfx::renderer);
+
     if (overView) overView->draw();
     
     handleEvents();

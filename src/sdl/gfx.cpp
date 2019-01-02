@@ -18,50 +18,39 @@ SDL_PixelFormat *Gfx::format = nullptr;
 
 SDL_Window* Gfx::window = nullptr;
 SDL_Renderer* Gfx::renderer = nullptr;
-SDL_Texture* Gfx::texture = nullptr;
 
-SDL_Surface *Gfx::screen = nullptr;
-SDL_Surface *Gfx::realScreen = nullptr;
-
-SDL_Surface *Gfx::tiles = nullptr;
-SDL_Surface *Gfx::font = nullptr;
-SDL_Surface *Gfx::ui = nullptr;
+SDL_Texture* Gfx::tiles = nullptr;
+SDL_Texture* Gfx::font = nullptr;
+SDL_Texture* Gfx::ui = nullptr;
 
 void Gfx::init()
 {
   SDL_Init(SDL_INIT_EVERYTHING);
 	atexit(SDL_Quit);
   
-  
   window = SDL_CreateWindow("Lazers",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH*SCALE, HEIGHT*SCALE, SDL_WINDOW_OPENGL);
-  renderer = SDL_CreateRenderer(window, -1, 0);
-  texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
-  screen = generateSurface(WIDTH, HEIGHT);
-  
-  realScreen = generateSurface(WIDTH*SCALE, HEIGHT*SCALE);
-  
-  Gfx::setFormat(screen->format);
-  
-  #ifdef SCALE
-    tiles = IMG_Load("data/tiles.png");
-    font = IMG_Load("data/font.png");
-    ui = IMG_Load("data/ui.png");
-  
-  assert(tiles && font && ui);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
 
+  SDL_RenderSetScale(renderer, SCALE, SCALE);
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-  #else
-    font = IMG_Load("./font.png");
-    tiles = IMG_Load("./tiles.png");
-    ui = IMG_Load("./ui.png");
-  #endif
-  
+  const char* textures[] = { "data/tiles.png", "data/font.png", "data/ui.png" };
+  SDL_Texture** dest[] = { &tiles, &font, &ui };
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    SDL_Surface* surface = IMG_Load(textures[i]);
+    assert(surface);
+    *dest[i] = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+  }
+
   //SDL_EnableKeyRepeat(300/*SDL_DEFAULT_REPEAT_DELAY*/, 80/*SDL_DEFAULT_REPEAT_INTERVAL*/);
 }
 
-SDL_Surface *Gfx::generateSurface(u16 w, u16 h)
+SDL_Texture* Gfx::generateSurface(u32 w, u32 h)
 {
-  return SDL_CreateRGBSurface(0, w, h, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+  return SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, w, h);
 }
 
 void Gfx::scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f)
@@ -174,61 +163,43 @@ void Gfx::scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 d
   SDL_UnlockSurface(dst);
 }
 
-void Gfx::blit(SDL_Surface *srcs, SDL_Surface *dest, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+void Gfx::blit(SDL_Texture* src, SDL_Renderer* dest, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
 {
-  SDL_Rect src = ccr(x, y, w, h);
-  SDL_Rect dst = ccr(dx, dy, 0, 0);
-  SDL_BlitSurface(srcs, &src, dest, &dst);
+  SDL_Rect srcr = ccr(x, y, w, h);
+  SDL_Rect dstr = ccr(dx, dy, 0, 0);
+  SDL_RenderCopy(dest, src, &srcr, &dstr);
 }
 
-void Gfx::blit(SDL_Surface *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+void Gfx::blit(SDL_Texture *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
 {
-  blit(srcs, screen, x, y, w, h, dx, dy);
+  blit(srcs, renderer, x, y, w, h, dx, dy);
 }
 
 
-void Gfx::line(u32 x1, u32 y1, u32 x2, u32 y2, u32 color)
+void Gfx::line(u32 x1, u32 y1, u32 x2, u32 y2, SDL_Color color)
 {
-  bool hor = y1 == y2;
-  u32* p = (u32*)screen->pixels;
-  
-  if (hor)
-    for (u16 x = x1; x <= x2; ++x)
-      p[y1*screen->w + x] = color;
-  else
-    for (u16 y = y1; y <= y2; ++y)
-      p[y*screen->w + x1] = color;
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 }
 
-void Gfx::rect(s32 x, s32 y, u32 w, u32 h, u32 color)
+void Gfx::rect(s32 x, s32 y, u32 w, u32 h, SDL_Color color)
 {
-  line(x, y, x, y+h, color);
-  line(x, y, x+w, y, color);
-  line(x+w, y, x+w, y+h, color);
-  line(x, y+h, x+w, y+h, color);
+  SDL_Rect rect = { x, y, w, h };
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); 
+  SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Gfx::rectFill(s32 x1, s32 y1, u32 x2, u32 y2, u32 color)
+void Gfx::rectFill(s32 x, s32 y, u32 w, u32 h, SDL_Color color)
 {
-  SDL_Rect rect = {x1,y1,static_cast<u16>(x2-x1+1),static_cast<u16>(y2-y1+1)};
-  SDL_FillRect(screen, &rect, color);
-  
-  /*u32* p = (u32*)screen->pixels;
-   
-   for (int x = x1; x <= x2; ++x)
-   for (int y = y1; y <= y2; ++y)
-   p[y*screen->w + x] = color;*/
+  SDL_Rect rect = { x, y, w, h };
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderFillRect(renderer, &rect);
 }
 
-void Gfx::clear(SDL_Surface *surf, u32 color)
+void Gfx::clear(SDL_Color color)
 {
   SDL_Rect frect = {0,0,WIDTH,HEIGHT};
-  SDL_FillRect(surf, &frect, color);
-}
-
-void Gfx::clear(u32 color)
-{
-  clear(screen, color);
+  rectFill(0, 0, WIDTH, HEIGHT, color);
 }
 
 u32 Gfx::charWidth(char c)
@@ -323,7 +294,10 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
     {    
       u32 w = charWidth(c) + 1;
       rect = ccr(6 * (c%32), 9 * (c/32), w, 9);
-      SDL_BlitSurface(font, &rect, screen, &out);
+      out.w = w;
+      out.h = 9;
+
+      SDL_RenderCopy(renderer, font, &rect, &out);
       out.x += w;
     }
   }
@@ -379,27 +353,13 @@ void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)
         u32 w = charWidth(c);
 
         SDL_Rect rect = ccr(6 * (c % 32), 9 * (c / 32), w, 9);
-        SDL_Rect out = ccr(cx + x, y, 0, 0);
+        SDL_Rect out = ccr(cx + x, y, w, 9);
 
-        SDL_BlitSurface(font, &rect, screen, &out);
+        SDL_RenderCopy(renderer, font, &rect, &out);
         cx += w + 1;
       }
     }
     
   }
-}
-
-void Gfx::postDraw()
-{
-#ifdef SCALE
-  scaleNN(screen, realScreen, 0, 0, 0, 0, WIDTH, HEIGHT, SCALE);
-
-  SDL_UpdateTexture(texture, nullptr, screen->pixels, screen->pitch);
-  SDL_RenderClear(renderer);
-  SDL_RenderCopy(renderer, texture, nullptr, nullptr);
-  SDL_RenderPresent(renderer);
-#else
-  SDL_Flip(screen);
-#endif
 }
 

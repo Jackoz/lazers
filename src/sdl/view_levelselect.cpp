@@ -14,7 +14,7 @@
 
 #include "SDL.h"
 
-LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), scaledPreview(nullptr), field(game->field), levelList(LevelList(game))
+LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), field(game->field), levelList(LevelList(game))
 {
 
 }
@@ -22,7 +22,6 @@ LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), sca
 void LevelSelectView::activate()
 {
   if (!preview) preview = Gfx::generateSurface((field->width()+field->invWidth())*ui::TILE_SIZE+10, field->height()*ui::TILE_SIZE); //TODO: height is max between field and inv
-  if (!scaledPreview) scaledPreview = Gfx::generateSurface((field->width()+field->invWidth())*7+5, field->height()*7);
   
   levelList.set(0);
   levelList.reset();
@@ -50,13 +49,8 @@ void LevelSelectView::draw()
   
   Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
 
-  Gfx::blit(scaledPreview, 0, 0, 160, 150, 170, 30);
-  
-  /*Gfx::lock();
-  Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
-  Gfx::unlock();*/
-  
-  Gfx::postDraw();
+  SDL_Rect dest = { 170, 30, 0, 0 };
+  Gfx::blit(preview, nullptr, &dest);
 }
 
 void LevelSelectView::handleEvent(SDL_Event &event)
@@ -154,11 +148,12 @@ void LevelSelectView::rebuildPreview()
   field->reset();
   field->load(game->pack->at(game->pack->selected));
   
-  Gfx::clear(preview, BACKGROUND_COLOR);
-  LevelView::drawGrid(0, 0, field->width(), field->height(), preview);
-  LevelView::drawGrid(field->width()*ui::TILE_SIZE + 10, 0, field->invWidth(), field->invHeight(), preview);
-  LevelView::drawField(field, preview, 0, 0);
-  LevelView::drawInventory(field, preview, field->width()*ui::TILE_SIZE + 10, 0);
-  Gfx::scaleBicubic(preview, scaledPreview, preview->w, preview->h, scaledPreview->w, scaledPreview->h);
+  Gfx::setTarget(preview);
+  Gfx::clear(BACKGROUND_COLOR);
+  LevelView::drawGrid(0, 0, field->width(), field->height());
+  LevelView::drawGrid(field->width()*ui::TILE_SIZE + 10, 0, field->invWidth(), field->invHeight());
+  LevelView::drawField(field, 0, 0);
+  LevelView::drawInventory(field, field->width()*ui::TILE_SIZE + 10, 0);
+  Gfx::setTarget(nullptr);
   //Gfx::blit(preview, scaledPreview, 0, 0, 160, 150, 0, 0);
 }

@@ -48,12 +48,6 @@ void PackSelectList::draw()
   }
   else
     Gfx::drawString(Gfx::width()/2, Gfx::height()/2 - 5, true, "No level pack loaded.");
-
-  /*Gfx::lock();
-  Gfx::rect(150, 30, 160, 150, Gfx::ccc(180, 0, 0));
-  Gfx::unlock();*/
-  
-  Gfx::postDraw();
 }
 
 void PackSelectList::handleEvent(SDL_Event &event)

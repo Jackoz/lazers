@@ -78,16 +78,12 @@ void HelpView::draw()
 
     if (!entry.level.empty())
     {
-      LevelView::drawGrid(x, 10, field->width(), field->height(), Gfx::screen);
-      LevelView::drawField(field, Gfx::screen, Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10);
+      LevelView::drawGrid(x, 10, field->width(), field->height());
+      LevelView::drawField(field, Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10);
     }
 
     Gfx::drawStringBounded(x, 20 + field->height()*ui::TILE_SIZE, 100, entry.text.data());
   }
-
-
-
-  Gfx::postDraw();
 }
 
 void HelpView::handleEvent(SDL_Event& event)

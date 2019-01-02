@@ -11,7 +11,7 @@
 
 #include "game.h"
 
-struct SDL_Surface;
+struct SDL_Texture;
 
 class View;
 
@@ -32,9 +32,8 @@ class LevelList : public OffsettableList<const LevelSpec*>
 class LevelSelectView : public View
 {
 private:
-  SDL_Surface *preview;
-  SDL_Surface *scaledPreview;
-  Field *field;
+  SDL_Texture* preview;
+  Field* field;
   
   LevelList levelList;
   
