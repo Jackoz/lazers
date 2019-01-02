@@ -33,6 +33,8 @@ const char* i18n::nameForPiece(PieceType type)
 
     case PIECE_SELECTOR: return "Selector";
     case PIECE_SPLICER: return "Splicer";
+    case PIECE_COLOR_SHIFTER: return "Color Shifter";
+    case PIECE_COLOR_INVERTER: return "Color Inverter";
 
     case PIECE_TNT: return "TNT";
 

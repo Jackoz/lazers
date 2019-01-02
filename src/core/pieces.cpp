@@ -222,9 +222,6 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
     { PIECE_PRISM, PieceMechanics(true, false, never(), prismMechanics(false)) },
     { PIECE_FLIPPED_PRISM, PieceMechanics(true, false, never(), prismMechanics(true)) },
 
-
-
-
     { PIECE_SELECTOR, PieceMechanics(true, true, [](const Piece* piece, const Laser&) { return piece->orientation() % 4 != 0; }, [](Field* field, const Piece* piece, Laser& laser)
       {
         int delta = piece->deltaDirection(laser);
@@ -266,6 +263,33 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
         }
       }
     )},
+
+    { PIECE_COLOR_SHIFTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        const int delta = piece->deltaDirection(laser);
+
+        if (delta % 4 != 0)
+          laser.invalidate();
+        else
+        {
+          if (delta == 0)
+            laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & LaserColor::RED) << 2));
+          else if (delta == 4)
+            laser.color = static_cast<LaserColor>(((laser.color << 1) & LaserColor::WHITE) | ((laser.color & LaserColor::BLUE) >> 2));
+        }
+      })
+    },
+
+    { PIECE_COLOR_INVERTER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        const int delta = piece->deltaDirection(laser);
+
+        if (delta % 4 != 0 || laser.color == LaserColor::WHITE)
+          laser.invalidate();
+        else
+          laser.color = static_cast<LaserColor>(~laser.color & LaserColor::WHITE);
+      })
+    },
 
     { PIECE_TNT, PieceMechanics(false, false, never(), [](Field* field, const Piece* piece, Laser& laser) { field->fail(); }) },
 

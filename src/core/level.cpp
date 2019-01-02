@@ -45,6 +45,8 @@ Piece* Field::generatePiece(const PieceInfo& info)
 
     case PIECE_SELECTOR:
     case PIECE_SPLICER:
+    case PIECE_COLOR_SHIFTER:
+    case PIECE_COLOR_INVERTER:
 
     case PIECE_TNT:
 
@@ -59,9 +61,7 @@ Piece* Field::generatePiece(const PieceInfo& info)
       return goal;
     }
 
-    
-    case PIECE_COLOR_SHIFTER: return new ColorShifter(info.direction);
-
+  
     case PIECE_TUNNEL: return new Tunnel(info.direction);
       
     case PIECE_MINE: return new Mine();
@@ -209,7 +209,7 @@ void Field::generateDummy()
     PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_THREE_WAY_SPLITTER, PIECE_STAR_SPLITTER, PIECE_PRISM, PIECE_FLIPPED_PRISM,
     PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
     PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER,
-    PIECE_SELECTOR, PIECE_SPLICER,
+    PIECE_SELECTOR, PIECE_SPLICER, PIECE_COLOR_SHIFTER, PIECE_COLOR_INVERTER,
     PIECE_TNT
   };
 

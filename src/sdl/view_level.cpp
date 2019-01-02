@@ -92,6 +92,8 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
 
     case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + color); break;
     case PIECE_SPLICER: gfx = Position(piece->rotation(), 12 + 7 + color); break;
+    case PIECE_COLOR_SHIFTER: gfx = Position(piece->rotation(), 8); break;
+    case PIECE_COLOR_INVERTER: gfx = Position(piece->rotation(), 6); break;
 
     case PIECE_TNT: gfx = Position(15, 7); break;
 
@@ -100,8 +102,7 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     
 
     case PIECE_TUNNEL: gfx = Position(piece->rotation(), 6); break;
-    case PIECE_COLOR_SHIFTER: gfx = Position(piece->rotation(), 8); break;
-    case PIECE_COLOR_INVERTER: gfx = Position(piece->rotation(), 7); break;
+
     case PIECE_CROSS_COLOR_INVERTER: gfx = Position(piece->rotation() % 2 + 4, 9); break;
     case PIECE_TELEPORTER: gfx = Position(9, 7); break;
     case PIECE_SLIME: gfx = Position(8, 7); break;

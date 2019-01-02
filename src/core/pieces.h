@@ -232,45 +232,6 @@ public:
   }
 };
 
-class ColorShifter : public Piece
-{
-public:
-  ColorShifter(Direction rotation) : Piece(PIECE_COLOR_SHIFTER, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser);
-    
-    if (delta%4 != 0)
-      laser.invalidate();
-    else
-    {
-      if (delta == 0)
-        laser.color = static_cast<LaserColor>((laser.color >> 1) | ((laser.color & LaserColor::RED) << 2));
-      else if (delta == 4)
-        laser.color = static_cast<LaserColor>(((laser.color << 1) & LaserColor::WHITE) | ((laser.color & LaserColor::BLUE) >> 2));
-    }
-  }
-};
-
-class ColorInverter : public Piece
-{
-public:
-  ColorInverter(Direction rotation) : Piece(PIECE_COLOR_INVERTER, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    int delta = deltaDirection(laser);
-    
-    if (delta%4 != 0)
-      laser.invalidate();
-    else
-    {
-      laser.color = static_cast<LaserColor>(~laser.color & LaserColor::WHITE);
-    }
-  }
-};
-
 class CrossColorInverter : public Piece
 {
 public:
