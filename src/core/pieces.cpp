@@ -265,7 +265,10 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
           laser.invalidate();
         }
       }
-    )}
+    )},
+
+    { PIECE_TNT, PieceMechanics(false, false, never(), [](Field* field, const Piece* piece, Laser& laser) { field->fail(); }) },
+
    };
 
   auto it = mechanics.find(type);

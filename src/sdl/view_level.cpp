@@ -93,6 +93,7 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_SELECTOR: gfx = Position(piece->rotation(), 12 + color); break;
     case PIECE_SPLICER: gfx = Position(piece->rotation(), 12 + 7 + color); break;
 
+    case PIECE_TNT: gfx = Position(15, 7); break;
 
 
 
@@ -103,7 +104,6 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_COLOR_INVERTER: gfx = Position(piece->rotation(), 7); break;
     case PIECE_CROSS_COLOR_INVERTER: gfx = Position(piece->rotation() % 2 + 4, 9); break;
     case PIECE_TELEPORTER: gfx = Position(9, 7); break;
-    case PIECE_TNT: gfx = Position(15, 7); break;
     case PIECE_SLIME: gfx = Position(8, 7); break;
     case PIECE_MINE: gfx = Position(8, 8); break;
     case PIECE_STRICT_GOAL: gfx = Position(color + 8, static_cast<const Goal*>(piece)->isSatisfied() ? 14 : 13); break;
@@ -364,7 +364,14 @@ void LevelView::handleEvent(SDL_Event &event)
       {
         if (!heldPiece && piece && piece->canBeMoved())
         {
-          tile->swap(heldPiece);
+          if (piece->isInfinite())
+          {
+            Piece* dupe = piece->dupe();
+            dupe->setInfinite(false);
+            heldPiece.reset(dupe);
+          }
+          else
+            tile->swap(heldPiece);
           field->updateLasers();
         }
         else if (heldPiece && (!piece || piece->canBeMoved()))

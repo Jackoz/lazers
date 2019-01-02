@@ -46,6 +46,8 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_SELECTOR:
     case PIECE_SPLICER:
 
+    case PIECE_TNT:
+
       return new Piece(info.type, info.direction, info.color);
 
     //case PIECE_ROUND_FILTER: return new RoundFilter(); //TODO: why empty constructor?
@@ -63,7 +65,6 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_TUNNEL: return new Tunnel(info.direction);
       
     case PIECE_MINE: return new Mine();
-    case PIECE_TNT: return new TNT();
     case PIECE_SLIME: return new Slime();
     // TODO: finire
     default:
@@ -208,7 +209,8 @@ void Field::generateDummy()
     PIECE_REFRACTOR, PIECE_SPLITTER, PIECE_ANGLED_SPLITTER, PIECE_THREE_WAY_SPLITTER, PIECE_STAR_SPLITTER, PIECE_PRISM, PIECE_FLIPPED_PRISM,
     PIECE_GLASS, PIECE_FILTER, PIECE_POLARIZER, 
     PIECE_RIGHT_BENDER, PIECE_LEFT_BENDER, PIECE_RIGHT_TWISTER, PIECE_LEFT_TWISTER,
-    PIECE_SELECTOR, PIECE_SPLICER
+    PIECE_SELECTOR, PIECE_SPLICER,
+    PIECE_TNT
   };
 
   for (size_t i = 0; i < sizeof(pieces) / sizeof(pieces[0]); ++i)
@@ -225,7 +227,9 @@ void Field::generateDummy()
     info.direction = Dir::NORTH;
     Piece* piece = generatePiece(info);
 
+    piece->setCanBeMoved(true);
     piece->setCanBeColored(true);
+    piece->setInfinite(true);
 
     place(base, piece);
 

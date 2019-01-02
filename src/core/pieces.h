@@ -132,6 +132,18 @@ public:
       assert(mechanics->canBeColored() || color == LaserColor::NONE);
     }
   }
+  
+  Piece* dupe() const {
+    Piece* piece = new Piece(type_);
+    piece->mechanics = this->mechanics;
+    piece->rotation_ = this->rotation_;
+    piece->color_ = this->color_;
+    piece->movable = this->movable;
+    piece->roteable = this->roteable;
+    piece->colorable = this->colorable;
+    piece->infinite = this->infinite;
+    return piece;
+  }
 
   virtual ~Piece() { }
   

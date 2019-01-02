@@ -387,6 +387,7 @@ std::vector<LevelPack> Aargon::parseLevels()
   apacks.push_back({ "Aargon Space Station (Intelligence)", "Twilight Games", "aargon-space-station-03", "Level Pack 1", 4 });
   
   std::vector<LevelPack> packs;
+  size_t levelCount = 0;
   
   for (const AargonPack &apack : apacks)
   {
@@ -406,9 +407,13 @@ std::vector<LevelPack> Aargon::parseLevels()
       
       npack.addLevel(parseLevel(path));
     }
+
+    levelCount += 30;
     
     packs.push_back(npack);
   }
+
+  printf("Parsed %zu Aargon levels.", levelCount);
   
   return packs;
 }

@@ -34,6 +34,8 @@ const char* i18n::nameForPiece(PieceType type)
     case PIECE_SELECTOR: return "Selector";
     case PIECE_SPLICER: return "Splicer";
 
+    case PIECE_TNT: return "TNT";
+
 
     default: return "Unnamed Piece";
   }
