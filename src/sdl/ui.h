@@ -66,4 +66,23 @@ public:
     else
       return false;
   }
+
+  static const char* textColorForLaser(LaserColor color)
+  {
+    switch (color)
+    {
+      case LaserColor::RED: return "^d00";
+      case LaserColor::GREEN: return "^3f7";
+      case LaserColor::BLUE: return "^4ae";
+
+      case LaserColor::YELLOW: return "^ed0";
+      case LaserColor::MAGENTA: return "^f4d";
+      case LaserColor::CYAN: return "^4ee";
+
+      case LaserColor::WHITE: return "^fff";     
+
+      default:
+        assert(false);
+    }
+  }
 };

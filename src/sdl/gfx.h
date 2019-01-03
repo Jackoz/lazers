@@ -40,7 +40,6 @@ public:
 
   static void scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f);
 
-  static void blit(SDL_Texture* src, SDL_Renderer *dst, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
   static void blit(SDL_Texture* src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
 
   static void blit(SDL_Texture* src, const SDL_Rect* srcr, const SDL_Rect* dstr) { SDL_RenderCopy(renderer, src, srcr, dstr); }

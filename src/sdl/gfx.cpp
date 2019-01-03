@@ -163,18 +163,12 @@ void Gfx::scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 d
   SDL_UnlockSurface(dst);
 }
 
-void Gfx::blit(SDL_Texture* src, SDL_Renderer* dest, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
+void Gfx::blit(SDL_Texture *src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
 {
   SDL_Rect srcr = ccr(x, y, w, h);
-  SDL_Rect dstr = ccr(dx, dy, 0, 0);
-  SDL_RenderCopy(dest, src, &srcr, &dstr);
+  SDL_Rect dstr = ccr(dx, dy, w, h);
+  SDL_RenderCopy(renderer, src, &srcr, &dstr);
 }
-
-void Gfx::blit(SDL_Texture *srcs, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy)
-{
-  blit(srcs, renderer, x, y, w, h, dx, dy);
-}
-
 
 void Gfx::line(u32 x1, u32 y1, u32 x2, u32 y2, SDL_Color color)
 {
@@ -254,7 +248,11 @@ u32 Gfx::stringWidth(const char *text)
   for (size_t i = 0; i < len; ++i)
   {
     char c = text[i];
-    strLen += charWidth(c) + 1;
+
+    if (c == '^')
+      i += text[i + 1] == '^' ? 1 : 3;
+    else
+      strLen += charWidth(c) + 1;
   }
   
   return strLen;
@@ -290,6 +288,28 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
       out.y += dy;
       out.x = x;
     }
+    else if (c == '^')
+    {
+      if (buffer[i + 1] == '^')
+      {
+        SDL_SetTextureColorMod(font, 0xFF, 0xFF, 0xFF);
+        ++i;
+      }
+      else
+      {
+        int rgb[] = { buffer[i + 1], buffer[i + 2], buffer[i + 3] };
+        std::for_each(rgb, rgb + 3, [](int& v) {
+          if (v >= 'A' && v <= 'F') v += - 'A' + 0x0a;
+          else if (v >= 'a' && v <= 'f') v += - 'a' + 0xa;
+          else if (v >= '0' && v <= '9') v -= '0';
+          else assert(false);
+        });
+
+        SDL_SetTextureColorMod(font, rgb[0] * 17, rgb[1] * 17, rgb[2] * 17);
+        i += 3;
+      }
+
+    }
     else
     {    
       u32 w = charWidth(c) + 1;
@@ -301,6 +321,8 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
       out.x += w;
     }
   }
+
+  SDL_SetTextureColorMod(font, 0xFF, 0xFF, 0xFF);
 }
 
 void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)

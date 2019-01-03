@@ -57,7 +57,7 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
 {
   Position gfx = Position(0,0);
   int color = piece->color();
-  int orientaton = 0; // piece->orientation();
+  int orientaton = piece->orientation();
   
   switch (piece->type())
   {
@@ -122,8 +122,8 @@ void LevelView::drawPiece(const Piece* piece, int cx, int cy)
   SDL_Rect dst = Gfx::ccr(cx + 1, cy + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
 
   //TODO: verify if this is fine and don't rotate for unrotable pieces
-  SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, piece->orientation() * (360.0 / 8), nullptr, SDL_FLIP_NONE);
-  //Gfx::blit(Gfx::tiles, src, dst);
+  //SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, piece->orientation() * (360.0 / 8), nullptr, SDL_FLIP_NONE);
+  Gfx::blit(Gfx::tiles, src, dst);
 }
 
 void LevelView::drawField(const Field *field, int bx, int by)
@@ -317,7 +317,12 @@ void LevelView::draw()
 
   if (curTile->piece())
   {
-    drawTooltip(x, y + 15, i18n::nameForPiece(curTile->piece()->type()));
+    const auto& piece = curTile->piece();
+    
+    if (piece->color() != LaserColor::NONE)
+      drawTooltip(x, y + 15, (std::string(i18n::nameForPiece(piece->type())) + " (" + ui::textColorForLaser(piece->color()) + i18n::nameForColor(piece->color()) + "^^)").c_str());
+    else
+      drawTooltip(x, y + 15, i18n::nameForPiece(piece->type()));
   }
   
   if (field->isFailed())
@@ -351,7 +356,8 @@ void LevelView::handleEvent(SDL_Event &event)
     {
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       Position hover = coordToPosition(x, y);
-      
+
+      //TODO: if hover is valid
       Tile* tile = field->tileAt(hover);
       const auto& piece = tile->piece();
       

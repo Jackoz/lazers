@@ -1,5 +1,7 @@
 #include "common/i18n.h"
 
+#include <cassert>
+
 const char* i18n::nameForPiece(PieceType type)
 {
   switch (type)
@@ -26,7 +28,7 @@ const char* i18n::nameForPiece(PieceType type)
     case PIECE_FILTER: return "Filter";
     case PIECE_POLARIZER: return "Polarizer";
 
-    case PIECE_RIGHT_BENDER: return "Right Bender";
+    case PIECE_RIGHT_BENDER: return "^d00Right Bender";
     case PIECE_LEFT_BENDER: return "Left Bender";
     case PIECE_RIGHT_TWISTER: return "Right Twister";
     case PIECE_LEFT_TWISTER: return "Left Twister";
@@ -40,5 +42,20 @@ const char* i18n::nameForPiece(PieceType type)
 
 
     default: return "Unnamed Piece";
+  }
+}
+
+const char* i18n::nameForColor(LaserColor color)
+{
+  switch (color)
+  {
+    case LaserColor::RED: return "Red";
+    case LaserColor::GREEN: return "Green";
+    case LaserColor::BLUE: return "Blue";
+    case LaserColor::YELLOW: return "Yellow";
+    case LaserColor::MAGENTA: return "Magenta";
+    case LaserColor::CYAN: return "Cyan";
+    case LaserColor::WHITE: return "White";
+    default: assert(false);
   }
 }
