@@ -10,6 +10,8 @@
 
 #include "level.h"
 
+#include <unordered_map>
+
 static PieceMechanics::on_laser_receive_t prismMechanics(bool flipped) {
   return [flipped](Field* field, const Piece* piece, Laser& laser)
   {
@@ -155,7 +157,12 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
       [](const Piece* piece, const Laser& laser) { return piece->deltaDirection(laser) % 4 != 0 || (piece->color() & laser.color) == LaserColor::NONE; },
       [](Field* field, const Piece* piece, Laser& laser) { laser.color = static_cast<LaserColor>(laser.color & piece->color()); })
     },
-
+    { PIECE_TUNNEL, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser)
+      {
+        if (piece->deltaDirection(laser) != 0)
+          laser.invalidate();
+      })
+    },
 
     { PIECE_RIGHT_BENDER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateRight(1); }) },
     { PIECE_LEFT_BENDER, PieceMechanics(true, false, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.rotateLeft(1); }) },
@@ -322,10 +329,5 @@ void Teleporter::receiveLaser(Field* field, Laser &laser)
   
   laser.invalidate();
 }
-
-//TODO: check?
-void TNT::receiveLaser(Field* field, Laser &laser) { field->fail(); UNUSED(laser); }
-
-
 
 Goal::Goal(PieceType type, LaserColor color) : Piece(type, NORTH, color), satisfied(false), satisfyDirection(0), satisfyColor(LaserColor::NONE) { }

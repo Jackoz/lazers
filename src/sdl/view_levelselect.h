@@ -32,6 +32,7 @@ class LevelList : public OffsettableList<const LevelSpec*>
 class LevelSelectView : public View
 {
 private:
+  int previewWidth, previewHeight;
   SDL_Texture* preview;
   Field* field;
   

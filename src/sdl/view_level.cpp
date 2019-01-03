@@ -84,6 +84,7 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_FILTER: gfx = Position(color + 8, 8); break;
     case PIECE_ROUND_FILTER: gfx = Position(orientaton % 4, 9); break;
     case PIECE_POLARIZER: gfx = Position(color + 8, orientaton % 4 + 9); break;
+    case PIECE_TUNNEL: gfx = Position(orientaton, 7); break;
 
     case PIECE_RIGHT_BENDER: gfx = Position(14, 7); break;
     case PIECE_RIGHT_TWISTER: gfx = Position(12, 7); break;
@@ -98,10 +99,6 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
     case PIECE_TNT: gfx = Position(15, 7); break;
 
 
-
-    
-
-    case PIECE_TUNNEL: gfx = Position(orientaton, 6); break;
 
     case PIECE_CROSS_COLOR_INVERTER: gfx = Position(orientaton % 2 + 4, 9); break;
     case PIECE_TELEPORTER: gfx = Position(9, 7); break;
@@ -346,6 +343,13 @@ void LevelView::draw()
     Gfx::rectFill(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width() * ui::TILE_SIZE, field->height() * ui::TILE_SIZE, Gfx::ccc(180, 0, 0, 128));
     Gfx::drawString(field->width()*ui::TILE_SIZE/2 + GFX_FIELD_POS_X, GFX_FIELD_POS_Y + field->height()*ui::TILE_SIZE/2, true, "FAILED!");
   }
+  
+  /*SDL_Rect src = { 117, 0, 4, 1};
+  SDL_Rect dst = { 10, 10, 4, 100};
+  SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, 45.0, nullptr, SDL_FLIP_NONE);*/
+  
+  
+  //Gfx::blit(Gfx::tiles, &src, &dst);
   
   //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
 }

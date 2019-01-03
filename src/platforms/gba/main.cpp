@@ -122,9 +122,9 @@ public:
     
     for (int i = 0; i < 8; ++i)
     {
-      field.place(Pos(2+i, 2), new Mirror((Direction)i));
-      field.place(Pos(2+i, 3), new Prism((Direction)i));
-      field.place(Pos(2+i, 6), new LaserSource((Direction)i, LaserColor::RED));
+      field.place(Pos(2+i, 2), new Piece(PIECE_MIRROR, (Direction)i));
+      field.place(Pos(2+i, 3), new Piece(PIECE_PRISM, (Direction)i));
+      field.place(Pos(2+i, 6), new Piece(PIECE_SOURCE, (Direction)i, LaserColor::RED));
     }
   }
 };

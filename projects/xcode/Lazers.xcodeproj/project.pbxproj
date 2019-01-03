@@ -25,6 +25,9 @@
 		0492643B21D5502C001BB26C /* SDL2.framework in Copy SDL Framework */ = {isa = PBXBuildFile; fileRef = 0482834221D2A99D008D800E /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0492643C21D5502C001BB26C /* SDL2_image.framework in Copy SDL Framework */ = {isa = PBXBuildFile; fileRef = 0482834021D2A990008D800E /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0492643F21D551C7001BB26C /* aargon in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0492643E21D551C7001BB26C /* aargon */; };
+		04D3DF5F21DDAEBF003FD748 /* level_encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF5E21DDAEBF003FD748 /* level_encoder.cpp */; };
+		04D3DF6221DDAECE003FD748 /* view_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF6021DDAECD003FD748 /* view_help.cpp */; };
+		04D3DF6521DDAED9003FD748 /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF6421DDAED9003FD748 /* i18n.cpp */; };
 		04E6866F21D97D38004CED66 /* repository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04E6866D21D97D37004CED66 /* repository.cpp */; };
 		04EEB486187E705800CA4BFB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EEB485187E705800CA4BFB /* Cocoa.framework */; };
 		04EEB490187E705800CA4BFB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB48E187E705800CA4BFB /* InfoPlist.strings */; };
@@ -99,6 +102,12 @@
 		0492643821D54F60001BB26C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = platforms/macos/SDLMain.h; sourceTree = "<group>"; };
 		0492643921D54F60001BB26C /* SDLMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLMain.mm; path = platforms/macos/SDLMain.mm; sourceTree = "<group>"; };
 		0492643E21D551C7001BB26C /* aargon */ = {isa = PBXFileReference; lastKnownFileType = folder; path = aargon; sourceTree = "<group>"; };
+		04D3DF5D21DDAEBF003FD748 /* level_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = level_encoder.h; sourceTree = "<group>"; };
+		04D3DF5E21DDAEBF003FD748 /* level_encoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_encoder.cpp; sourceTree = "<group>"; };
+		04D3DF6021DDAECD003FD748 /* view_help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view_help.cpp; sourceTree = "<group>"; };
+		04D3DF6121DDAECE003FD748 /* view_help.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = view_help.h; sourceTree = "<group>"; };
+		04D3DF6321DDAED9003FD748 /* i18n.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i18n.h; sourceTree = "<group>"; };
+		04D3DF6421DDAED9003FD748 /* i18n.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i18n.cpp; sourceTree = "<group>"; };
 		04E6866D21D97D37004CED66 /* repository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = repository.cpp; sourceTree = "<group>"; };
 		04E6866E21D97D37004CED66 /* repository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = repository.h; sourceTree = "<group>"; };
 		04EEB482187E705800CA4BFB /* Lazers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lazers.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,6 +142,8 @@
 				0492641921D54F53001BB26C /* aargon.h */,
 				0492641721D54F53001BB26C /* files.cpp */,
 				0492641821D54F53001BB26C /* files.h */,
+				04D3DF5E21DDAEBF003FD748 /* level_encoder.cpp */,
+				04D3DF5D21DDAEBF003FD748 /* level_encoder.h */,
 				04E6866D21D97D37004CED66 /* repository.cpp */,
 				04E6866E21D97D37004CED66 /* repository.h */,
 			);
@@ -155,6 +166,8 @@
 			children = (
 				0492642021D54F53001BB26C /* common.cpp */,
 				0492642121D54F53001BB26C /* common.h */,
+				04D3DF6421DDAED9003FD748 /* i18n.cpp */,
+				04D3DF6321DDAED9003FD748 /* i18n.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -167,6 +180,8 @@
 				0492642B21D54F53001BB26C /* gfx.cpp */,
 				0492642921D54F53001BB26C /* gfx.h */,
 				0492642421D54F53001BB26C /* ui.h */,
+				04D3DF6021DDAECD003FD748 /* view_help.cpp */,
+				04D3DF6121DDAECE003FD748 /* view_help.h */,
 				0492642C21D54F53001BB26C /* view_level.cpp */,
 				0492642621D54F53001BB26C /* view_level.h */,
 				0492642321D54F53001BB26C /* view_levelselect.cpp */,
@@ -322,13 +337,16 @@
 				0492643721D54F53001BB26C /* game.cpp in Sources */,
 				0492643221D54F53001BB26C /* common.cpp in Sources */,
 				0492643121D54F53001BB26C /* pieces.cpp in Sources */,
+				04D3DF5F21DDAEBF003FD748 /* level_encoder.cpp in Sources */,
 				0492643621D54F53001BB26C /* view_level.cpp in Sources */,
 				0492643321D54F53001BB26C /* view_levelselect.cpp in Sources */,
+				04D3DF6521DDAED9003FD748 /* i18n.cpp in Sources */,
 				04E6866F21D97D38004CED66 /* repository.cpp in Sources */,
 				0492642E21D54F53001BB26C /* aargon.cpp in Sources */,
 				0492643521D54F53001BB26C /* gfx.cpp in Sources */,
 				0492643421D54F53001BB26C /* view_packselect.cpp in Sources */,
 				0492643A21D54F60001BB26C /* SDLMain.mm in Sources */,
+				04D3DF6221DDAECE003FD748 /* view_help.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -139,8 +139,8 @@ struct Position
   Type type;
   u8 x, y;
   
-  Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { assert(x >= 0 && y >= 0); }
-  Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { assert(x >= 0 && y >= 0);  }
+  Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { /*assert(x >= 0 && y >= 0);*/ }
+  Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { /*assert(x >= 0 && y >= 0);*/  }
   Position(Type type) : Position(Type::INVALID, 0, 0) { }
   
   bool isValid() const { return type != Position::Type::INVALID; }

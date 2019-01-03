@@ -176,14 +176,14 @@ void Gfx::line(u32 x1, u32 y1, u32 x2, u32 y2, SDL_Color color)
   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 }
 
-void Gfx::rect(s32 x, s32 y, u32 w, u32 h, SDL_Color color)
+void Gfx::rect(int x, int y, int w, int h, SDL_Color color)
 {
   SDL_Rect rect = { x, y, w, h };
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a); 
   SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Gfx::rectFill(s32 x, s32 y, u32 w, u32 h, SDL_Color color)
+void Gfx::rectFill(int x, int y, int w, int h, SDL_Color color)
 {
   SDL_Rect rect = { x, y, w, h };
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);

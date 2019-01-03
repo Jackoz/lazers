@@ -27,6 +27,7 @@ const char* i18n::nameForPiece(PieceType type)
     case PIECE_GLASS: return "Glass";
     case PIECE_FILTER: return "Filter";
     case PIECE_POLARIZER: return "Polarizer";
+    case PIECE_TUNNEL: return "Tunnel";
 
     case PIECE_RIGHT_BENDER: return "Right Bender";
     case PIECE_LEFT_BENDER: return "Left Bender";

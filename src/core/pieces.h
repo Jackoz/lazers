@@ -157,7 +157,7 @@ public:
   void setColor(LaserColor color) { color_ = color;  }
   
   virtual Laser produceLaser() const { 
-    return mechanics ? mechanics->onLaserGeneration(this) : Laser(Position(-1, -1), Direction::NORTH, LaserColor::NONE);
+    return mechanics ? mechanics->onLaserGeneration(this) : Laser(Pos::invalid(), Direction::NORTH, LaserColor::NONE);
   }
   virtual bool blocksLaser(const Laser &laser) { return mechanics ? mechanics->doesBlockLaser(this, laser) : false; }
   virtual void receiveLaser(Field* field, Laser& laser) { if (mechanics) mechanics->onLaserReceive(field, this, laser); }
@@ -220,18 +220,6 @@ public:
   }
 };
 
-class Tunnel : public Piece
-{
-public:
-  Tunnel(Direction rotation) : Piece(PIECE_TUNNEL, rotation, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override
-  {
-    if (deltaDirection(laser) != 0)
-      laser.invalidate();
-  }
-};
-
 class CrossColorInverter : public Piece
 {
 public:
@@ -255,16 +243,6 @@ class Teleporter : public Piece
 {
 public:
   Teleporter() : Piece(PIECE_TELEPORTER, NORTH, LaserColor::NONE) { }
-  
-  void receiveLaser(Field* field, Laser &laser) override;
-  
-  bool canBeRotated() const override { return false; }
-};
-
-class TNT : public Piece
-{
-public:
-  TNT() : Piece(PIECE_TNT, NORTH, LaserColor::NONE) { }
   
   void receiveLaser(Field* field, Laser &laser) override;
   

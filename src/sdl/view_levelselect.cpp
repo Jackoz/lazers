@@ -16,12 +16,13 @@
 
 LevelSelectView::LevelSelectView(Game *game) : View(game), preview(nullptr), field(game->field), levelList(LevelList(game))
 {
-
+  previewWidth = (field->width()+field->invWidth())*ui::TILE_SIZE+10;
+  previewHeight = field->height()*ui::TILE_SIZE;
 }
 
 void LevelSelectView::activate()
 {
-  if (!preview) preview = Gfx::generateSurface((field->width()+field->invWidth())*ui::TILE_SIZE+10, field->height()*ui::TILE_SIZE); //TODO: height is max between field and inv
+  if (!preview) preview = Gfx::generateSurface(previewWidth, previewHeight); //TODO: height is max between field and inv
   
   levelList.set(0);
   levelList.reset();
@@ -49,7 +50,7 @@ void LevelSelectView::draw()
   
   Gfx::drawString(ui::LIST_X+30, ui::LIST_Y+ ui::LIST_DY*levelList.LIST_SIZE+10, false, "%d of %d", levelList.current()+1, levelList.count());
 
-  SDL_Rect dest = { 170, 30, 0, 0 };
+  SDL_Rect dest = { 150, 30, previewWidth/2, previewHeight/2};
   Gfx::blit(preview, nullptr, &dest);
 }
 

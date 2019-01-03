@@ -31,8 +31,8 @@ public:
   static u32 height() { return HEIGHT; }
   
   static void line(u32 x1, u32 y1, u32 x2, u32 y2, SDL_Color color);
-  static void rect(s32 x1, s32 y1, u32 w, u32 h, SDL_Color color);
-  static void rectFill(s32 x1, s32 y1, u32 w, u32 h, SDL_Color color);
+  static void rect(int x1, int y1, int w, int h, SDL_Color color);
+  static void rectFill(int x1, int y1, int w, int h, SDL_Color color);
 
   static void clear(SDL_Color color);
 
