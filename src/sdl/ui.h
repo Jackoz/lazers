@@ -26,17 +26,17 @@
 class ui
 {
 public:
-  static constexpr u16 TILE_SIZE = 15;
-  static constexpr u16 PIECE_SIZE = 14;
+  static constexpr int TILE_SIZE = 15;
+  static constexpr int PIECE_SIZE = 14;
   
-  static constexpr u32 LIST_X = 20;
-  static constexpr u32 LIST_Y = 30;
-  static constexpr u32 LIST_DY = 10;
-  static constexpr u32 LIST_SIZE = 14;
-  static constexpr u32 LIST_WIDTH = 150;
+  static constexpr int LIST_X = 20;
+  static constexpr int LIST_Y = 30;
+  static constexpr int LIST_DY = 10;
+  static constexpr int LIST_SIZE = 14;
+  static constexpr int LIST_WIDTH = 150;
 
-  static constexpr u32 TITLE_X = 20;
-  static constexpr u32 TITLE_Y = 10;
+  static constexpr int TITLE_X = 20;
+  static constexpr int TITLE_Y = 10;
 
   static int coordToListEntry(int x, int y)
   {
@@ -83,6 +83,7 @@ public:
 
       default:
         assert(false);
+        return "";
     }
   }
 };

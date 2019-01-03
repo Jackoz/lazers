@@ -130,24 +130,29 @@ enum Direction
 
 using Dir = Direction;
 
+#include <cassert>
+
 struct Position
 {
   enum class Type : u8 { FIELD, INVENTORY, INVALID };
   
   Type type;
-  s8 x, y;
+  u8 x, y;
   
-  Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { }
-  Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { }
-  Position(Type type) : Position(Type::INVALID, -1, -1) { }
+  Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { assert(x >= 0 && y >= 0); }
+  Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { assert(x >= 0 && y >= 0);  }
+  Position(Type type) : Position(Type::INVALID, 0, 0) { }
   
+  bool isValid() const { return type != Position::Type::INVALID; }
   bool isInventory() const { return type == Position::Type::INVENTORY; }
 
   Position& operator+=(Direction dir) { x += directions[dir][0]; y += directions[dir][1]; return *this; }
   Position operator+(Direction dir) const { return Position(x + directions[dir][0], y + directions[dir][1]); }
   Position operator+(const Position& o) const { return Position(type, x + o.x, y + o.y); }
   
+  static Position invalid() { return Position(Position::Type::INVALID); }
   static const s8 directions[8][2];
+
 };
 
 using Pos = Position;

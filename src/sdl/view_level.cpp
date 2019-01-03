@@ -15,12 +15,12 @@
 #include "common/i18n.h"
 
 
-static const u16 GFX_FIELD_POS_X = 0;
-static const u16 GFX_FIELD_POS_Y = 15;
+static const int GFX_FIELD_POS_X = 0;
+static const int GFX_FIELD_POS_Y = 15;
 
 Position LevelView::coordToPosition(int x, int y)
 {
-  static const u16 GFX_INVENTORY_POS_X = ui::TILE_SIZE*field()->width() + 10;
+  const int GFX_INVENTORY_POS_X = ui::TILE_SIZE*field()->width() + 10;
 
   if (x >= GFX_FIELD_POS_X && x <= GFX_FIELD_POS_X + ui::TILE_SIZE*field()->width() && y >= GFX_FIELD_POS_Y && y < GFX_FIELD_POS_Y + ui::TILE_SIZE*field()->height())
   {
@@ -33,7 +33,7 @@ Position LevelView::coordToPosition(int x, int y)
     return Position(Position::Type::INVENTORY, tx, ty);
   }
   else
-    return Position(Position::Type::INVALID);
+    return Position::invalid();
 }
 
 u16 LevelView::coordX(const Position& p)
@@ -128,13 +128,13 @@ void LevelView::drawPiece(const Piece* piece, int cx, int cy)
 
 void LevelView::drawField(const Field *field, int bx, int by)
 {  
-  for (int x = 0; x < field->width(); ++x)
-    for (int y = 0; y < field->height(); ++y)
+  for (u32 x = 0; x < field->width(); ++x)
+    for (u32 y = 0; y < field->height(); ++y)
     {
       const Tile *tile = field->tileAt(Position(x, y));
       
-      u16 cx = bx + x*ui::TILE_SIZE;
-      u16 cy = by + y*ui::TILE_SIZE;
+      u32 cx = bx + x*ui::TILE_SIZE;
+      u32 cy = by + y*ui::TILE_SIZE;
       
       if (tile->piece())
         drawPiece(tile->piece().get(), cx, cy);
@@ -221,12 +221,25 @@ void LevelView::drawInventory(const Field* field, int bx, int by)
 void LevelView::drawGrid(int x, int y, int w, int h)
 {
   for (int i = 0; i < w; ++i)
+  {
     for (int j = 0; j < h; ++j)
     {
-      SDL_Rect bgRect = Gfx::ccr(176+16*0,266,16,16);
-      SDL_Rect tileRect = Gfx::ccr(x+i*ui::TILE_SIZE, y+j*ui::TILE_SIZE, 15, 15);
+      SDL_Rect bgRect = Gfx::ccr(176 + 16 * 0, 266, 15, 15);
+      SDL_Rect tileRect = Gfx::ccr(x + i * ui::TILE_SIZE, y + j * ui::TILE_SIZE, 15, 15);
       Gfx::blit(Gfx::tiles, bgRect, tileRect);
     }
+
+    SDL_Rect bgRect = Gfx::ccr(176 + 16 * 0, 266 + 15, 15, 1);
+    SDL_Rect tileRect = Gfx::ccr(x + i * ui::TILE_SIZE, y + h * ui::TILE_SIZE, 15, 1);
+    Gfx::blit(Gfx::tiles, bgRect, tileRect);
+  }
+
+  for (int j = 0; j < h; ++j)
+  {
+    SDL_Rect bgRect = Gfx::ccr(176 + 16 * 0 + 15, 266, 1, 15);
+    SDL_Rect tileRect = Gfx::ccr(x + w * ui::TILE_SIZE, y + j * ui::TILE_SIZE, 1, 15);
+    Gfx::blit(Gfx::tiles, bgRect, tileRect);
+  }
 }
 
 void LevelView::drawTooltip(int x, int y, const char* text)
@@ -244,8 +257,8 @@ void LevelView::drawTooltip(int x, int y, const char* text)
   if (y < 0) y = margin;
   else if (y + height > Gfx::height() - margin) y = Gfx::height() - margin - height;
 
-  Gfx::rectFill(x, y, width, height, Gfx::ccc(0, 45, 120));
-  Gfx::rect(x, y, width, height, Gfx::ccc(30, 116, 255));
+  Gfx::rectFill(x, y, width, height, Gfx::ccc(35, 35, 45));
+  Gfx::rect(x, y, width, height, Gfx::ccc(4, 4, 8));
 
   Gfx::drawString(x + padding + 1, y + padding + 1, false, text);
 }
@@ -268,8 +281,11 @@ void LevelView::draw()
   drawGrid(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width(), field->height());
   drawGrid(inventoryBaseX, GFX_FIELD_POS_Y, field->invWidth(), field->invHeight());
   
-  Gfx::rect(coordX(*position), coordY(*position), ui::TILE_SIZE, ui::TILE_SIZE, Gfx::ccc(180, 0, 0));
-  Gfx::rect(coordX(*position)+1, coordY(*position)+1, ui::TILE_SIZE-2, ui::TILE_SIZE-2, Gfx::ccc(180, 0, 0));
+  if (position->isValid())
+  {
+    Gfx::rect(coordX(*position), coordY(*position), ui::TILE_SIZE, ui::TILE_SIZE, Gfx::ccc(180, 0, 0));
+    Gfx::rect(coordX(*position) + 1, coordY(*position) + 1, ui::TILE_SIZE - 2, ui::TILE_SIZE - 2, Gfx::ccc(180, 0, 0));
+  }
   
   if (selectedTile)
     Gfx::rect(coordX(Position(selectedTile->x, selectedTile->y)), coordY(Position(selectedTile->x, selectedTile->y)), ui::TILE_SIZE, ui::TILE_SIZE, Gfx::ccc(240, 240, 0));
@@ -327,6 +343,7 @@ void LevelView::draw()
   
   if (field->isFailed())
   {
+    Gfx::rectFill(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width() * ui::TILE_SIZE, field->height() * ui::TILE_SIZE, Gfx::ccc(180, 0, 0, 128));
     Gfx::drawString(field->width()*ui::TILE_SIZE/2 + GFX_FIELD_POS_X, GFX_FIELD_POS_Y + field->height()*ui::TILE_SIZE/2, true, "FAILED!");
   }
   
@@ -346,8 +363,10 @@ void LevelView::handleEvent(SDL_Event &event)
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       Position hover = coordToPosition(x, y);
       
-      if (field->isInside(hover))
+      if (hover.isValid() && field->isInside(hover))
         *position = hover;
+      else
+        *position = Pos::invalid();
       
       break;
     }
@@ -357,47 +376,48 @@ void LevelView::handleEvent(SDL_Event &event)
       auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
       Position hover = coordToPosition(x, y);
 
-      //TODO: if hover is valid
       Tile* tile = field->tileAt(hover);
-      const auto& piece = tile->piece();
-      
-      if (event.button.button == SDL_BUTTON_LEFT)
-      {
-        if (!heldPiece && piece && piece->canBeMoved())
-        {
-          if (piece->isInfinite())
-          {
-            Piece* dupe = piece->dupe();
-            dupe->setInfinite(false);
-            heldPiece.reset(dupe);
-          }
-          else
-            tile->swap(heldPiece);
-          field->updateLasers();
-        }
-        else if (heldPiece && (!piece || piece->canBeMoved()))
-        {
-          tile->swap(heldPiece);
-          field->updateLasers();
-        }
-      }
-      else if (event.button.button == SDL_BUTTON_RIGHT)
-      {
-        if (piece && piece->canBeRotated())
-        {
-          piece->rotateRight();
-          field->updateLasers();
-        }
-      }
-      
 
-      
+      if (hover.isValid() && tile)
+      {
+        const auto& piece = tile->piece();
+
+        if (event.button.button == SDL_BUTTON_LEFT)
+        {
+          if (!heldPiece && piece && piece->canBeMoved())
+          {
+            if (piece->isInfinite())
+            {
+              Piece* dupe = piece->dupe();
+              dupe->setInfinite(false);
+              heldPiece.reset(dupe);
+            }
+            else
+              tile->swap(heldPiece);
+            field->updateLasers();
+          }
+          else if (heldPiece && (!piece || piece->canBeMoved()))
+          {
+            tile->swap(heldPiece);
+            field->updateLasers();
+          }
+        }
+        else if (event.button.button == SDL_BUTTON_RIGHT)
+        {
+          if (piece && piece->canBeRotated())
+          {
+            piece->rotateRight();
+            field->updateLasers();
+          }
+        }
+      }
+
       break;
     }
     
     case SDL_KEYDOWN:			// Button press
     {
-      auto*& p = position;
+      Pos*& p = position;
       auto key = event.key.keysym.sym;
       
       switch(key)

@@ -163,6 +163,7 @@ public:
   u32 invHeight() const { return _invHeight; }
   
   bool isInside(const Pos& p) const { return p.x >= 0 && p.x < _width && p.y >= 0 && p.y < _height; }
+  bool isInsideInventory(const Pos& p) const { return p.x >= 0 && p.x < _invWidth && p.y >= 0 && p.y < _invHeight; }
 
   void reset()
   {
@@ -187,15 +188,19 @@ public:
   }
   
   inline const Tile* tileAt(Position p) const {
-    return p.type == Position::Type::INVENTORY ?
-      &inventory[p.y * _invWidth + p.x] :
-      &tiles[p.y * _width + p.x];
+    if (p.type == Position::Type::INVENTORY && isInsideInventory(p))
+      return &inventory[p.y * _invWidth + p.x];
+    else if (isInside(p))
+      return &tiles[p.y * _width + p.x];
+    else return nullptr;
   }
 
   inline Tile* tileAt(Position p) {
-    return p.type == Position::Type::INVENTORY ?
-    &inventory[p.y * _invWidth + p.x] :
-    &tiles[p.y * _width + p.x];
+    if (p.type == Position::Type::INVENTORY && isInsideInventory(p))
+      return &inventory[p.y * _invWidth + p.x];
+    else if (isInside(p))
+      return &tiles[p.y * _width + p.x];
+    else return nullptr;
   }
 
   void addGoal(Goal* goal) { goals.push_back(goal); }

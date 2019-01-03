@@ -61,7 +61,8 @@ public:
   
   static inline SDL_Rect ccr(int x, int y, int w, int h) { return { x, y, w, h }; }
   static inline SDL_Color ccc(u8 r, u8 g, u8 b) { return { r, g, b, 0xFF }; }
-    
+  static inline SDL_Color ccc(u8 r, u8 g, u8 b, u8 a) { return { r, g, b, a }; }
+
   static SDL_Texture *tiles;
   static SDL_Texture *font;
   static SDL_Texture *ui;

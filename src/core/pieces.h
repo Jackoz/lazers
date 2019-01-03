@@ -99,7 +99,7 @@ public:
 
 private:
   static on_laser_receive_t emptyMechanics() { return [](Field*, const Piece*, Laser&) {}; }
-  static on_laser_generate_t emptyGenerator() { return [](const Piece*) { return Laser(Pos(-1, -1), Dir::NORTH, LaserColor::NONE); }; }
+  static on_laser_generate_t emptyGenerator() { return [](const Piece*) { return Laser(Pos::invalid(), Dir::NORTH, LaserColor::NONE); }; }
 
   static inline blocks_laser_predicate always() { return [](const Piece*, const Laser&) { return true;  }; }
   static inline blocks_laser_predicate never() { return [](const Piece*, const Laser&) { return false;  }; }
