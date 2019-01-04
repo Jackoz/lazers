@@ -136,7 +136,7 @@ void LevelView::drawField(const Field *field, int bx, int by)
       if (tile->piece())
         drawPiece(tile->piece().get(), cx, cy);
       
-      static const SDL_Rect rect = { 224, 16, 4, 1 };
+      static SDL_Rect rect = { 224, 16, 4, 1 };
       static SDL_Rect dst = { 0, 0, 4, 8 };
       
       struct Spec
@@ -148,13 +148,13 @@ void LevelView::drawField(const Field *field, int bx, int by)
       
       static const Spec specs[] = {
         { 6, 0, 0, 8},
-        { 10, -1, 45, 11},
-        { ui::TILE_SIZE/2 - rect.w / 2 + 1, 0, 90, 8},
-        { ui::TILE_SIZE/2 - rect.w / 2 + 1, 0, 135, 11},
+        { 11, -2, 45, 11},
+        { 10, 4, 90, 8},
+        { 10, 7, 135, 11},
         { 6, 8, 0, 8},
-        { 2, 6, 45, 11},
-        { ui::TILE_SIZE/2 - rect.w / 2 + 1, 0, 90, 8},
-        { ui::TILE_SIZE/2 - rect.w / 2 + 1, 0, 135, 11},
+        { 3, 6, 45, 11},
+        { 2, 4, 90, 8},
+        { 3, 0, 135, 11},
       };
       
       
@@ -168,6 +168,7 @@ void LevelView::drawField(const Field *field, int bx, int by)
           dst.x = (int)cx + specs[i].dx;
           dst.y = (int)cy + specs[i].dy;
           dst.h = specs[i].length;
+          rect.y = 8 + 8*tile->colors[i];
           
           SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &rect, &dst, specs[i].angle, nullptr, SDL_FLIP_NONE);
         }
@@ -175,59 +176,6 @@ void LevelView::drawField(const Field *field, int bx, int by)
       
       SDL_SetTextureAlphaMod(Gfx::tiles, 0xFF);
       SDL_SetTextureBlendMode(Gfx::tiles, SDL_BLENDMODE_BLEND);
-
-      
-      /*
-      // diagonal middle filler '\'
-      if (tile->colors[NORTH_WEST] != LaserColor::NONE && tile->colors[NORTH_WEST] == tile->colors[SOUTH_EAST])
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*17, ui::PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 5, 4, 4);
-        SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-      // diagonal middle filler '/'
-      if (tile->colors[SOUTH_WEST] != LaserColor::NONE && tile->colors[SOUTH_WEST] == tile->colors[NORTH_EAST])
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*17, ui::PIECE_SIZE*(tile->colors[SOUTH_WEST]-1), 4, 4);
-        SDL_Rect dst = Gfx::ccr(cx + 1 + 5, cy + 1 + 5, 0, 0);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-
-      const Tile* upper = y > 0 ? field->tileAt(Position(x, y-1)) : nullptr;
-      const Tile* left = x > 0 ? field->tileAt(Position(x-1, y)) : nullptr;
-      const Tile* upperLeft = upper && left ? field->tileAt(Position(x-1, y-1)) : nullptr;
-      const Tile* upperRight = upper && x < field->width() ? field->tileAt(Position(x+1, y-1)) : nullptr;
-      
-      // place horizontal fillers
-      if (tile->colors[NORTH] != LaserColor::NONE && (upper && upper->colors[SOUTH] == tile->colors[NORTH]))
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16,ui::PIECE_SIZE*(tile->colors[NORTH]-1),ui::PIECE_SIZE,1);
-        SDL_Rect dst = Gfx::ccr(cx + 1, cy, ui::PIECE_SIZE, ui::PIECE_SIZE);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-      
-      // place vertical fillers
-      if (tile->colors[WEST] != LaserColor::NONE && (left && left->colors[EAST] == tile->colors[WEST]))
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16,ui::PIECE_SIZE*(tile->colors[WEST]-1),1,ui::PIECE_SIZE);
-        SDL_Rect dst = Gfx::ccr(cx,cy + 1, 1, ui::PIECE_SIZE);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-      
-      // place cross filler upper left
-      if (tile->colors[NORTH_WEST] != LaserColor::NONE && (upperLeft && upperLeft->colors[SOUTH_EAST] == tile->colors[NORTH_WEST]))
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16 + 9,ui::PIECE_SIZE*(tile->colors[NORTH_WEST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(cx - 2,cy - 2, 5, 5);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }
-      // place cross filler upper right
-      if (tile->colors[NORTH_EAST] != LaserColor::NONE && (upperRight && upperRight->colors[SOUTH_WEST] == tile->colors[NORTH_EAST]))
-      {
-        SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*16 + 9,ui::PIECE_SIZE*(tile->colors[NORTH_EAST]-1) + 9 , 5, 5);
-        SDL_Rect dst = Gfx::ccr(cx - 2, cy - 2, 5, 5);
-        Gfx::blit(Gfx::tiles, src, dst);
-      }*/
     }
 }
 
