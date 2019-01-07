@@ -142,29 +142,9 @@ void LevelView::drawField(const Field *field, int bx, int by)
       {
         if (tile->colors[i] != LaserColor::NONE)
         {
-          if (i == 0 || i == 4)
-          {
-            SDL_Rect src = { 224, 16, 4, 1};
-            SDL_Rect dst = { (int)cx + ui::TILE_SIZE/2 - src.w / 2 + 1, (int)cy + (i == 4 ? ui::TILE_SIZE/2 + 1 : 0), 4, 8};
-            SDL_RenderCopy(Gfx::renderer, Gfx::tiles, &src, &dst);
-            /*SDL_Rect src = { 117, 0, 4, 1};
-             SDL_Rect dst = { 10, 10, 4, 100};
-             SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, 45.0, nullptr, SDL_FLIP_NONE);*/
-
-          }
-          else if (i == 2 /*|| i == 6*/)
-          {
-            SDL_Rect src = { 224, 16, 4, 1};
-            SDL_Rect dst = { (int)cx + ui::TILE_SIZE/2 - src.w / 2 + 1, (int)cy + (i == 4 ? ui::TILE_SIZE/2 + 1 : 0), 4, 8};
-            SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, 90.0, nullptr, SDL_FLIP_NONE);
-          }
-          else
-          {
-            continue;
-            SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*8+(ui::PIECE_SIZE)*i, ui::PIECE_SIZE*(tile->colors[i]-1), ui::PIECE_SIZE, ui::PIECE_SIZE);
-            SDL_Rect dst = Gfx::ccr(cx+1, cy+1, ui::PIECE_SIZE, ui::PIECE_SIZE);
-            Gfx::blit(Gfx::tiles, src, dst);
-          }
+          SDL_Rect src = Gfx::ccr(ui::PIECE_SIZE*8+(ui::PIECE_SIZE)*i, ui::PIECE_SIZE*(tile->colors[i]-1), ui::PIECE_SIZE, ui::PIECE_SIZE);
+          SDL_Rect dst = Gfx::ccr(cx+1, cy+1, ui::PIECE_SIZE, ui::PIECE_SIZE);
+          Gfx::blit(Gfx::tiles, src, dst);
         }
       }
       
