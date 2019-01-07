@@ -38,10 +38,7 @@ public:
 
   static SDL_Texture* generateSurface(u32 w, u32 h);
 
-  static void scaleNN(SDL_Surface *src, SDL_Surface *dst, u16 sx, u16 sy, u16 dx, u16 dy, u16 w, u16 h, u16 f);
-
   static void blit(SDL_Texture* src, u16 x, u16 y, u16 w, u16 h, u16 dx, u16 dy);
-
   static void blit(SDL_Texture* src, const SDL_Rect* srcr, const SDL_Rect* dstr) { SDL_RenderCopy(renderer, src, srcr, dstr); }
   static void blit(SDL_Texture* src, const SDL_Rect& srcr, const SDL_Rect& dstr) { SDL_RenderCopy(renderer, src, &srcr, &dstr);  }
 
@@ -52,9 +49,6 @@ public:
   
   static void setTarget(SDL_Texture* target) { SDL_SetRenderTarget(renderer, target);  }
 
-  static void scaleBicubic(SDL_Surface *src, SDL_Surface *dst, u16 sw, u16 sh, u16 dw, u16 dh);
-
-  static void setFormat(SDL_PixelFormat *format) { Gfx::format = format; }
   static void init();
   
   //static inline color makeColor(u8 r, u8 g, u8 b) { return (color){r,g,b,0}; }

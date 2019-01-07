@@ -40,6 +40,7 @@ private:
   
 public:
   LevelSelectView(Game *game);
+  
   void handleEvent(SDL_Event &event);
   void draw();
   void rebuildPreview();
