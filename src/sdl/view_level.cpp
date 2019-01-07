@@ -159,7 +159,7 @@ void LevelView::drawField(const Field *field, int bx, int by)
       
       
 
-      SDL_SetTextureAlphaMod(Gfx::tiles, 200);
+      SDL_SetTextureAlphaMod(Gfx::tiles, 160);
       SDL_SetTextureBlendMode(Gfx::tiles, SDL_BLENDMODE_BLEND);
       for (int i = 0; i < 8; ++i)
       {
@@ -171,6 +171,7 @@ void LevelView::drawField(const Field *field, int bx, int by)
           rect.y = 8 + 8*tile->colors[i];
           
           SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &rect, &dst, specs[i].angle, nullptr, SDL_FLIP_NONE);
+
         }
       }
       
