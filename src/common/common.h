@@ -10,6 +10,8 @@
 #define _COMMON_H_
 
 #include <cstdint>
+#include <cstddef>
+#include <type_traits>
 
 using u32 = uint32_t;
 using u16 = uint16_t;
@@ -20,6 +22,17 @@ using s32 = int32_t;
 
 typedef signed char s8;
 typedef signed short s16;
+
+struct enum_hash
+{
+  template<typename T>
+  inline
+  typename std::enable_if<std::is_enum<T>::value, size_t>::type
+  operator()(T const value) const
+  {
+    return static_cast<size_t>(value);
+  }
+};
 
 enum LaserColor : u8
 {

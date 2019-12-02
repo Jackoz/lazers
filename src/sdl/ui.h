@@ -5,10 +5,18 @@
 #include "SDL.h"
 #include "gfx.h"
 
+#if _WIN32 || __APPLE__
 #include <string_view>
+using lwstring = std::string_view;
+#else
+using lwstring = std::string;
+#endif
 
+#if defined(OPEN_DINGUX)
+#define SCALE (1)
+#else
 #define SCALE (3)
-
+#endif
 
 #define KEY_LEFT (SDLK_LEFT)
 #define KEY_RIGHT (SDLK_RIGHT)

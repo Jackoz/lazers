@@ -194,7 +194,7 @@ PieceInfo LevelEncoder::decodePieceFromString(const char* data, bool withFlags)
   return info;
 }
 
-std::array<char, 4> LevelEncoder::encodePieceToString(const PieceInfo& info, bool asciiCoords)
+std::array<char, 4> encodePieceToString(const PieceInfo& info, bool asciiCoords)
 {
   return std::array<char, 4>();
 }

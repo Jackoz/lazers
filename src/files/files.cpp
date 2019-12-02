@@ -17,6 +17,7 @@
 #endif
 
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
@@ -168,9 +169,14 @@ void Files::saveLevel(const LevelSpec* level, byte_t **ptr, size_t *length)
 }
 
 
+#if defined(OPEN_DINGUX)
+const string PATH_SAVE = "/home/SD/lazers/packs/";
+const string PATH_PAK = "/home/SD/lazers/packs/";
+#else
 const string PATH_SAVE = "/Users/jack/Documents/Dev/c++/lazers/data/packs/";
-
 const string PATH_PAK = "/Users/jack/Documents/Dev/c++/lazers/data/packs/";
+#endif
+
 
 std::vector<std::string> Files::findFiles(std::string path, const char *ext)
 {
@@ -211,7 +217,7 @@ std::vector<LevelPack> Files::loadPacks()
 
 LevelPack Files::loadPack(const std::string& filename)
 {
-  ifstream in = ifstream(PATH_PAK+filename);
+  ifstream in(PATH_PAK+filename);
   
   u8 *output;
   size_t outputLength;
@@ -247,7 +253,7 @@ LevelPack Files::loadPack(const std::string& filename)
 
 void Files::savePack(const LevelPack& pack)
 {
-  ofstream os = ofstream(PATH_PAK+pack.path()+".pak");
+  ofstream os(PATH_PAK+pack.path()+".pak");
   
   char *output;
   size_t outputLength;
@@ -281,7 +287,7 @@ void Files::savePack(const LevelPack& pack)
 
 void Files::loadSolvedStatus()
 {
-  ifstream in = ifstream(PATH_SAVE+"save.dat");
+  ifstream in(PATH_SAVE+"save.dat");
   string line;
   
   if (in)
@@ -328,7 +334,7 @@ void Files::loadSolvedStatus()
 
 void Files::saveSolvedStatus()
 {  
-  ofstream os = ofstream(PATH_SAVE+"save.dat");
+  ofstream os(PATH_SAVE+"save.dat");
   
   //TODO: reimplement
   /*

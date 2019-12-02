@@ -56,7 +56,7 @@ static PieceMechanics::on_laser_receive_t prismMechanics(bool flipped) {
 
 const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
 {
-  static const std::unordered_map<PieceType, PieceMechanics> mechanics = {
+  static const std::unordered_map<PieceType, PieceMechanics, enum_hash> mechanics = {
     { PIECE_WALL, PieceMechanics(false, false, always(), emptyMechanics(), emptyGenerator()) },
     { PIECE_SOURCE, PieceMechanics(true, true, always(), emptyMechanics(), [](const Piece* piece) { return Laser(Position(0,0), piece->orientation(), piece->color()); })}, //TODO: why 0,0?
 

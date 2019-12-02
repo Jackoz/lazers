@@ -223,8 +223,8 @@ void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)
   vsnprintf(buffer, 256, text, args);
   va_end(args);
 
-  std::string_view string = buffer;
-  std::vector<std::string_view> words;
+  lwstring string = buffer;
+  std::vector<lwstring> words;
   size_t c = 0;
   size_t len = string.size();
 
@@ -235,7 +235,7 @@ void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)
     if (c != s)
       words.emplace_back(string.substr(c, s - c));
 
-    if (s == std::string_view::npos)
+    if (s == lwstring::npos)
       break;
     else
       buffer[s] = '\0';

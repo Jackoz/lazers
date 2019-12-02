@@ -3,13 +3,17 @@
 CXX:= $(CROSS)g++
 
 SYSROOT:= $(shell $(CXX) -print-sysroot)
-CXXFLAGS+= $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
-LDFLAGS+= $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
-LDFLAGS+= -lSDL_image
+CXXFLAGS+= $(shell $(SYSROOT)/usr/bin/sdl2-config --cflags)
+LDFLAGS+= $(shell $(SYSROOT)/usr/bin/sdl2-config --libs)
+LDFLAGS+= -lSDL2_image
 
-CXXFLAGS+= -W -Wall -Wextra -O2 -std=c++0x
+CXXFLAGS+= -W -Wall -Wextra -O2 -std=c++0x -Isrc -Wno-unused-parameter -DOPEN_DINGUX
 
-SOURCES:= $(wildcard *.cpp)
+SOURCES:= $(wildcard src/common/*.cpp)
+SOURCES += $(wildcard src/core/*.cpp)
+SOURCES += $(wildcard src/files/*.cpp)
+SOURCES += $(wildcard src/sdl/*.cpp)
+SOURCES += $(wildcard src/platforms/windows/*.cpp)
 BINARIES:= $(foreach source, $(SOURCES), $(source:%.cpp=%.o) )
 EXECUTABLE:= ./lazers/lazers
 

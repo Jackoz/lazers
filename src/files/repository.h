@@ -95,6 +95,6 @@ public:
   void add(const LevelPack& pack) { packs.push_back(pack); }
   const LevelPack& operator[](size_t index) { return packs[index]; }
   
-  auto begin() const { return packs.begin(); }
-  auto end() const { return packs.end(); }
+  std::vector<LevelPack>::const_iterator begin() const { return packs.begin(); }
+  std::vector<LevelPack>::const_iterator end() const { return packs.end(); }
 };

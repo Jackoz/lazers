@@ -12,8 +12,8 @@
 #include "common/common.h"
 #include "core/level.h"
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include "SDL.h"
+#include "SDL_image.h"
 
 #define BACKGROUND_COLOR (Gfx::ccc(20, 20, 40))
 

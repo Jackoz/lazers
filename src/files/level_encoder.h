@@ -24,5 +24,4 @@ private:
 
 public:
   PieceInfo decodePieceFromString(const char* data, bool withFlags);
-  std::array<char, 4> encodePieceToString(const PieceInfo& info, bool asciiCoords);
 };
