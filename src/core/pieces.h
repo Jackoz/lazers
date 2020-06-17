@@ -154,6 +154,7 @@ public:
   
   void rotateLeft() { rotation_ = rotation_ == NORTH ? NORTH_WEST : static_cast<Direction>(rotation_-1); }
   void rotateRight() { rotation_ = rotation_ == NORTH_WEST ? NORTH : static_cast<Direction>(rotation_+1); }
+  void setOrientation(Direction orientation) { rotation_ = orientation; }
   void setColor(LaserColor color) { color_ = color;  }
   
   virtual Laser produceLaser() const { 

@@ -12,6 +12,7 @@
 
 #include <unordered_map>
 
+/* TODO: broken for flipped prism */
 static PieceMechanics::on_laser_receive_t prismMechanics(bool flipped) {
   return [flipped](Field* field, const Piece* piece, Laser& laser)
   {

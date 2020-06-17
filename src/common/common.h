@@ -141,6 +141,8 @@ enum Direction
   NORTH_WEST
 };
 
+static bool isOrtho(Direction d) { return d % 2 == 0; }
+
 using Dir = Direction;
 
 #include <cassert>

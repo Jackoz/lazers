@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Jack. All rights reserved.
 //
 
-#ifndef _AARGON_H_
-#define _AARGON_H_
+#pragma once
 
 #include "common/common.h"
 
@@ -23,5 +22,3 @@ public:
   static LevelSpec parseLevel(const std::string& name);
   static std::vector<LevelPack> parseLevels();
 };
-
-#endif

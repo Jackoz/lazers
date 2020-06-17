@@ -15,6 +15,7 @@ class View;
 
 struct SDL_Rect;
 struct SDL_Texture;
+struct PieceGfx;
 
 class LevelView : public View
 {
@@ -26,7 +27,7 @@ private:
   
   u16 coordX(const Position& p);
   u16 coordY(const Position& p);
-  static SDL_Rect rectForPiece(const Piece* piece);
+  static PieceGfx gfxForPiece(const Piece* piece);
   
   Field* field() { return game->field; }
   

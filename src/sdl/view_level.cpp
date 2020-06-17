@@ -53,52 +53,89 @@ void LevelView::activate()
 
 }
 
-SDL_Rect LevelView::rectForPiece(const Piece* piece)
+struct PieceGfx
+{
+  enum class Mode
+  {
+    NEVER_ROTATES, HAS_HALF_ROTATION
+  };
+  
+  SDL_Rect rect;
+  int rotation;
+
+  PieceGfx(const Piece* piece, Mode mode, int x, int y) : rect({ x * ui::PIECE_SIZE, y * ui::PIECE_SIZE, ui::PIECE_SIZE, ui::PIECE_SIZE })
+  {
+    constexpr bool forceRotations = true;
+    
+    switch (mode) {
+      case Mode::NEVER_ROTATES: rotation = 0; break;
+      case Mode::HAS_HALF_ROTATION:
+      {
+        if (forceRotations)
+          rotation = piece->orientation();
+        else
+        {
+          if (!isOrtho(piece->orientation())) rect.x += ui::PIECE_SIZE;
+          rotation = (piece->orientation() / 2) * 2;
+        }
+
+        break;
+      }
+    }
+  }
+
+
+  PieceGfx(int x, int y, int angle) : rect({ x * ui::PIECE_SIZE, y * ui::PIECE_SIZE, ui::PIECE_SIZE, ui::PIECE_SIZE }), rotation(angle) { }
+  PieceGfx(int x, int y) : PieceGfx(x, y, 0) { }
+};
+
+PieceGfx LevelView::gfxForPiece(const Piece* piece)
 {
   Position gfx = Position(0,0);
+  int angle = piece->orientation();
+
   int color = piece->color();
   int orientaton = piece->orientation();
-  
+  const Direction o = piece->orientation();
+ 
   switch (piece->type())
   {
-    case PIECE_WALL: gfx = Position(13,7); break;
-    case PIECE_GLASS: gfx = Position(11,7); break;
+  case PIECE_WALL: return PieceGfx(13, 7);
+  case PIECE_GLASS: return PieceGfx(11, 7);
     
-    case PIECE_SOURCE: gfx = Position(orientaton, 1); break;
+  case PIECE_SOURCE: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 1);
+  case PIECE_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 0);
 
-    case PIECE_MIRROR: gfx = Position(orientaton, 0); break;
-    case PIECE_SKEW_MIRROR: gfx = Position(orientaton, 10); break;
-    case PIECE_DOUBLE_MIRROR: gfx = Position(orientaton % 4 + 4, 5); break;
-    case PIECE_DOUBLE_SPLITTER_MIRROR: gfx = Position(orientaton % 4 + 4, 11); break;
-    case PIECE_DOUBLE_PASS_MIRROR: gfx = Position(orientaton % 4, 12); break;
-    case PIECE_DOUBLE_SKEW_MIRROR: gfx = Position(orientaton % 4 + 4, 12); break;
-    case PIECE_REFRACTOR: gfx = Position(orientaton % 4, 5); break;
+    case PIECE_SKEW_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 4, 2);
+    case PIECE_DOUBLE_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 2, 2);
+    case PIECE_DOUBLE_SPLITTER_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 4, 4);
+    case PIECE_DOUBLE_PASS_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 2);
+    case PIECE_DOUBLE_SKEW_MIRROR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 4, 3);
+    case PIECE_REFRACTOR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 4, 1);
 
-    case PIECE_SPLITTER: gfx = Position(orientaton, 2); break;
-    case PIECE_ANGLED_SPLITTER: gfx = Position(orientaton, 3); break;
-    case PIECE_THREE_WAY_SPLITTER: gfx = Position(orientaton + 8, 18); break;
+    case PIECE_SPLITTER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 2, 0);
+    case PIECE_ANGLED_SPLITTER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 4, 0);
+    case PIECE_THREE_WAY_SPLITTER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 2, 1);
     case PIECE_STAR_SPLITTER: gfx = Position(8, 9); break;
-    case PIECE_PRISM: gfx = Position(orientaton, 4); break;
-    case PIECE_FLIPPED_PRISM: gfx = Position(orientaton + 8, 17); break;
+    case PIECE_PRISM: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 3);
+    case PIECE_FLIPPED_PRISM: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 2, 3);
 
-    case PIECE_FILTER: gfx = Position(color + 8, 8); break;
+    case PIECE_FILTER: return PieceGfx(0, 8 + color);
     case PIECE_ROUND_FILTER: gfx = Position(orientaton % 4, 9); break;
-    case PIECE_POLARIZER: gfx = Position(color + 8, orientaton % 4 + 9); break;
-    case PIECE_TUNNEL: gfx = Position(orientaton, 7); break;
+    case PIECE_POLARIZER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 1, 8 + color);
+    case PIECE_TUNNEL: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 7);
 
     case PIECE_RIGHT_BENDER: gfx = Position(14, 7); break;
     case PIECE_RIGHT_TWISTER: gfx = Position(12, 7); break;
     case PIECE_LEFT_BENDER: gfx = Position(10, 7); break;
     case PIECE_LEFT_TWISTER: gfx = Position(9, 7); break;
 
-    case PIECE_SELECTOR: gfx = Position(orientaton, 12 + color); break;
-    case PIECE_SPLICER: gfx = Position(orientaton, 12 + 7 + color); break;
-    case PIECE_COLOR_SHIFTER: gfx = Position(orientaton, 8); break;
-    case PIECE_COLOR_INVERTER: gfx = Position(orientaton, 6); break;
+    case PIECE_SELECTOR: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 3, 8 + color);
+    case PIECE_SPLICER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 5, 8 + color);
+    case PIECE_COLOR_SHIFTER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 2, 6);
+    case PIECE_COLOR_INVERTER: return PieceGfx(piece, PieceGfx::Mode::HAS_HALF_ROTATION, 0, 6);
 
     case PIECE_TNT: gfx = Position(15, 7); break;
-
-
 
     case PIECE_CROSS_COLOR_INVERTER: gfx = Position(orientaton % 2 + 4, 9); break;
     case PIECE_TELEPORTER: gfx = Position(9, 7); break;
@@ -110,17 +147,17 @@ SDL_Rect LevelView::rectForPiece(const Piece* piece)
       assert(false);
   }
   
-  return { gfx.x*ui::PIECE_SIZE, gfx.y*ui::PIECE_SIZE, ui::PIECE_SIZE, ui::PIECE_SIZE };
+  return PieceGfx(gfx.x, gfx.y, piece->orientation());
 }
 
 void LevelView::drawPiece(const Piece* piece, int cx, int cy)
 {
-  SDL_Rect src = rectForPiece(piece);
+  PieceGfx src = gfxForPiece(piece);
   SDL_Rect dst = Gfx::ccr(cx + 1, cy + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
 
   //TODO: verify if this is fine and don't rotate for unrotable pieces
-  //SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src, &dst, piece->orientation() * (360.0 / 8), nullptr, SDL_FLIP_NONE);
-  Gfx::blit(Gfx::tiles, src, dst);
+  SDL_RenderCopyEx(Gfx::renderer, Gfx::tiles, &src.rect, &dst, src.rotation * (360.0 / 8), nullptr, SDL_FLIP_NONE);
+  //Gfx::blit(Gfx::tiles, src, dst);
 }
 
 void LevelView::drawField(const Field *field, int bx, int by)
@@ -156,8 +193,6 @@ void LevelView::drawField(const Field *field, int bx, int by)
         { 2, 4, 90, 8},
         { 3, 0, 135, 11},
       };
-      
-      
 
       SDL_SetTextureAlphaMod(Gfx::tiles, 160);
       SDL_SetTextureBlendMode(Gfx::tiles, SDL_BLENDMODE_BLEND);
@@ -189,9 +224,9 @@ void LevelView::drawInventory(const Field* field, int bx, int by)
       
       if (tile->piece())
       {
-        SDL_Rect src = rectForPiece(tile->piece().get());
+        PieceGfx src = gfxForPiece(tile->piece().get());
         SDL_Rect dst = Gfx::ccr(bx+ui::TILE_SIZE*x + 1, by + ui::TILE_SIZE*y + 1, ui::PIECE_SIZE, ui::PIECE_SIZE);
-        Gfx::blit(Gfx::tiles, src, dst);
+        Gfx::blit(Gfx::tiles, src.rect, dst);
       }
     }
 }
@@ -276,9 +311,9 @@ void LevelView::draw()
 
   // 245, 110
   
-  const int BASE_X = 80;
+  constexpr int BASE_X = 80;
   const int BASE_Y = GFX_FIELD_POS_X + field->height()*ui::TILE_SIZE + 20;
-  const int STEP = 14;
+  constexpr int STEP = 14;
   
   if (position == &iposition)
     Gfx::drawString(BASE_X, BASE_Y, true, "Y: to field");
