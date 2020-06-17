@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{C5A2A52B-65F4-4C5F-9B92-FCB8A2B8B320}</ProjectGuid>
+    <RootNamespace>Lazers</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\src;D:\dev\openmom\libs\sdl2\win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2.lib;D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2_image.lib;D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\src;D:\dev\openmom\libs\sdl2\win\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2.lib;D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2_image.lib;D:\dev\openmom\libs\sdl2\win\lib\x64\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\common\common.cpp" />
+    <ClCompile Include="..\..\src\common\i18n.cpp" />
+    <ClCompile Include="..\..\src\core\level.cpp" />
+    <ClCompile Include="..\..\src\core\pieces.cpp" />
+    <ClCompile Include="..\..\src\files\aargon.cpp" />
+    <ClCompile Include="..\..\src\files\files.cpp" />
+    <ClCompile Include="..\..\src\files\level_encoder.cpp" />
+    <ClCompile Include="..\..\src\files\repository.cpp" />
+    <ClCompile Include="..\..\src\platforms\windows\main.cpp" />
+    <ClCompile Include="..\..\src\sdl\game.cpp" />
+    <ClCompile Include="..\..\src\sdl\gfx.cpp" />
+    <ClCompile Include="..\..\src\sdl\view_help.cpp" />
+    <ClCompile Include="..\..\src\sdl\view_level.cpp" />
+    <ClCompile Include="..\..\src\sdl\view_levelselect.cpp" />
+    <ClCompile Include="..\..\src\sdl\view_packselect.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\common\common.h" />
+    <ClInclude Include="..\..\src\common\i18n.h" />
+    <ClInclude Include="..\..\src\core\level.h" />
+    <ClInclude Include="..\..\src\core\pieces.h" />
+    <ClInclude Include="..\..\src\files\aargon.h" />
+    <ClInclude Include="..\..\src\files\files.h" />
+    <ClInclude Include="..\..\src\files\level_encoder.h" />
+    <ClInclude Include="..\..\src\files\repository.h" />
+    <ClInclude Include="..\..\src\platforms\windows\dirent.h" />
+    <ClInclude Include="..\..\src\sdl\game.h" />
+    <ClInclude Include="..\..\src\sdl\gfx.h" />
+    <ClInclude Include="..\..\src\sdl\ui.h" />
+    <ClInclude Include="..\..\src\sdl\view_help.h" />
+    <ClInclude Include="..\..\src\sdl\view_level.h" />
+    <ClInclude Include="..\..\src\sdl\view_levelselect.h" />
+    <ClInclude Include="..\..\src\sdl\view_packselect.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

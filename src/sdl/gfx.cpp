@@ -37,10 +37,23 @@ void Gfx::init()
   const char* textures[] = { "data/tiles.png", "data/font.png", "data/ui.png" };
   SDL_Texture** dest[] = { &tiles, &font, &ui };
 
+#ifdef _WIN32
+  std::string prefix = "./../../";
+#else
+  std::string prefix = "";
+#endif
+
   for (size_t i = 0; i < 3; ++i)
   {
-    SDL_Surface* surface = IMG_Load(textures[i]);
-    assert(surface);
+    SDL_Surface* surface = IMG_Load((prefix + textures[i]).c_str());
+    
+    if (!surface)
+    {
+      const char* message = IMG_GetError();
+      printf("IMG_Load error: %s\n", message);
+      assert(false);
+    }
+
     *dest[i] = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
   }
