@@ -103,7 +103,7 @@ void Field::load(const LevelSpec* level)
     }
     else
     {
-      printf("Missing allocation: %c (%s)\n",info.type,level->name.c_str());
+      printf("Missing allocation: %c (%s)\n", info.type, level->name.c_str());
     }
   }
   

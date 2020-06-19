@@ -43,7 +43,7 @@ public:
   static void drawGrid(int x, int y, int w, int h);
   static void drawInventory(const Field *field, int bx, int by);
 
-  static void drawTooltip(int x, int y, const char* text);
+  static void drawTooltip(int x, int y, const std::string& text);
 
   static void drawPiece(const Piece* piece, int x, int y);
 };

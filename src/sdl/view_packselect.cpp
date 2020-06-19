@@ -91,7 +91,7 @@ void PackSelectList::handleEvent(SDL_Event &event)
       {
         case KEY_START:
         {
-          game->quit();
+          game->switchView(VIEW_START);
           break;
         }
           

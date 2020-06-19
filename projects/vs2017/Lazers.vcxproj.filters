@@ -66,6 +66,9 @@
     <ClCompile Include="..\..\src\sdl\view_help.cpp">
       <Filter>src\sdl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sdl\view_start.cpp">
+      <Filter>src\sdl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common\i18n.h">
@@ -114,6 +117,9 @@
       <Filter>src\sdl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\sdl\view_help.h">
+      <Filter>src\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sdl\view_start.h">
       <Filter>src\sdl</Filter>
     </ClInclude>
   </ItemGroup>

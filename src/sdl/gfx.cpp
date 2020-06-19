@@ -138,17 +138,16 @@ u32 Gfx::charWidth(char c)
   }
 }
 
-u32 Gfx::stringHeight(const char* text)
+u32 Gfx::stringHeight(const std::string& text)
 {
   return 9;
 }
 
-u32 Gfx::stringWidth(const char *text)
+u32 Gfx::stringWidth(const std::string& text)
 {
-  size_t len = strlen(text);
   u32 strLen = 0;
 
-  for (size_t i = 0; i < len; ++i)
+  for (size_t i = 0; i < text.size(); ++i)
   {
     char c = text[i];
 
@@ -163,12 +162,12 @@ u32 Gfx::stringWidth(const char *text)
 
 constexpr u32 dy = 9;
 
-void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
+void Gfx::drawString(int x, int y, bool centered, const std::string& text, ...)
 {
   char buffer[256];
   va_list args;
   va_start(args, text);
-  vsnprintf(buffer, 256, text, args);
+  vsnprintf(buffer, 256, text.c_str(), args);
   va_end(args);
   
   if (centered)
@@ -228,12 +227,12 @@ void Gfx::drawString(int x, int y, bool centered, const char *text, ...)
   SDL_SetTextureColorMod(font, 0xFF, 0xFF, 0xFF);
 }
 
-void Gfx::drawStringBounded(int x, int y, int w, const char *text, ...)
+void Gfx::drawStringBounded(int x, int y, int w, const std::string& text, ...)
 {
   char buffer[256];
   va_list args;
   va_start(args, text);
-  vsnprintf(buffer, 256, text, args);
+  vsnprintf(buffer, 256, text.c_str(), args);
   va_end(args);
 
   lwstring string = buffer;

@@ -42,10 +42,10 @@ public:
   static void blit(SDL_Texture* src, const SDL_Rect* srcr, const SDL_Rect* dstr) { SDL_RenderCopy(renderer, src, srcr, dstr); }
   static void blit(SDL_Texture* src, const SDL_Rect& srcr, const SDL_Rect& dstr) { SDL_RenderCopy(renderer, src, &srcr, &dstr);  }
 
-  static u32 stringHeight(const char* text);
-  static u32 stringWidth(const char* text);
-  static void drawString(int x, int y, bool centered, const char *text, ...);
-  static void drawStringBounded(int x, int y, int w, const char *text, ...);
+  static u32 stringHeight(const std::string&);
+  static u32 stringWidth(const std::string&);
+  static void drawString(int x, int y, bool centered, const std::string& text);
+  static void drawStringBounded(int x, int y, int w, const std::string& text);
   
   static void setTarget(SDL_Texture* target) { SDL_SetRenderTarget(renderer, target);  }
 

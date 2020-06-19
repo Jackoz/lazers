@@ -255,7 +255,7 @@ void LevelView::drawGrid(int x, int y, int w, int h)
   }
 }
 
-void LevelView::drawTooltip(int x, int y, const char* text)
+void LevelView::drawTooltip(int x, int y, const std::string& text)
 {
   static constexpr u32 padding = 2;
   static constexpr u32 margin = 2;
@@ -307,7 +307,7 @@ void LevelView::draw()
   drawInventory(field, inventoryBaseX, GFX_FIELD_POS_Y);
   
   if (field->level())
-    Gfx::drawString(GFX_FIELD_POS_X + field->width()*ui::TILE_SIZE/2, 5, true, "%s%s", field->level()->name.c_str(), field->level()->solved ? " \x1D" : "");
+    Gfx::drawString(GFX_FIELD_POS_X + field->width()*ui::TILE_SIZE/2, 5, true, field->level()->name + (field->level()->solved ? " \x1D" : ""));
 
   // 245, 110
   

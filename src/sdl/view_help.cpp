@@ -64,7 +64,7 @@ void HelpView::draw()
   {
     const HelpEntry* entry = list.get(i);
 
-    Gfx::drawString(ui::LIST_X, ui::LIST_Y + ui::LIST_DY*i, false, "%s", entry->title.c_str());
+    Gfx::drawString(ui::LIST_X, ui::LIST_Y + ui::LIST_DY*i, false, entry->title);
 
     if (list.isSelected(i))
       Gfx::blit(Gfx::ui, 0, 0, 4, 7, ui::LIST_X - 8, ui::LIST_Y + ui::LIST_DY*i);
