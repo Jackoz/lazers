@@ -45,7 +45,7 @@ void Game::init()
   if (packs.packCount() > 0)
     pack = &packs[0];
 
-  view = views[VIEW_LEVEL];
+  view = views[VIEW_START];
   
   view->activate();
 }

@@ -18,7 +18,7 @@ private:
   struct MenuEntry
   {
     std::string caption;
-    std::function<void(void)> action;
+    std::function<void(Game*)> action;
   };
 
   std::vector<MenuEntry> entries;

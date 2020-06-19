@@ -32,10 +32,15 @@ public:
   }
 };
 
+
+/* type x y dir col flags*/
+
 static const HelpEntry help[] = {
   HelpEntry("Source", "A source produces a beam of a specific color. Some can be rotated.", "S112RS122GS132BS350YS450MS550C"),
   HelpEntry("Mirror", "The mirror deflects laser beams by 90 degrees.", "M221 S02erM260 S303yM632 M454 "),
   HelpEntry("Double Mirror", "A double mirror works as a normal mirror but on both sides.", "S113RS557BD332 "),
+  
+  HelpEntry("Filter", "A filter let just its color components to pass through.", "S022WF220YF420MS204WF240CS042WS404WF440G" ),
 };
 
 class HelpEntryList : public OffsettableList<const HelpEntry*>
@@ -79,7 +84,7 @@ void HelpView::draw()
     if (!entry.level.empty())
     {
       LevelView::drawGrid(x, 10, field->width(), field->height());
-      LevelView::drawField(field, Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10);
+      LevelView::drawField(field.get(), Gfx::width() - ui::TILE_SIZE*field->width() - 10, 10);
     }
 
     Gfx::drawStringBounded(x, 20 + field->height()*ui::TILE_SIZE, 100, entry.text.data());
@@ -101,7 +106,7 @@ void HelpView::handleMouseEvent(EventType type, int x, int y, int button)
       if (entry.hasExampleLevel())
       {
         field->reset();
-        entry.buildField(field);
+        entry.buildField(field.get());
       }
     }
   }
@@ -123,15 +128,22 @@ void HelpView::handleEvent(SDL_Event& event)
       ui::handleMouseWheelOnList(list, event.wheel.y);
       break;
     }
+      
+    case SDL_KEYDOWN:
+    {
+      if (event.key.keysym.sym == KEY_SELECT)
+        game->switchView(VIEW_START); //TODO: should go back to view that called it, not always start
+      break;
+    }
   }
 }
 
 void HelpView::activate()
 {
-  field = new Field(7, 7, 0, 0);
+  field.reset(new Field(7, 7, 0, 0));
 }
 
 void HelpView::deactivate()
 {
-  delete field;
+  field.reset();
 }

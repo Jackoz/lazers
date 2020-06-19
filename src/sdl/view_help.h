@@ -3,10 +3,10 @@
 class HelpView : public View
 {
 private:
-  Field* field;
+  std::unique_ptr<Field> field;
 
 public:
-  HelpView(Game* game) : View(game), field(nullptr) { }
+  HelpView(Game* game) : View(game) { }
 
   void activate() override;
   void deactivate() override;

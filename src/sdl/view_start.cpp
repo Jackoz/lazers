@@ -20,7 +20,8 @@ StartView::StartView(Game *game) : View(game)
       "Play" 
     }, 
     { 
-      "Help" 
+      "Help",
+      [] (Game* game) { game->switchView(VIEW_HELP); }
     },
     { 
       "Options"
@@ -29,7 +30,8 @@ StartView::StartView(Game *game) : View(game)
       "About" 
     },
     { 
-      "Quit" 
+      "Quit",
+      [] (Game* game) { game->quit(); }
     } 
   };
   selected = entries.end();
@@ -54,8 +56,8 @@ void StartView::draw()
     
     if (!it->action)
       prefix = "^bbb";
-    else if (it == selected)
-      prefix = "^f00";
+    if (it == selected)
+      prefix = "^ff0";
     
     Gfx::drawString(Gfx::width() / 2, Gfx::height() * 0.4f + spacing * c, true, prefix + it->caption);
     ++c;
@@ -64,11 +66,25 @@ void StartView::draw()
 
 void StartView::handleMouseEvent(EventType type, int x, int y, int button)
 {
+  const int base = Gfx::height() * 0.4f;
+  const int spacing = Gfx::stringHeight("") + 1;
+  int w = (y - base) / spacing;
+  auto hover = entries.end();
+  
+  if (w >= 0 && w < entries.size() && x > Gfx::width()/2 - 20 && x < Gfx::width()/2 + 20)
+  {
+    hover = entries.begin() + w;
+  }
+  
   if (type == EventType::MOUSE_MOTION)
   {
-    const int base = Gfx::height() * 0.4f;
-    const int spacing = Gfx::stringHeight("") + 1;
-    int w = (y - base) / spacing;
+    selected = hover;
+  }
+  else if (type == EventType::MOUSE_DOWN)
+  {
+    selected = hover;
+    if (selected != entries.end() && selected->action)
+      selected->action(game);
   }
 }
 
