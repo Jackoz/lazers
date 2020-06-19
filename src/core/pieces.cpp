@@ -154,7 +154,7 @@ const PieceMechanics* PieceMechanics::mechanicsForType(PieceType type)
 
     { PIECE_GLASS, PieceMechanics(false, false, never(), emptyMechanics(), emptyGenerator()) },
     { PIECE_FILTER, PieceMechanics(false, true, never(), [](Field* field, const Piece* piece, Laser& laser) { laser.color = static_cast<LaserColor>(laser.color & piece->color()); })},
-    { PIECE_POLARIZER, PieceMechanics(false, true, 
+    { PIECE_POLARIZER, PieceMechanics(true, true, 
       [](const Piece* piece, const Laser& laser) { return piece->deltaDirection(laser) % 4 != 0 || (piece->color() & laser.color) == LaserColor::NONE; },
       [](Field* field, const Piece* piece, Laser& laser) { laser.color = static_cast<LaserColor>(laser.color & piece->color()); })
     },

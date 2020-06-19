@@ -8,6 +8,8 @@ const char* i18n::nameForPiece(PieceType type)
   {
     case PIECE_WALL: return "Wall";
     case PIECE_SOURCE: return "Source";
+    case PIECE_LOOSE_GOAL: return "Loose Goal";
+    case PIECE_STRICT_GOAL: return "Goal";
 
     case PIECE_MIRROR: return "Mirror";
     case PIECE_DOUBLE_MIRROR: return "Double Mirror";

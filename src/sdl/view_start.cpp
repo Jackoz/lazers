@@ -17,7 +17,8 @@ StartView::StartView(Game *game) : View(game)
 {
   entries = { 
     { 
-      "Play" 
+      "Play",
+      [] (Game* game) { game->switchView(VIEW_PACK_SELECT); }
     }, 
     { 
       "Help",
