@@ -45,7 +45,15 @@ public:
   static u32 stringHeight(const std::string&);
   static u32 stringWidth(const std::string&);
   static void drawString(int x, int y, bool centered, const std::string& text);
-  static void drawStringBounded(int x, int y, int w, const std::string& text);
+  static void drawStringBounded(int x, int y, int w, std::string text);
+
+  template<typename T, typename... Args>
+  static void drawString(int x, int y, bool centered, const std::string& text, T&& arg, Args&&... args)
+  {
+    char buffer[512];
+    snprintf(buffer, 512, text.c_str(), arg, args...);
+    drawString(x, y, centered, buffer);
+  }
   
   static void setTarget(SDL_Texture* target) { SDL_SetRenderTarget(renderer, target);  }
 

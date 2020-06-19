@@ -162,28 +162,22 @@ u32 Gfx::stringWidth(const std::string& text)
 
 constexpr u32 dy = 9;
 
-void Gfx::drawString(int x, int y, bool centered, const std::string& text, ...)
+void Gfx::drawString(int x, int y, bool centered, const std::string& text)
 {
-  char buffer[256];
-  va_list args;
-  va_start(args, text);
-  vsnprintf(buffer, 256, text.c_str(), args);
-  va_end(args);
-  
   if (centered)
   {
-    u16 length = stringWidth(buffer);
+    u16 length = stringWidth(text);
     x -= length/2;
   }
   
-  size_t len = strlen(buffer);
+  const size_t len = text.size();
   
   SDL_Rect rect;
   SDL_Rect out = ccr(x, y, 0, 0);
   
   for (size_t i = 0; i < len; ++i)
   {
-    char c = buffer[i];
+    char c = text[i];
     
     if (c == '\n')
     {
@@ -192,14 +186,14 @@ void Gfx::drawString(int x, int y, bool centered, const std::string& text, ...)
     }
     else if (c == '^')
     {
-      if (buffer[i + 1] == '^')
+      if (text[i + 1] == '^')
       {
         SDL_SetTextureColorMod(font, 0xFF, 0xFF, 0xFF);
         ++i;
       }
       else
       {
-        int rgb[] = { buffer[i + 1], buffer[i + 2], buffer[i + 3] };
+        int rgb[] = { text[i + 1], text[i + 2], text[i + 3] };
         std::for_each(rgb, rgb + 3, [](int& v) {
           if (v >= 'A' && v <= 'F') v += - 'A' + 0x0a;
           else if (v >= 'a' && v <= 'f') v += - 'a' + 0xa;
@@ -227,15 +221,9 @@ void Gfx::drawString(int x, int y, bool centered, const std::string& text, ...)
   SDL_SetTextureColorMod(font, 0xFF, 0xFF, 0xFF);
 }
 
-void Gfx::drawStringBounded(int x, int y, int w, const std::string& text, ...)
+void Gfx::drawStringBounded(int x, int y, int w, std::string text)
 {
-  char buffer[256];
-  va_list args;
-  va_start(args, text);
-  vsnprintf(buffer, 256, text.c_str(), args);
-  va_end(args);
-
-  lwstring string = buffer;
+  lwstring string = text;
   std::vector<lwstring> words;
   size_t c = 0;
   size_t len = string.size();
@@ -250,7 +238,7 @@ void Gfx::drawStringBounded(int x, int y, int w, const std::string& text, ...)
     if (s == lwstring::npos)
       break;
     else
-      buffer[s] = '\0';
+      text[s] = '\0';
 
     c = s + 1;
   }
