@@ -141,7 +141,7 @@ enum Direction
   NORTH_WEST
 };
 
-static bool isOrtho(Direction d) { return d % 2 == 0; }
+inline bool isOrtho(Direction d) { return d % 2 == 0; }
 
 using Dir = Direction;
 
@@ -149,10 +149,10 @@ using Dir = Direction;
 
 struct Position
 {
-  enum class Type : u8 { FIELD, INVENTORY, INVALID };
+  enum class Type : s16 { FIELD, INVENTORY, INVALID };
   
   Type type;
-  u8 x, y;
+  s16 x, y;
   
   Position(Type type, s32 x, s32 y) : type(type), x(x), y(y) { /*assert(x >= 0 && y >= 0);*/ }
   Position(s32 x, s32 y) : Position(Type::FIELD, x, y) { /*assert(x >= 0 && y >= 0);*/  }

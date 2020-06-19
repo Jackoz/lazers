@@ -77,6 +77,8 @@ Piece* Field::generatePiece(const PieceInfo& info)
 
 void Field::load(const LevelSpec* level)
 {
+  printf("Loading %s\n", level->name.c_str());
+  
   this->_level = level;
   
   u32 curInvSlot = 0;

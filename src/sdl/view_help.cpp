@@ -34,8 +34,8 @@ public:
 
 static const HelpEntry help[] = {
   HelpEntry("Source", "A source produces a beam of a specific color. Some can be rotated.", "S112RS122GS132BS350YS450MS550C"),
-  HelpEntry( "Mirror", "The mirror deflects laser beams by 90 degrees.", "M221 S02erM260 S303yM632 M454 "),
-  HelpEntry( "Double Mirror", "A double mirror works as a normal mirror but on both sides.", "S113RS557BD332 "),
+  HelpEntry("Mirror", "The mirror deflects laser beams by 90 degrees.", "M221 S02erM260 S303yM632 M454 "),
+  HelpEntry("Double Mirror", "A double mirror works as a normal mirror but on both sides.", "S113RS557BD332 "),
 };
 
 class HelpEntryList : public OffsettableList<const HelpEntry*>
@@ -86,42 +86,38 @@ void HelpView::draw()
   }
 }
 
+void HelpView::handleMouseEvent(EventType type, int x, int y, int button)
+{
+  if (type == EventType::MOUSE_MOTION)
+  {
+    int i = ui::coordToListEntry(x, y);
+    
+    if (i >= 0 && (i + list.getOffset()) != list.current() && list.isValidIndex(i))
+    {
+      list.set(list.getOffset() + i);
+      
+      const HelpEntry& entry = help[list.current()];
+      
+      if (entry.hasExampleLevel())
+      {
+        field->reset();
+        entry.buildField(field);
+      }
+    }
+  }
+  else if (type == EventType::MOUSE_DOWN)
+  {
+    int i = ui::coordToListEntry(x, y);
+    
+    if (i >= 0 && list.get(i))
+      ;
+  }
+}
+
 void HelpView::handleEvent(SDL_Event& event)
 {
   switch (event.type)
   {
-    case SDL_MOUSEMOTION:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      int i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && (i + list.getOffset()) != list.current() && list.isValidIndex(i))
-      {
-        list.set(list.getOffset() + i);
-
-        const HelpEntry& entry = help[list.current()];
-        
-        if (entry.hasExampleLevel())
-        {
-          field->reset();
-          entry.buildField(field);
-        }
-      }
-
-      break;
-    }
-
-    case SDL_MOUSEBUTTONDOWN:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      int i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && list.get(i))
-        ;
-
-      break;
-    }
-
     case SDL_MOUSEWHEEL:
     {
       ui::handleMouseWheelOnList(list, event.wheel.y);

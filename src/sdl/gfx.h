@@ -17,6 +17,13 @@
 
 #define BACKGROUND_COLOR (Gfx::ccc(20, 20, 40))
 
+#if defined(OPEN_DINGUX)
+#define SCALE (1)
+#else
+#define SCALE (3)
+#endif
+
+
 class Gfx
 {
 private:

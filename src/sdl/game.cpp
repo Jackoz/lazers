@@ -54,14 +54,28 @@ void Game::handleEvents()
 {
   SDL_Event event;
   
+  auto view = overView ? overView : this->view;
+  
   while (SDL_PollEvent(&event))
   {
     switch (event.type) {
       case SDL_QUIT: quit(); break;
+        
+      case SDL_MOUSEMOTION:
+      {
+        view->handleMouseEvent(EventType::MOUSE_MOTION, event.motion.x / SCALE, event.motion.y / SCALE, SDL_BUTTON_LEFT);
+        break;
+      }
+      case SDL_MOUSEBUTTONUP:
+      case SDL_MOUSEBUTTONDOWN:
+      {
+        auto type = event.type == SDL_MOUSEBUTTONUP ? EventType::MOUSE_UP : EventType::MOUSE_DOWN;
+        view->handleMouseEvent(type, event.button.x / SCALE, event.button.y / SCALE, event.button.button);
+      }
+        
       default:
       {
-        if (overView) overView->handleEvent(event);
-        else view->handleEvent(event);
+        view->handleEvent(event);
         break;
       }
     }

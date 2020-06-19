@@ -39,6 +39,8 @@ public:
   void draw();
   void activate();
   
+  void handleMouseEvent(EventType type, int x, int y, int button) override;
+  
   static void drawField(const Field *field, int bx, int by);
   static void drawGrid(int x, int y, int w, int h);
   static void drawInventory(const Field *field, int bx, int by);

@@ -365,6 +365,60 @@ void LevelView::draw()
   //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
 }
 
+void LevelView::handleMouseEvent(EventType type, int x, int y, int button)
+{
+  auto field = this->field();
+
+  if (type == EventType::MOUSE_MOTION)
+  {
+    Position hover = coordToPosition(x, y);
+    
+    if (hover.isValid() && field->isInside(hover))
+      *position = hover;
+    else
+      *position = Pos::invalid();
+  }
+  else if (type == EventType::MOUSE_DOWN)
+  {
+    Position hover = coordToPosition(x, y);
+    
+    Tile* tile = field->tileAt(hover);
+    
+    if (hover.isValid() && tile)
+    {
+      const auto& piece = tile->piece();
+      
+      if (button == SDL_BUTTON_LEFT)
+      {
+        if (!heldPiece && piece && piece->canBeMoved())
+        {
+          if (piece->isInfinite())
+          {
+            Piece* dupe = piece->dupe();
+            dupe->setInfinite(false);
+            heldPiece.reset(dupe);
+          }
+          else
+            tile->swap(heldPiece);
+          field->updateLasers();
+        }
+        else if (heldPiece && (!piece || piece->canBeMoved()))
+        {
+          tile->swap(heldPiece);
+          field->updateLasers();
+        }
+      }
+      else if (button == SDL_BUTTON_RIGHT)
+      {
+        if (piece && piece->canBeRotated())
+        {
+          piece->rotateRight();
+          field->updateLasers();
+        }
+      }
+    }
+  }
+}
 
 
 void LevelView::handleEvent(SDL_Event &event)
@@ -373,63 +427,6 @@ void LevelView::handleEvent(SDL_Event &event)
   
   switch(event.type)
   {
-    case SDL_MOUSEMOTION:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      Position hover = coordToPosition(x, y);
-      
-      if (hover.isValid() && field->isInside(hover))
-        *position = hover;
-      else
-        *position = Pos::invalid();
-      
-      break;
-    }
-      
-    case SDL_MOUSEBUTTONDOWN:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      Position hover = coordToPosition(x, y);
-
-      Tile* tile = field->tileAt(hover);
-
-      if (hover.isValid() && tile)
-      {
-        const auto& piece = tile->piece();
-
-        if (event.button.button == SDL_BUTTON_LEFT)
-        {
-          if (!heldPiece && piece && piece->canBeMoved())
-          {
-            if (piece->isInfinite())
-            {
-              Piece* dupe = piece->dupe();
-              dupe->setInfinite(false);
-              heldPiece.reset(dupe);
-            }
-            else
-              tile->swap(heldPiece);
-            field->updateLasers();
-          }
-          else if (heldPiece && (!piece || piece->canBeMoved()))
-          {
-            tile->swap(heldPiece);
-            field->updateLasers();
-          }
-        }
-        else if (event.button.button == SDL_BUTTON_RIGHT)
-        {
-          if (piece && piece->canBeRotated())
-          {
-            piece->rotateRight();
-            field->updateLasers();
-          }
-        }
-      }
-
-      break;
-    }
-    
     case SDL_KEYDOWN:			// Button press
     {
       Pos*& p = position;

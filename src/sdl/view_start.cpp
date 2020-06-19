@@ -45,11 +45,30 @@ void StartView::draw()
   Gfx::clear(BACKGROUND_COLOR);
   Gfx::drawString(Gfx::width() / 2, Gfx::height() * 0.15f, true, "^f00L^^a^ff0z^^e^0f0r^^s");
 
+  const int spacing = Gfx::stringHeight("") + 1;
+  
   int c = 0;
-  for (const auto& entry : entries)
+  for (auto it = entries.begin(); it != entries.end(); ++it)
   {
-    Gfx::drawString(Gfx::width() / 2, Gfx::height() * 0.4f + 10 * c, true, entry.action ? entry.caption : ("^bbb" + entry.caption));
+    std::string prefix;
+    
+    if (!it->action)
+      prefix = "^bbb";
+    else if (it == selected)
+      prefix = "^f00";
+    
+    Gfx::drawString(Gfx::width() / 2, Gfx::height() * 0.4f + spacing * c, true, prefix + it->caption);
     ++c;
+  }
+}
+
+void StartView::handleMouseEvent(EventType type, int x, int y, int button)
+{
+  if (type == EventType::MOUSE_MOTION)
+  {
+    const int base = Gfx::height() * 0.4f;
+    const int spacing = Gfx::stringHeight("") + 1;
+    int w = (y - base) / spacing;
   }
 }
 
@@ -57,31 +76,16 @@ void StartView::handleEvent(SDL_Event &event)
 {
   switch(event.type)
   {
-    case SDL_MOUSEMOTION:
-    {
-   
-
-      break;
-    }
-      
-    case SDL_MOUSEBUTTONDOWN:
-    {
-    
-
-      break;
-    }
-
-    case SDL_MOUSEWHEEL:
-    {
-
-      break;
-    }
-      
     case SDL_KEYDOWN:			// Button press
     {
       switch(event.key.keysym.sym)
       {
         case KEY_START:
+        {
+          break;
+        }
+          
+        case KEY_SELECT:
         {
           game->quit();
           break;

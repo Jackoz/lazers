@@ -127,14 +127,24 @@ enum ViewType
 
 union SDL_Event;
 
+enum class EventType
+{
+  MOUSE_DOWN,
+  MOUSE_UP,
+  MOUSE_MOTION
+};
+
 class View
 {
+public:
+  
 protected:
   Game *game;
   
 public:
   View(Game *game) : game(game) { }
   virtual void handleEvent(SDL_Event& event) = 0;
+  virtual void handleMouseEvent(EventType type, int x, int y, int button) = 0;
   virtual void draw() = 0;
   
   virtual void activate() { };

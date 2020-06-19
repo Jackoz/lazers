@@ -41,6 +41,8 @@ private:
 public:
   LevelSelectView(Game *game);
   
+  void handleMouseEvent(EventType type, int x, int y, int button) override;
+  
   void handleEvent(SDL_Event &event);
   void draw();
   void rebuildPreview();

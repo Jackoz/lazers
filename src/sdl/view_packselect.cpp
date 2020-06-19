@@ -50,35 +50,29 @@ void PackSelectList::draw()
     Gfx::drawString(Gfx::width()/2, Gfx::height()/2 - 5, true, "No level pack loaded.");
 }
 
+void PackSelectList::handleMouseEvent(EventType type, int x, int y, int button)
+{
+  auto i = ui::coordToListEntry(x, y);
+
+  if (type == EventType::MOUSE_MOTION)
+  {
+    if (i >= 0 && levelList.isValidIndex(i))
+      levelList.set(i);
+  }
+  else if (type == EventType::MOUSE_DOWN)
+  {
+    if (i >= 0 && levelList.isValidIndex(i))
+    {
+      game->pack = &game->packs[Files::selectedPack];
+      game->switchView(VIEW_LEVEL_SELECT);
+    }
+  }
+}
+
 void PackSelectList::handleEvent(SDL_Event &event)
 {
   switch(event.type)
   {
-    case SDL_MOUSEMOTION:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      auto i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && levelList.isValidIndex(i))
-        levelList.set(i);
-
-      break;
-    }
-      
-    case SDL_MOUSEBUTTONDOWN:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      auto i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && levelList.isValidIndex(i))
-      {
-        game->pack = &game->packs[Files::selectedPack];
-        game->switchView(VIEW_LEVEL_SELECT);
-      }
-
-      break;
-    }
-
     case SDL_MOUSEWHEEL:
     {
       ui::handleMouseWheelOnList(levelList, event.wheel.y);
@@ -90,6 +84,11 @@ void PackSelectList::handleEvent(SDL_Event &event)
       switch(event.key.keysym.sym)
       {
         case KEY_START:
+        {
+          break;
+        }
+          
+        case KEY_SELECT:
         {
           game->switchView(VIEW_START);
           break;

@@ -13,4 +13,6 @@ public:
 
   void draw() override;
   void handleEvent(SDL_Event& event) override;
+  
+  void handleMouseEvent(EventType type, int x, int y, int button) override;
 };

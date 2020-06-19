@@ -55,35 +55,32 @@ void LevelSelectView::draw()
   Gfx::blit(preview, nullptr, &dest);
 }
 
+void LevelSelectView::handleMouseEvent(EventType type, int x, int y, int button)
+{
+  auto i = ui::coordToListEntry(x, y);
+  
+  if (type == EventType::MOUSE_MOTION)
+  {
+    if (i >= 0 && (i + levelList.getOffset()) != levelList.current() && levelList.isValidIndex(i))
+    {
+      levelList.set(levelList.getOffset() + i);
+      rebuildPreview();
+    }
+  }
+  else if (type == EventType::MOUSE_DOWN)
+  {
+    int i = ui::coordToListEntry(x, y);
+    
+    if (i >= 0 && levelList.get(i))
+      game->switchView(VIEW_LEVEL);
+  }
+}
+
+
 void LevelSelectView::handleEvent(SDL_Event &event)
 {
   switch(event.type)
   {
-    case SDL_MOUSEMOTION:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      int i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && (i + levelList.getOffset()) != levelList.current() && levelList.isValidIndex(i))
-      {
-        levelList.set(levelList.getOffset() + i);
-        rebuildPreview();
-      }
-      
-      break;
-    }
-      
-    case SDL_MOUSEBUTTONDOWN:
-    {
-      auto x = event.motion.x / SCALE, y = event.motion.y / SCALE;
-      int i = ui::coordToListEntry(x, y);
-
-      if (i >= 0 && levelList.get(i))
-          game->switchView(VIEW_LEVEL);
-
-      break;
-    }
-
     case SDL_MOUSEWHEEL:
     {
       ui::handleMouseWheelOnList(levelList, event.wheel.y);

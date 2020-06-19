@@ -376,12 +376,12 @@ std::vector<LevelPack> Aargon::parseLevels()
   apacks.push_back({"Aargon Deluxe (Hard)", "Twilight Games", "aargon-deluxe-02", "Deluxe", 3});
   apacks.push_back({"Aargon Deluxe (Extreme)", "Twilight Games", "aargon-deluxe-03", "Deluxe", 4});
 
-  /*apacks.push_back({ "Aargon Classic (Beginner)", "Twilight Games", "aargon-classic-00", "Classic", 1 });
+  apacks.push_back({ "Aargon Classic (Beginner)", "Twilight Games", "aargon-classic-00", "Classic", 1 });
   apacks.push_back({ "Aargon Classic (Easy)", "Twilight Games", "aargon-classic-01", "Classic", 2 });
   apacks.push_back({ "Aargon Classic (Hard)", "Twilight Games", "aargon-classic-02", "Classic", 3 });
   apacks.push_back({ "Aargon Classic (Expert)", "Twilight Games", "aargon-classic-03", "Classic", 4 });
   
-  apacks.push_back({ "Aargon Space Station (Training)", "Twilight Games", "aargon-space-station-00", "Level Pack 1", 1 });
+  /*apacks.push_back({ "Aargon Space Station (Training)", "Twilight Games", "aargon-space-station-00", "Level Pack 1", 1 });
   apacks.push_back({ "Aargon Space Station (Recreation)", "Twilight Games", "aargon-space-station-01", "Level Pack 1", 2 });
   apacks.push_back({ "Aargon Space Station (Engineering)", "Twilight Games", "aargon-space-station-02", "Level Pack 1", 3 });
   apacks.push_back({ "Aargon Space Station (Intelligence)", "Twilight Games", "aargon-space-station-03", "Level Pack 1", 4 });*/
@@ -395,7 +395,7 @@ std::vector<LevelPack> Aargon::parseLevels()
 
     for (int i = 1; i <= 30; ++i)
     {
-      string base = "packs/aargon/";// "/Users/jack/Documents/dev/c++/lazers/data/packs/aargon/";
+      string base = "/Users/jack/Documents/Dev/c++/lazers/data/aargon/";
       stringstream ss;
       ss << base << apack.folderName << "/" << "Levels/SKILL";
       ss << apack.skillNumber << "/";

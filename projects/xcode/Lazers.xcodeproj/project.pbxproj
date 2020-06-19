@@ -25,6 +25,7 @@
 		0492643B21D5502C001BB26C /* SDL2.framework in Copy SDL Framework */ = {isa = PBXBuildFile; fileRef = 0482834221D2A99D008D800E /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0492643C21D5502C001BB26C /* SDL2_image.framework in Copy SDL Framework */ = {isa = PBXBuildFile; fileRef = 0482834021D2A990008D800E /* SDL2_image.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0492643F21D551C7001BB26C /* aargon in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0492643E21D551C7001BB26C /* aargon */; };
+		0496622D249D5C900007CF5A /* view_start.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0496622B249D5C900007CF5A /* view_start.cpp */; };
 		04D3DF5F21DDAEBF003FD748 /* level_encoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF5E21DDAEBF003FD748 /* level_encoder.cpp */; };
 		04D3DF6221DDAECE003FD748 /* view_help.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF6021DDAECD003FD748 /* view_help.cpp */; };
 		04D3DF6521DDAED9003FD748 /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04D3DF6421DDAED9003FD748 /* i18n.cpp */; };
@@ -102,6 +103,8 @@
 		0492643821D54F60001BB26C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = platforms/macos/SDLMain.h; sourceTree = "<group>"; };
 		0492643921D54F60001BB26C /* SDLMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SDLMain.mm; path = platforms/macos/SDLMain.mm; sourceTree = "<group>"; };
 		0492643E21D551C7001BB26C /* aargon */ = {isa = PBXFileReference; lastKnownFileType = folder; path = aargon; sourceTree = "<group>"; };
+		0496622B249D5C900007CF5A /* view_start.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view_start.cpp; sourceTree = "<group>"; };
+		0496622C249D5C900007CF5A /* view_start.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = view_start.h; sourceTree = "<group>"; };
 		04D3DF5D21DDAEBF003FD748 /* level_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = level_encoder.h; sourceTree = "<group>"; };
 		04D3DF5E21DDAEBF003FD748 /* level_encoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = level_encoder.cpp; sourceTree = "<group>"; };
 		04D3DF6021DDAECD003FD748 /* view_help.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = view_help.cpp; sourceTree = "<group>"; };
@@ -188,6 +191,8 @@
 				0492642721D54F53001BB26C /* view_levelselect.h */,
 				0492642A21D54F53001BB26C /* view_packselect.cpp */,
 				0492642521D54F53001BB26C /* view_packselect.h */,
+				0496622B249D5C900007CF5A /* view_start.cpp */,
+				0496622C249D5C900007CF5A /* view_start.h */,
 			);
 			path = sdl;
 			sourceTree = "<group>";
@@ -339,6 +344,7 @@
 				0492643121D54F53001BB26C /* pieces.cpp in Sources */,
 				04D3DF5F21DDAEBF003FD748 /* level_encoder.cpp in Sources */,
 				0492643621D54F53001BB26C /* view_level.cpp in Sources */,
+				0496622D249D5C900007CF5A /* view_start.cpp in Sources */,
 				0492643321D54F53001BB26C /* view_levelselect.cpp in Sources */,
 				04D3DF6521DDAED9003FD748 /* i18n.cpp in Sources */,
 				04E6866F21D97D38004CED66 /* repository.cpp in Sources */,
@@ -398,7 +404,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -428,7 +433,6 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -449,6 +453,7 @@
 					"${SRCROOT}/../../src",
 				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pixbits.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -475,6 +480,7 @@
 					"${SRCROOT}/../../src",
 				);
 				INFOPLIST_FILE = "Lazers-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pixbits.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
