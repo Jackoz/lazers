@@ -31,11 +31,12 @@ class Tile
 {
 private:
   std::unique_ptr<Piece> _piece;
+public:
+  u8 x, y;
 
 public:
   std::array<LaserColor, 8> colors;
   
-  u8 x, y;
   u8 variant;
   
   Tile() : _piece{nullptr}, colors{LaserColor::NONE}, x{0}, y{0}, variant{static_cast<u8>(rand()%3)} { }
@@ -66,12 +67,13 @@ private:
   
   const LevelSpec* _level;
   
-  Tile *tiles;
-  Tile *inventory;
+  std::vector<Tile> tiles;
+  std::vector<Tile> inventory;
   std::list<Laser> lasers;
-  std::list<Goal*> goals;
+  std::list<std::unique_ptr<Goal>> goals;
   std::unordered_set<Laser, Laser::hash> beams;
   
+  bool won;
   bool failed;
 
 public:
@@ -79,9 +81,11 @@ public:
   _width(width), _height(height),
   _invWidth(invWidth), _invHeight(invHeight),
   _level(nullptr),
-  tiles(new Tile[width*height]), inventory(new Tile[invWidth*invHeight]),
-  failed(false)
+  failed(false), won(false)
   {
+    tiles.resize(width*height);
+    inventory.resize(invWidth*invHeight);
+    
     for (u32 i = 0; i < _width; ++i)
       for (u32 j = 0; j < _height; ++j)
       {
@@ -98,44 +102,7 @@ public:
         tile.y = j;
       }
     
-    
-    /*for (int i = 0; i < 7; ++i)
-    {
-      place({(s8)(i+3),8}, new LaserSource(NORTH, static_cast<LaserColor>(i+1)));
-      
-      if (i < 6)
-        place({(s8)(i+3),9}, new Filter(static_cast<LaserColor>(i+1)));
-    }
-    
-    place({2, 10}, new Polarizer(NORTH, LaserColor::MAGENTA));
-    place({1, 10}, new Polarizer(NORTH, LaserColor::WHITE));
-    place({3, 10}, new Tunnel(NORTH));
-    place({4, 10}, new ColorShifter(NORTH));
-    place({5, 10}, new ColorInverter(NORTH));
-    place({6, 10}, new StrictGoal(LaserColor::NONE));
-    place({7, 10}, new StrictGoal(LaserColor::YELLOW));
-    place({8, 10}, new Teleporter());
-    place({9, 10}, new Teleporter());
-    place({10, 10}, new Refractor(NORTH));
-    
-    place({3, 3}, new Mirror(NORTH));
-    place({4, 3}, new DoubleMirror(NORTH));
-    
-    place({2, 2}, new Splitter(NORTH));
-    place({3, 2}, new DSplitter(NORTH));
-    place({4, 2}, new Wall());
-    place({5, 2}, new Glass());
-    place({6, 2}, new Prism(NORTH));
-    place({7, 2}, new Bender());
-    place({8, 2}, new Twister());
-    place({9, 2}, new RoundFilter());
-    place({10, 2}, new CrossColorInverter(NORTH));
-    place({11, 2}, new SkewMirror(NORTH));
-    place({12, 2}, new DoubleSkewMirror(NORTH));
-    place({13, 2}, new DoubleSplitterMirror(NORTH));
-    place({14, 2}, new StarSplitter(this));
-    */
-    
+
     /*std::stringstream ss;
     for (int i = 0; i < width(); ++i)
       for (int j = 0; j < height(); ++j)
@@ -171,8 +138,8 @@ public:
     beams.clear();
     failed = false;
     
-    std::for_each(tiles, tiles + _width*_height, [] (Tile& tile) { tile.resetLasers(); tile.clear(); });
-    std::for_each(inventory, inventory + _invWidth*_invHeight, [] (Tile& tile) { tile.clear(); });    
+    std::for_each(tiles.begin(), tiles.end(), [] (Tile& tile) { tile.resetLasers(); tile.clear(); });
+    std::for_each(inventory.begin(), inventory.end(), [] (Tile& tile) { tile.clear(); });    
   }
 
   Piece* generatePiece(const PieceInfo& info);
@@ -180,6 +147,7 @@ public:
 
   void fail() { failed = true; }
   bool isFailed() const { return failed; }
+  bool isWon() const { return won; }
   
   void place(Position p, Piece* piece)
   {
@@ -203,11 +171,10 @@ public:
     else return nullptr;
   }
 
-  void addGoal(Goal* goal) { goals.push_back(goal); }
-
   void generateBeam(Position position, Direction direction, LaserColor color);
   void updateLasers();
-  bool checkForWin();
+
+  void checkForWin();
 
   void generateDummy();
 };

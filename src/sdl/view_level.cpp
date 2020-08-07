@@ -359,10 +359,29 @@ void LevelView::draw()
     Gfx::rectFill(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width() * ui::TILE_SIZE, field->height() * ui::TILE_SIZE, Gfx::ccc(180, 0, 0, 128));
     Gfx::drawString(field->width()*ui::TILE_SIZE/2 + GFX_FIELD_POS_X, GFX_FIELD_POS_Y + field->height()*ui::TILE_SIZE/2, true, "FAILED!");
   }
+  else if (field->isWon())
+  {
+    Gfx::rectFill(GFX_FIELD_POS_X, GFX_FIELD_POS_Y, field->width() * ui::TILE_SIZE, field->height() * ui::TILE_SIZE, Gfx::ccc(0, 180, 0, 128));
+    Gfx::drawString(field->width()*ui::TILE_SIZE / 2 + GFX_FIELD_POS_X, GFX_FIELD_POS_Y + field->height()*ui::TILE_SIZE / 2, true, "WON!");
+  }
 
   //Gfx::blit(Gfx::tiles, &src, &dst);
   
   //Gfx::drawString(245, 110, "Y: switch zone\nX: rotate left\nA: rotate right\nB: select piece");
+}
+
+void LevelView::levelChanged()
+{
+  Field* field = this->field();
+  field->updateLasers();
+  field->checkForWin();
+
+  if (field->isWon())
+  {
+    //TODO: finish
+    //_level->solved = true;
+    //++Files::packAt(Files::selectedPack)->solvedCount;
+  }
 }
 
 void LevelView::handleMouseEvent(EventType type, int x, int y, int button)
@@ -400,12 +419,13 @@ void LevelView::handleMouseEvent(EventType type, int x, int y, int button)
           }
           else
             tile->swap(heldPiece);
-          field->updateLasers();
+
+          levelChanged();
         }
         else if (heldPiece && (!piece || piece->canBeMoved()))
         {
           tile->swap(heldPiece);
-          field->updateLasers();
+          levelChanged();
         }
       }
       else if (button == SDL_BUTTON_RIGHT)
@@ -413,7 +433,7 @@ void LevelView::handleMouseEvent(EventType type, int x, int y, int button)
         if (piece && piece->canBeRotated())
         {
           piece->rotateRight();
-          field->updateLasers();
+          levelChanged();
         }
       }
     }
@@ -452,7 +472,7 @@ void LevelView::handleEvent(SDL_Event &event)
             else color = (LaserColor)(color | channel);
 
             piece->setColor(color);
-            field->updateLasers();
+            levelChanged();
           }
 
           break;
@@ -511,7 +531,7 @@ void LevelView::handleEvent(SDL_Event &event)
           if (piece && piece->canBeRotated())
           {
             piece->rotateRight();
-            field->updateLasers();
+            levelChanged();
           }
           
           break;
@@ -534,8 +554,8 @@ void LevelView::handleEvent(SDL_Event &event)
             if (!newPiece || newPiece->canBeMoved())
             {
               selectedTile->swap(curTile);
-              selectedTile = nullptr;              
-              field->updateLasers();
+              selectedTile = nullptr;    
+              levelChanged();
             }
           }
           
@@ -547,7 +567,7 @@ void LevelView::handleEvent(SDL_Event &event)
           if (piece && piece->canBeRotated())
           {
             piece->rotateLeft();
-            field->updateLasers();
+            levelChanged();
           }
           
           break;

@@ -58,7 +58,7 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_STRICT_GOAL:
     {
       Goal* goal = new StrictGoal(info.color);
-      addGoal(goal);
+      goals.push_back(std::unique_ptr<Goal>(goal));
       return goal;
     }
 
@@ -130,10 +130,9 @@ void Field::generateBeam(Position position, Direction direction, LaserColor colo
 void Field::updateLasers()
 {
   beams.clear();
-  
-  for (auto g : goals)
-    g->reset();
-  
+
+  std::for_each(goals.begin(), goals.end(), [](auto& g) { g->reset(); });
+
   for (int i = 0; i < _width; ++i)
     for (int j = 0; j < _height; ++j)
     {
@@ -187,18 +186,11 @@ void Field::updateLasers()
     
     it = lasers.erase(it);
   }
-  
-  if (checkForWin() && _level && !_level->solved)
-  {
-    //TODO: non-sense here, need to be managed somewhere else
-    //_level->solved = true;
-    //++Files::packAt(Files::selectedPack)->solvedCount;
-  }
 }
 
-bool Field::checkForWin()
+void Field::checkForWin()
 {
-  return std::all_of(goals.begin(), goals.end(), [](const Goal *goal){ return goal->isSatisfied(); });
+  won = std::all_of(goals.begin(), goals.end(), [](const auto& goal) { return goal->isSatisfied(); });
 }
 
 void Field::generateDummy()

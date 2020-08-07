@@ -83,11 +83,12 @@ void PackSelectList::handleEvent(SDL_Event &event)
     {
       switch(event.key.keysym.sym)
       {
-        case KEY_START:
+        /*case KEY_START:
         {
+          game->switchView(VIEW_START);
           break;
-        }
-          
+        }*/
+
         case KEY_SELECT:
         {
           game->switchView(VIEW_START);

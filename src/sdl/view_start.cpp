@@ -57,7 +57,7 @@ void StartView::draw()
     
     if (!it->action)
       prefix = "^bbb";
-    if (it == selected)
+    else if (it == selected)
       prefix = "^ff0";
     
     Gfx::drawString(Gfx::width() / 2, Gfx::height() * 0.4f + spacing * c, true, prefix + it->caption);

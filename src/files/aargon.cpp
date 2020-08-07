@@ -395,7 +395,7 @@ std::vector<LevelPack> Aargon::parseLevels()
 
     for (int i = 1; i <= 30; ++i)
     {
-      string base = "/Users/jack/Documents/Dev/c++/lazers/data/aargon/";
+      string base = "packs/aargon/";// "/Users/jack/Documents/Dev/c++/lazers/data/aargon/";
       stringstream ss;
       ss << base << apack.folderName << "/" << "Levels/SKILL";
       ss << apack.skillNumber << "/";

@@ -21,7 +21,7 @@ class LevelView : public View
 {
 private:
   std::unique_ptr<Piece> heldPiece;
-  Tile *selectedTile;
+  Tile* selectedTile;
   Position fposition, iposition;
   Position *position;
   
@@ -32,12 +32,14 @@ private:
   Field* field() { return game->field; }
   
   Position coordToPosition(int x, int y);
-  
+  void levelChanged();
+
 public:
   LevelView(Game *game) : View(game), selectedTile(nullptr), fposition(Position(0,0)), iposition(Position(Position::Type::INVENTORY,0,0)), position(&fposition), heldPiece(nullptr) { }
   void handleEvent(SDL_Event &event);
   void draw();
   void activate();
+  
   
   void handleMouseEvent(EventType type, int x, int y, int button) override;
   
