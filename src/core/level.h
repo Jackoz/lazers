@@ -70,7 +70,7 @@ private:
   std::vector<Tile> tiles;
   std::vector<Tile> inventory;
   std::list<Laser> lasers;
-  std::list<std::unique_ptr<Goal>> goals;
+  std::list<Goal*> goals;
   std::unordered_set<Laser, Laser::hash> beams;
   
   bool won;

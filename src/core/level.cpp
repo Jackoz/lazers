@@ -58,7 +58,7 @@ Piece* Field::generatePiece(const PieceInfo& info)
     case PIECE_STRICT_GOAL:
     {
       Goal* goal = new StrictGoal(info.color);
-      goals.push_back(std::unique_ptr<Goal>(goal));
+      goals.push_back(goal); /* weak reference to goal since it's already as unique_ptr in tile */
       return goal;
     }
 
